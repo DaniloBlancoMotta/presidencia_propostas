@@ -1,0 +1,11 @@
+[project]
+name = "rag-planos"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["pymupdf==1.28.2", "pyyaml==6.0.2", "jsonschema==4.23.0"]
+
+[project.optional-dependencies]
+teste = ["pytest==8.3.4"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
