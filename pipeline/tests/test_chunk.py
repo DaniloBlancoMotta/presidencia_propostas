@@ -70,6 +70,11 @@ def test_viradas_reais_batem_com_as_paginas(chunks_reais, paginas):
 
 
 def test_chunks_gravados_iguais_aos_recalculados(chunks_reais):
-    """L12 (rodada 4): dados/chunks/chunks.json é exatamente o que o código produz hoje."""
+    """L12: dados/chunks/chunks.json é o que o código produz hoje. `temas` admite as confianças do
+    LLM de um `ingest` com chave: cada tema das palavras-chave fica, com confiança >= a delas."""
     gravados = json.loads((config.DADOS / "chunks" / "chunks.json").read_text(encoding="utf-8"))
-    assert gravados == chunks_reais
+    assert len(gravados) == len(chunks_reais) == 84
+    for g, r in zip(gravados, chunks_reais):
+        assert {k: v for k, v in g.items() if k != "temas"} == {k: v for k, v in r.items() if k != "temas"}, r["id"]
+        conf = {t["theme_id"]: t["confianca"] for t in g["temas"]}
+        assert all(conf.get(t["theme_id"], -1) >= t["confianca"] for t in r["temas"]), r["id"]

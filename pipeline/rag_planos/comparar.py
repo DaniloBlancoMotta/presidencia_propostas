@@ -45,8 +45,9 @@ def _chunks_do_tema(chunks: list[dict], theme_id: str, candidato: str) -> list[d
 
 
 def pedidos_de_resumo(tema: dict, chunks: list[dict]) -> dict[str, dict]:
-    """Por candidato com trechos no tema: o prompt resumo.md (com `[página N]` em cada virada) e a
-    faixa de páginas dos chunks enviados. Quem não tem trecho fica de fora (sem chamada)."""
+    """Por candidato com trechos no tema: o prompt resumo.md (com `[página N]` em cada virada) e o
+    texto e as viradas dos chunks enviados, que o filtro usa para achar a página que o modelo viu.
+    Quem não tem trecho fica de fora (sem chamada)."""
     pedidos = {}
     for cid, meta in config.CANDIDATOS.items():
         sel = _chunks_do_tema(chunks, tema["id"], cid)
@@ -54,7 +55,8 @@ def pedidos_de_resumo(tema: dict, chunks: list[dict]) -> dict[str, dict]:
             trechos = "\n\n".join(chunk.texto_marcado(c) for c in sel)
             pedidos[cid] = {"prompt": llm.prompt("resumo", rotulo=tema["rotulo"], descricao=tema["descricao"],
                                                  arquivo=meta["arquivo"], trechos=trechos),
-                            "paginas": sorted({p for c in sel for p in c["paginas"]})}
+                            "chunks": [{"texto": c["texto"], "viradas": c.get("viradas"), "pagina": c["pagina"]}
+                                       for c in sel]}
     return pedidos
 
 
@@ -71,20 +73,22 @@ def com_llm(tema: dict, chunks: list[dict], paginas: dict, gerador: llm.Gerador)
 
 def registrar(theme_id: str, conteudo: dict, origem: str, pasta: Path = config.DADOS / "geracao",
               agora: datetime | None = None, correcoes: list | None = None) -> dict:
-    """`correcoes_pagina` só entra no arquivo quando houve troca: sem troca, o arquivo é o de sempre."""
+    """`correcoes_pagina` só entra no arquivo quando houve troca: sem troca, o arquivo é o de sempre.
+    Mesmo conteúdo e mesma origem mantêm `gerado_em` (e o hash publicado), mesmo que as trocas mudem."""
     pasta.mkdir(parents=True, exist_ok=True)
     arq = pasta / f"{theme_id}.json"
-    if arq.exists():
-        antigo = json.loads(arq.read_text(encoding="utf-8"))
-        if (antigo["conteudo"] == conteudo and antigo["origem"] == origem
-                and antigo.get("correcoes_pagina", []) == (correcoes or [])):
+    antigo = json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else None
+    if antigo and antigo["conteudo"] == conteudo and antigo["origem"] == origem:
+        if antigo.get("correcoes_pagina", []) == (correcoes or []):
             return antigo
-    registro = {
-        "theme_id": theme_id,
-        "origem": origem,
-        "gerado_em": (agora or datetime.now(BRT)).replace(microsecond=0).isoformat(),
-        "conteudo": conteudo,
-    }
+        registro = {k: v for k, v in antigo.items() if k != "correcoes_pagina"}
+    else:
+        registro = {
+            "theme_id": theme_id,
+            "origem": origem,
+            "gerado_em": (agora or datetime.now(BRT)).replace(microsecond=0).isoformat(),
+            "conteudo": conteudo,
+        }
     if correcoes:
         registro["correcoes_pagina"] = correcoes
     arq.write_text(json.dumps(registro, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

@@ -656,11 +656,11 @@ def test_dependencias_fixadas():
 PAGS = {LULA: [pagina_falsa(1, "Texto repetido A. Proposta um."),
                pagina_falsa(2, "Texto repetido A. Proposta dois."),
                pagina_falsa(3, "Proposta três exclusiva.")],
-        FLAVIO: [pagina_falsa(1, "Nada aqui.")]}
+        FLAVIO: [pagina_falsa(1, "Nada aqui."), pagina_falsa(2, "Proposta dois.")]}
 
 
 def _chunk_lula_1_2():
-    """Chunk real (chunk.cortar) que cobre só as págs. 1 e 2 de Lula; a 3 fica fora da faixa."""
+    """Chunk real (chunk.cortar) que cobre só as págs. 1 e 2 de Lula; a 3 não vai ao modelo."""
     c = cortar_em_chunks(PAGS[LULA][:2], "lula", "PT", LULA)
     assert len(c) == 1 and c[0]["paginas"] == [1, 2]
     c[0]["temas"] = [{"theme_id": "saude", "confianca": 0.9}]
@@ -671,7 +671,10 @@ def test_prompt_marca_viradas():
     outro = {**_chunk_lula_1_2(), "pagina": 5, "paginas": [5], "viradas": [[0, 5]], "texto": "Página cinco."}
     outro["temas"] = [{"theme_id": "saude", "confianca": 0.5}]
     pedidos = comparar.pedidos_de_resumo(TEMA, [_chunk_lula_1_2(), outro])
-    assert list(pedidos) == ["lula"] and pedidos["lula"]["paginas"] == [1, 2, 5]
+    assert list(pedidos) == ["lula"]
+    assert [(c["texto"], c["viradas"]) for c in pedidos["lula"]["chunks"]] == [
+        ("Texto repetido A. Proposta um. Texto repetido A. Proposta dois.", [[0, 1], [31, 2]]),
+        ("Página cinco.", [[0, 5]])]
     p = pedidos["lula"]["prompt"]
     assert "[página 1] Texto repetido A. Proposta um. [página 2] Texto repetido A. Proposta dois." in p
     assert "[página 5] Página cinco." in p and "[página 1-2]" not in p
@@ -682,12 +685,14 @@ def test_corrige_pagina_so_quando_unica_na_faixa(tmp_path):
     def resp(p):
         if p.startswith("Você resume"):
             return json.dumps({"nao_encontrado": False, "resumo": [
-                bullet("Corrigida.", cit(LULA, 1, "Proposta dois.")),            # só na pág. 2 da faixa
-                bullet("Ambígua.", cit(LULA, 3, "Texto repetido A.")),           # nas págs. 1 e 2
-                bullet("Fora da faixa.", cit(LULA, 1, "Proposta três exclusiva.")),  # só na pág. 3
+                bullet("Corrigida.", cit(LULA, 1, "Proposta dois.")),            # no chunk, sob [página 2]
+                bullet("Ambígua.", cit(LULA, 3, "Texto repetido A.")),           # sob [página 1] e [página 2]
+                bullet("Fora da faixa.", cit(LULA, 1, "Proposta três exclusiva.")),  # pág. 3: não foi ao modelo
                 bullet("Certa.", cit(LULA, 1, "Proposta um.")),
                 bullet("Página em texto.", cit(LULA, "1", "Proposta dois.")),
-                bullet("Arquivo do outro.", cit(FLAVIO, 1, "Proposta dois."))]}, ensure_ascii=False)
+                bullet("Arquivo do outro.", cit(FLAVIO, 1, "Proposta dois.")),   # Flávio p.2 tem o trecho
+                bullet("Duas citações.", cit(LULA, 1, "Proposta dois."), cit(LULA, 1, "Inexistente.")),
+                bullet("Atravessa.", cit(LULA, 1, "Proposta um. Texto repetido A."))]}, ensure_ascii=False)
         return json.dumps({"semelhancas": [], "diferencas": [], "omissoes": []})
 
     m = ModeloFalso(resp)
@@ -721,8 +726,9 @@ def test_correcao_registrada_e_no_relatorio(tmp_path, conteudo_valido, paginas_f
     depois = datetime(2026, 10, 19, 12, 0, tzinfo=comparar.BRT)
     assert comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois,
                               correcoes=corr)["gerado_em"] == reg["gerado_em"]
-    assert comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois)["gerado_em"] != \
-        reg["gerado_em"]
+    sem_trocas = comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois)
+    assert sem_trocas["gerado_em"] == reg["gerado_em"] and "correcoes_pagina" not in sem_trocas
+    assert (tmp_path / "c" / "saude.json").read_bytes() == a  # mesmo conteúdo: mesmo arquivo, mesmo hash adiante
 
     saida, descartes, mantidos = verificar.verificar("saude", conteudo_valido, paginas_falsas)
     comp = verificar.montar("saude", "2026-10-18T12:00:00-03:00", saida, FONTES)
@@ -734,3 +740,35 @@ def test_correcao_registrada_e_no_relatorio(tmp_path, conteudo_valido, paginas_f
     assert "Páginas corrigidas" not in sem
     assert relatorio.gerar(TEMA, comp, "0" * 64, "gemini (x)", mantidos, descartes, tmp_path / "r3.html",
                            []).read_text(encoding="utf-8") == sem
+
+
+def test_correcoes_pela_linha_de_comando(tmp_path, monkeypatch, capsys, paginas):
+    """`comparar --origem gemini` grava as trocas em geracao/<tema>.json e `verificar` as leva ao
+    relatório. O modelo falso cita cada trecho uma página adiante da do marcador que viu."""
+    from rag_planos import __main__ as cli, config, temas
+
+    def resp(p):
+        if p.startswith("Você resume"):
+            arq = re.search(r"Arquivo: (\S+)", p).group(1)
+            pag, trecho = re.search(r"\[página (\d+)\] ((?:\S+ ){7}\S+)", p).groups()
+            return json.dumps({"nao_encontrado": False, "resumo": [
+                bullet("Bullet de teste.", cit(arq, int(pag) + 1, trecho))]}, ensure_ascii=False)
+        return json.dumps({"semelhancas": [], "diferencas": [], "omissoes": []})
+
+    dados = tmp_path / "dados"
+    original = comparar.registrar
+    monkeypatch.setattr(llm, "provedor_padrao", lambda: gerador(ModeloFalso(resp), tmp_path / "cache"))
+    monkeypatch.setattr(comparar, "registrar", lambda *a, **k: original(*a, **{**k, "pasta": dados / "geracao"}))
+    assert main(["comparar", "saude", "--origem", "gemini"]) == 0
+    assert "2 página(s) corrigida(s)" in capsys.readouterr().out
+    g = json.loads((dados / "geracao" / "saude.json").read_text(encoding="utf-8"))
+    assert sorted(c["candidato"] for c in g["correcoes_pagina"]) == ["flavio-bolsonaro", "lula"]
+    assert all(c["pagina_citada"] == c["pagina"] + 1 for c in g["correcoes_pagina"])
+
+    tema = temas.por_id(temas.carregar())["saude"]
+    fontes = json.loads((config.DADOS / "fontes.json").read_text(encoding="utf-8"))
+    monkeypatch.setattr(config, "RAIZ", tmp_path)
+    monkeypatch.setattr(config, "DADOS", dados)
+    cli._verificar_tema(tema, paginas, fontes, None)
+    html_rel = (dados / "relatorios" / "saude.html").read_text(encoding="utf-8")
+    assert "Páginas corrigidas automaticamente (2)" in html_rel

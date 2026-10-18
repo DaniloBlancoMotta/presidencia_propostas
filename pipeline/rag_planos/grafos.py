@@ -1,7 +1,7 @@
 """Os três fluxos de LLM do pipeline como grafos LangGraph (decisão 10).
 
 - `comparar`: um resumo por candidato em paralelo (`Send`), filtro literal (que corrige a página
-  quando o trecho está em exatamente uma página da faixa enviada) e comparação;
+  pela página do marcador sob o qual o trecho aparece no chunk enviado) e comparação;
 - `juiz`: um veredito por item que passou na checagem literal, em paralelo;
 - `classificar`: um pedido por chunk, em paralelo.
 Os nós que chamam o modelo têm `RETRY` e passam pelo cache de `llm.Gerador`; a concorrência é
@@ -19,7 +19,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import RetryPolicy, Send
 
 from . import config, extrair, llm
-from .literal import trecho_na_pagina
+from .literal import normalizar, trecho_na_pagina
 
 LISTAS = ("semelhancas", "diferencas", "omissoes")
 RETRY = RetryPolicy(max_attempts=5, initial_interval=2.0, backoff_factor=2.0, max_interval=60.0,
@@ -62,10 +62,28 @@ def _literal(bullet: Any, paginas: dict) -> bool:
     return True
 
 
-def _corrigir_paginas(bullet: Any, arquivo: str, faixa: list[int], paginas: dict) -> tuple[Any, list[dict]]:
+def _pagina_no_chunk(trecho: str, chunks: list[dict]) -> int | None:
+    """Página do marcador sob o qual o trecho aparece no texto dos chunks enviados ao modelo (pela
+    `viradas`); None se não aparece, se aparece sob marcadores diferentes ou só atravessando uma virada."""
+    t = normalizar(trecho)
+    achadas: set[int] = set()
+    for c in chunks if t else []:
+        texto, viradas = c["texto"], c.get("viradas") or [[0, c["pagina"]]]
+        i = texto.find(t)
+        while i != -1:
+            k = max(j for j, (inicio, _) in enumerate(viradas) if inicio <= i)
+            proxima = viradas[k + 1][0] if k + 1 < len(viradas) else len(texto) + 1
+            if i + len(t) <= proxima - 1:
+                achadas.add(viradas[k][1])
+            i = texto.find(t, i + 1)
+    return achadas.pop() if len(achadas) == 1 else None
+
+
+def _corrigir_paginas(bullet: Any, arquivo: str, chunks: list[dict], paginas: dict) -> tuple[Any, list[dict]]:
     """Cópia do bullet em que cada citação de `arquivo` com página inteira, cujo trecho não está na
-    página citada mas está literalmente em exatamente uma página de `faixa`, passa a citar essa
-    página. Devolve (bullet, trocas). Nada é inventado: o trecho é o mesmo, só a página fica certa."""
+    página citada mas aparece num chunk enviado sob um único marcador `[página N]` (e é literal na
+    página N), passa a citar N. Devolve (bullet, trocas). Nada é inventado: o trecho é o mesmo, só a
+    página fica a que o modelo viu."""
     if not isinstance(bullet, dict) or not isinstance(bullet.get("citacoes"), list):
         return bullet, []
     novo, trocas = copy.deepcopy(bullet), []
@@ -77,10 +95,10 @@ def _corrigir_paginas(bullet: Any, arquivo: str, faixa: list[int], paginas: dict
             continue
         if trecho_na_pagina(trecho, extrair.texto_da_pagina(paginas, arquivo, pagina) or ""):
             continue
-        onde = [n for n in faixa if trecho_na_pagina(trecho, extrair.texto_da_pagina(paginas, arquivo, n) or "")]
-        if len(onde) == 1:
-            trocas.append({"trecho": trecho, "pagina_citada": pagina, "pagina": onde[0]})
-            ci["pagina"] = onde[0]
+        vista = _pagina_no_chunk(trecho, chunks)
+        if vista is not None and trecho_na_pagina(trecho, extrair.texto_da_pagina(paginas, arquivo, vista) or ""):
+            trocas.append({"trecho": trecho, "pagina_citada": pagina, "pagina": vista})
+            ci["pagina"] = vista
     return novo, trocas
 
 
@@ -98,7 +116,7 @@ def _validar_comparar(r: Any) -> None:
 
 class EstadoComparar(TypedDict, total=False):
     tema: dict
-    pedidos: dict          # candidato -> {"prompt", "paginas" (faixa)}; só quem tem trechos no tema
+    pedidos: dict          # candidato -> {"prompt", "chunks" (texto, viradas)}; só quem tem trechos no tema
     paginas: dict
     brutos: Annotated[dict, _juntar]
     candidatos: dict
@@ -118,10 +136,10 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
         candidatos, correcoes = {}, []
         for cid, meta in config.CANDIDATOS.items():
             bullets = _dict(s.get("brutos", {}).get(cid)).get("resumo", [])
-            faixa = _dict(s["pedidos"].get(cid)).get("paginas", [])
+            enviados = _dict(s["pedidos"].get(cid)).get("chunks", [])
             resumo = []
             for b in bullets if isinstance(bullets, list) else []:
-                b, trocas = _corrigir_paginas(b, meta["arquivo"], faixa, s["paginas"])
+                b, trocas = _corrigir_paginas(b, meta["arquivo"], enviados, s["paginas"])
                 if _literal(b, s["paginas"]):
                     resumo.append(b)
                     correcoes += [{"candidato": cid, "texto": b.get("texto", ""), **t} for t in trocas]
