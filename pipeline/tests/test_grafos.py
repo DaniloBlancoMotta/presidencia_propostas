@@ -4,6 +4,7 @@ Modelo falso em memória, ou o ChatGoogleGenerativeAI real contra um servidor HT
 o endpoint do Gemini. Nenhum teste sai para a rede.
 """
 import hashlib
+import html
 import itertools
 import json
 import re
@@ -18,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from rag_planos import classificar, comparar, grafos, llm, verificar
+from rag_planos import classificar, comparar, extrair, grafos, llm, relatorio, verificar
 from rag_planos.__main__ import main
 
 from .conftest import FLAVIO, LULA, bullet, cit
@@ -281,17 +282,22 @@ def test_ritmo_por_cota(servidor, tmp_path, monkeypatch):
     from langchain_core.rate_limiters import InMemoryRateLimiter
     monkeypatch.setenv("GEMINI_API_KEY", "chave-falsa")
     monkeypatch.delenv("LLM_RPM", raising=False)
-    assert llm.provedor_padrao().modelo.rate_limiter is None
+    assert llm.provedor_padrao().limitador is None
     monkeypatch.setenv("LLM_RPM", "600")
-    limitador = llm.provedor_padrao().modelo.rate_limiter
-    assert isinstance(limitador, InMemoryRateLimiter) and limitador.requests_per_second == 10
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url, rpm=600),
-                    "gemini", "gemini-2.5-flash", tmp_path)
+    p = llm.provedor_padrao()
+    lim = p.limitador
+    assert isinstance(lim, InMemoryRateLimiter)
+    assert (lim.requests_per_second, lim.check_every_n_seconds, lim.max_bucket_size) == (10, 0.05, 1)
+    assert p.modelo.rate_limiter is None  # o limitador fica no Gerador, fora do relógio da latência
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-2.5-flash", tmp_path, limitador=llm.limitador(600))
     inicio = time.monotonic()
     for i in range(5):
         g.json(f"p{i}")
     assert time.monotonic() - inicio >= 0.4
     assert len(servidor.pedidos) == 5
+    linhas = [json.loads(l) for l in (tmp_path / "chamadas.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert sum(l["espera_ms"] for l in linhas) >= 400
 
 
 def _429_com_espera(segundos):
@@ -312,6 +318,15 @@ def test_retry_espera_sugerida(servidor, tmp_path, paginas_falsas):
     grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
     assert len(servidor.pedidos) == 2
     assert 0.2 <= servidor.pedidos[1]["t"] - servidor.pedidos[0]["t"] < 2.0
+    assert llm.ESPERA_MAXIMA_SUGERIDA == 60.0 and llm.Gerador(None, "gemini", "m").espera_maxima == 60.0
+    servidor.pedidos.clear()
+    servidor.roteiro = [_429_com_espera("30s")] * 5  # a 5ª tentativa também recebe retryDelay
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-2.5-flash", tmp_path / "c", espera_maxima=0.5)
+    with pytest.raises(Exception):
+        grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
+    assert len(servidor.pedidos) == 5
+    assert time.monotonic() - servidor.pedidos[-1]["t"] < 0.3  # sem espera depois da última
 
 
 def test_retry_rede_e_500(servidor, tmp_path, paginas_falsas):
@@ -351,6 +366,55 @@ def test_concorrencia_limitada(tmp_path, monkeypatch):
     assert estado["pico"] == 2
 
 
+# --- L25, L26: variáveis e cota diária -------------------------------------------------------
+
+def test_variaveis_vazias_ou_invalidas(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "chave-falsa")
+    for nome in ("GEMINI_MODELO", "LLM_RPM", "LLM_CONCORRENCIA"):
+        monkeypatch.setenv(nome, "")
+    p = llm.provedor_padrao()
+    assert (p.nome_modelo, p.limitador, llm.concorrencia()) == ("gemini-2.5-flash", None, 4)
+    for valor in ("nan", "abc", "0", "-5", "inf"):
+        monkeypatch.setenv("LLM_RPM", valor)
+        with pytest.raises(SystemExit, match="ERRO: LLM_RPM"):
+            llm.provedor_padrao()
+    monkeypatch.setenv("LLM_RPM", "")
+    for valor in ("0", "x", "2.5"):
+        monkeypatch.setenv("LLM_CONCORRENCIA", valor)
+        with pytest.raises(SystemExit, match="ERRO: LLM_CONCORRENCIA"):
+            grafos.classificar(gerador(ModeloFalso(lambda q: "[]"), Path("/tmp/nao-usado")), ["p"])
+    monkeypatch.setenv("LLM_CONCORRENCIA", "3")
+    assert llm.concorrencia() == 3
+
+
+def _429_cota(*quota_ids, espera="30s"):
+    return {"status": 429, "corpo": {"error": {
+        "code": 429, "message": "You exceeded your current quota", "status": "RESOURCE_EXHAUSTED",
+        "details": [{"@type": "type.googleapis.com/google.rpc.QuotaFailure",
+                     "violations": [{"quotaMetric": "generativelanguage.googleapis.com/generate_content_free_tier_requests",
+                                     "quotaId": q} for q in quota_ids]},
+                    {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": espera}]}}}
+
+
+def test_cota_diaria_nao_repete(servidor, tmp_path, paginas_falsas, monkeypatch):
+    servidor.roteiro = [_429_cota("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", espera="0s")]
+    _comparar_real(servidor, tmp_path / "minuto", paginas_falsas)
+    assert len(servidor.pedidos) == 2  # por minuto: repete
+    servidor.pedidos.clear()
+    monkeypatch.setenv("LLM_CONCORRENCIA", "1")
+    servidor.roteiro = [_429_cota("GenerateRequestsPerMinutePerProjectPerModel-FreeTier",
+                                  "GenerateRequestsPerDayPerProjectPerModel-FreeTier")]
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-2.5-flash", tmp_path / "dia")
+    inicio = time.monotonic()
+    with pytest.raises(Exception) as erro:
+        grafos.classificar(g, [f"p{i}" for i in range(6)], retry=RAPIDO)
+    assert len(servidor.pedidos) == 1  # por dia: nem repete, nem chama as outras 5
+    assert llm.cota_diaria(erro.value) and not llm.deve_repetir(erro.value)
+    assert type(erro.value).__name__ == "GoogleRateLimitError"
+    assert time.monotonic() - inicio < 2.0
+
+
 # --- L18-L22: telemetria, formato, prompt idêntico, erro definitivo, página -------------------
 
 def test_telemetria_local(servidor, tmp_path, paginas_falsas):
@@ -369,6 +433,7 @@ def test_telemetria_local(servidor, tmp_path, paginas_falsas):
     prompt = servidor.pedidos[0]["corpo"]["contents"][0]["parts"][0]["text"]
     assert {l["chave"] for l in linhas} == {g.arquivo(prompt).stem}
     assert "chave-secreta-123" not in bruto and "Você compara" not in bruto
+    assert all(isinstance(l["ms"], int) and isinstance(l["espera_ms"], int) for l in linhas)
     assert g.resumo() == ("LLM gemini:gemini-2.5-flash: 2 chamadas, 1 do cache, 1 falhas, "
                           "11 tokens de entrada, 7 de saída")
 
@@ -379,16 +444,30 @@ def test_resumo_sai_mesmo_com_erro(tmp_path, monkeypatch, capsys):
             return '{"nao_encontrado": true, "resumo": []}'
         raise ValueError("falha definitiva na comparação")
 
-    g = gerador(ModeloFalso(resp), tmp_path)
+    g = gerador(ModeloFalso(resp), tmp_path / "comparar")
     monkeypatch.setattr(llm, "provedor_padrao", lambda: g)
     with pytest.raises(ValueError, match="falha definitiva"):
         main(["comparar", "saude", "--origem", "gemini"])
     assert "LLM gemini:gemini-2.5-flash: 3 chamadas, 0 do cache, 1 falhas" in capsys.readouterr().out
 
+    def falha(p):
+        raise ErroHttp(400)
+
+    for cmd in (["verificar", "saude"], ["ingest"]):
+        g = gerador(ModeloFalso(falha), tmp_path / cmd[0])
+        monkeypatch.setattr(llm, "provedor_padrao", lambda g=g: g)
+        monkeypatch.setattr(extrair, "gravar", lambda *a, **k: None)  # o ingest não reescreve dados/paginas
+        with pytest.raises(ErroHttp):
+            main(cmd)
+        saida = capsys.readouterr().out
+        assert re.search(r"LLM gemini:gemini-2\.5-flash: [1-9]\d* chamadas, 0 do cache, [1-9]\d* falhas", saida), cmd
+
 
 @pytest.mark.parametrize("etapa,resposta", [
-    ("resume", "[]"), ("resume", '{"resumo": {"texto": "x"}}'),
-    ("compara", '[{"semelhancas": []}]'), ("compara", '{"semelhancas": "nenhuma"}')])
+    ("resume", "[]"), ("resume", '{"resumo": {"texto": "x"}}'), ("resume", "{}"),
+    ("resume", '{"nao_encontrado": true}'),
+    ("compara", '[{"semelhancas": []}]'), ("compara", '{"semelhancas": "nenhuma"}'), ("compara", "{}"),
+    ("compara", '{"semelhancas": [], "diferencas": []}')])
 def test_formato_invalido_fora_do_cache(tmp_path, paginas_falsas, etapa, resposta):
     g = gerador(ModeloFalso(lambda p: resposta if p.startswith("Você " + etapa) else responder(p)), tmp_path)
     with pytest.raises(ValueError, match="fora do formato"):
@@ -427,11 +506,23 @@ def test_erro_definitivo_interrompe(tmp_path, monkeypatch):
     with pytest.raises(ErroHttp):
         grafos.classificar(gerador(m, tmp_path), [f"p{i}" for i in range(10)], retry=RAPIDO)
     assert len(m.prompts) <= 2
+    # determinístico: o LangGraph pode trazer a tarefa cancelada; _rodar sobe o erro que a cancelou
+    original = ErroHttp(400)
+    original.__cause__ = ValueError("causa do SDK")
+
+    class GrafoQueCancela:
+        def invoke(self, entrada, config):
+            raise llm.ChamadaCancelada(original)
+
+    with pytest.raises(ErroHttp) as erro:
+        grafos._rodar(GrafoQueCancela(), {})
+    assert erro.value is original and isinstance(erro.value.__cause__, ValueError)
 
 
 @pytest.mark.parametrize("pagina,trecho", [
     (2.0, "Vamos corrigir a Tabela SUS."), ("2", "Vamos corrigir a Tabela SUS."),
-    (True, "Apoiamos a escola em tempo integral."), (None, "Vamos corrigir a Tabela SUS.")])
+    (True, "Apoiamos a escola em tempo integral."), (None, "Vamos corrigir a Tabela SUS."),
+    ("abc", "Vamos corrigir a Tabela SUS."), ("<b>", "Vamos corrigir a Tabela SUS.")])
 def test_pagina_nao_inteira_reprova(pagina, trecho, paginas_falsas, conteudo_valido):
     ci = cit(FLAVIO, pagina, trecho)
     if pagina is None:
@@ -444,6 +535,10 @@ def test_pagina_nao_inteira_reprova(pagina, trecho, paginas_falsas, conteudo_val
     _, descartes, _ = verificar.verificar("t", conteudo_valido, paginas_falsas)
     assert [d["motivo"] for d in descartes if d["item"]["texto"] == "Corrigir a Tabela SUS."] == \
         ["trecho_nao_encontrado"]
+    d = next(x for x in descartes if x["item"]["texto"] == "Corrigir a Tabela SUS.")
+    bloco = relatorio._bloco_item(d, "")  # o relatório do descarte não quebra e escapa o valor
+    assert f"pág. {html.escape(str(ci.get('pagina')))} " in bloco and "#page=0'" in bloco
+    assert "<b>" not in bloco.replace("<b>Resumo</b>", "")
 
 
 # --- L9: grafo juiz --------------------------------------------------------------------------

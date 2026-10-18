@@ -11,7 +11,6 @@ mesmo JSON e, portanto, o mesmo hash de aprovação.
 from __future__ import annotations
 
 import json
-import os
 from typing import Annotated, Any, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -30,7 +29,7 @@ def _juntar(a: dict, b: dict) -> dict:
 
 
 def _execucao() -> dict:
-    return {"max_concurrency": int(os.environ.get("LLM_CONCORRENCIA", "4"))}
+    return {"max_concurrency": llm.concorrencia()}
 
 
 def _rodar(grafo, entrada: dict) -> dict:
@@ -62,12 +61,12 @@ def _literal(bullet: Any, paginas: dict) -> bool:
 
 
 def _validar_resumo(r: Any) -> None:
-    if not isinstance(r, dict) or not isinstance(r.get("resumo", []), list):
+    if not isinstance(r, dict) or not isinstance(r.get("resumo"), list):
         raise ValueError("resposta de resumo fora do formato: " + json.dumps(r, ensure_ascii=False)[:120])
 
 
 def _validar_comparar(r: Any) -> None:
-    if not isinstance(r, dict) or not all(isinstance(r.get(k, []), list) for k in LISTAS):
+    if not isinstance(r, dict) or not all(isinstance(r.get(k), list) for k in LISTAS):
         raise ValueError("resposta de comparação fora do formato: " + json.dumps(r, ensure_ascii=False)[:120])
 
 

@@ -23,7 +23,9 @@ def _cits(item: dict) -> list[tuple[str, dict]]:
 
 
 def _link(c: dict) -> str:
-    return f"../../corpus/{html.escape(c.get('arquivo', ''))}#page={int(c.get('pagina', 0))}"
+    p = c.get("pagina")
+    pagina = p if isinstance(p, int) and not isinstance(p, bool) else 0  # descarte pode ter página inválida
+    return f"../../corpus/{html.escape(str(c.get('arquivo', '')))}#page={pagina}"
 
 
 def _bloco_item(m: dict, extra: str) -> str:
@@ -34,7 +36,7 @@ def _bloco_item(m: dict, extra: str) -> str:
     for cand, c in _cits(item):
         nome = config.CANDIDATOS.get(cand, {}).get("nome", cand)
         linhas.append(f"<li><q>{html.escape(c.get('trecho', ''))}</q> — {html.escape(nome)}, "
-                      f"{html.escape(c.get('arquivo', ''))}, pág. {c.get('pagina')} "
+                      f"{html.escape(str(c.get('arquivo', '')))}, pág. {html.escape(str(c.get('pagina')))} "
                       f"<a href='{_link(c)}'>abrir página</a></li>")
     linhas.append("</ul></li>")
     return "".join(linhas)

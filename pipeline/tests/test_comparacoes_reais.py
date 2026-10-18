@@ -44,7 +44,6 @@ def test_todo_json_ate_30kb():
         assert arq.stat().st_size <= 30 * 1024, arq.name
 
 
-@pytest.mark.skipif(not ARQUIVOS, reason="nenhuma comparação gerada ainda")
 def test_comparacoes_reproduziveis(paginas):
     """L12: cada JSON publicado sai byte a byte de dados/geracao + dados/juiz, sem chave de API."""
     assert {a.stem for a in ARQUIVOS} == {t["id"] for t in temas.carregar()}
