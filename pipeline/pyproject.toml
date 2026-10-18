@@ -7,7 +7,7 @@ dependencies = ["pymupdf==1.28.2", "pyyaml==6.0.2", "jsonschema==4.23.0", "langg
                 "langchain-google-genai==4.4.2"]
 
 [project.optional-dependencies]
-teste = ["pytest==8.3.4"]
+teste = ["pytest==9.0.3"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

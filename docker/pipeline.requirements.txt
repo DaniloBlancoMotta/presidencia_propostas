@@ -39,8 +39,9 @@ pyasn1_modules==0.4.2
 pycparser==3.11
 pydantic==2.14.1
 pydantic_core==2.50.1
+Pygments==2.21.0
 pymupdf==1.28.2
-pytest==8.3.4
+pytest==9.0.3
 PyYAML==6.0.2
 referencing==0.37.0
 requests==2.34.2
