@@ -88,4 +88,14 @@ def test_comando_avaliar_sai_nao_zero(tmp_path):
     comps["saude"]["candidatos"]["lula"]["resumo"] = [bullet("x", *[cit(LULA, p, "t") for p in range(1, 16)])]
     (tmp_path / "comparacoes" / "saude.json").write_text(json.dumps(comps["saude"]), encoding="utf-8")
     assert avaliar.principal(tmp_path / "ouro.yaml", tmp_path / "comparacoes") == 0
-    assert callable(main)
+    calls = []
+    original = avaliar.principal
+    avaliar.principal = lambda: calls.append(1) or original(tmp_path / "ouro.yaml", tmp_path / "comparacoes")
+    try:
+        assert main(["avaliar"]) == 0  # o comando devolve o código de `principal`
+        comps["saude"]["candidatos"]["lula"]["resumo"] = [bullet("x", cit(LULA, 1, "t"))]
+        (tmp_path / "comparacoes" / "saude.json").write_text(json.dumps(comps["saude"]), encoding="utf-8")
+        assert main(["avaliar"]) == 1
+    finally:
+        avaliar.principal = original
+    assert calls == [1, 1]

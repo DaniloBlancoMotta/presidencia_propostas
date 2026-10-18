@@ -188,7 +188,7 @@ Proof: `npx playwright test e2e/a11y.spec.ts -g "reflow"`
 - authorization: n/a - site público sem login
 - concurrency and ordering: n/a - geração offline por um operador
 - data lifecycle: versão do PDF identificada por SHA-256 (C2, C4)
-- external-dependency failure: TSE com 403 (constatado em 17/10) → `fontes --tse-dir` aceita PDFs baixados no navegador; Gemini sem chave → provedor `arquivo`
+- external-dependency failure: TSE com 403 (constatado em 17/10) → `fontes --tse-dir` aceita PDFs baixados no navegador; Gemini sem chave → `comparar.de_rascunho` (dados/rascunhos) e juiz por `verificar.juiz_vereditos` (dados/juiz)
 - state transitions: gerado → verificado → aprovado → publicado, guardado por C17
 - observability: analytics do Cloudflare por caminho (decisão 18), sem código
 

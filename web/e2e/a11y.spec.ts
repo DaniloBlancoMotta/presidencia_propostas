@@ -3,8 +3,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { ROTAS } from "./apoio";
 
-test("axe: zero violações serious ou critical em cada rota", async ({ page }) => {
-  for (const r of ROTAS) {
+for (const r of ROTAS) test(`axe: zero violações serious ou critical em ${r}`, async ({ page }) => {
+  {
     await page.goto(r);
     await page.waitForLoadState("networkidle");
     for (const s of await page.locator("summary:visible").all()) await s.click();
