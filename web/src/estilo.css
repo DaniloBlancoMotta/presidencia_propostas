@@ -1,0 +1,121 @@
+/* Tokens neutros (decisão 22): cinzas e um acento azul-petróleo escuro. Nenhum token por candidato. */
+:root {
+  --fundo: #fafaf9;
+  --superficie: #ffffff;
+  --texto: #1f2328;
+  --sutil: #4b5563;
+  --borda: #d0d7de;
+  --acento: #0f4c5c;
+  --acento-fundo: #e7eff1;
+  --foco: #0f4c5c;
+  --raio: 10px;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 1rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+a { color: var(--acento); }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+h1 { font-size: 1.6rem; line-height: 1.25; margin: .5rem 0; }
+h1:focus { outline: none; }
+h1:focus-visible { outline: 3px solid var(--foco); }
+h2 { font-size: 1.25rem; margin: 1.5rem 0 .5rem; }
+h3, h4 { font-size: 1.05rem; margin: .5rem 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.pular { position: absolute; left: -999px; top: 0; background: var(--superficie); padding: .5rem 1rem; z-index: 10; }
+.pular:focus { left: 1rem; }
+
+.topo { background: var(--superficie); border-bottom: 1px solid var(--borda); }
+.faixa {
+  max-width: 64rem; margin: 0 auto; padding: .75rem 1rem;
+  display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
+}
+.marca { font-weight: 700; color: var(--texto); text-decoration: none; }
+.aviso-ia {
+  max-width: 64rem; margin: 0 auto; padding: .5rem 1rem; font-size: .9rem; color: var(--texto);
+  background: var(--acento-fundo); border-top: 1px solid var(--borda);
+}
+.conteudo { max-width: 64rem; margin: 0 auto; padding: 1rem; min-height: 60vh; }
+.rodape { max-width: 64rem; margin: 2rem auto 0; padding: 1rem; border-top: 1px solid var(--borda); color: var(--sutil); font-size: .9rem; }
+.lead { color: var(--sutil); }
+.voltar { margin: 0; }
+
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
+  padding: .4rem .9rem; border: 1px solid var(--acento); border-radius: var(--raio);
+  background: var(--superficie); color: var(--acento); font: inherit; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+}
+.botao[aria-pressed="true"] { background: var(--acento); color: #fff; }
+
+/* Grade da tela inicial */
+.grade { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); }
+.grade .destaque { grid-column: span 1; }
+.cartao {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem;
+  min-height: 7rem; padding: 1rem; text-align: center; font-weight: 600; color: var(--texto);
+  background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); text-decoration: none;
+}
+.destaque .cartao { border: 2px solid var(--acento); background: var(--acento-fundo); }
+.icone { color: var(--acento); flex: none; }
+
+/* Tela de tema */
+.filtros { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.bloco { margin: 1.25rem 0; }
+.itens { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+.item details { background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); }
+.item summary { cursor: pointer; padding: .75rem 1rem; min-height: 44px; list-style-position: outside; margin-left: 1rem; }
+.item[open] summary, .item details[open] > summary { border-bottom: 1px solid var(--borda); }
+.selo { display: block; font-size: .8rem; font-weight: 700; color: var(--sutil); text-transform: uppercase; letter-spacing: .02em; }
+.citacoes { list-style: none; margin: 0; padding: .5rem 1rem 1rem; display: grid; gap: .75rem; }
+.trecho { margin: 0; padding: .5rem .75rem; border-left: 3px solid var(--borda); background: var(--fundo); font-style: italic; }
+.origem { margin: .25rem 0; color: var(--sutil); font-size: .9rem; }
+.nome-candidato { margin-top: 0; }
+.nao-encontrado, .vazio { padding: .75rem 1rem; background: var(--superficie); border: 1px dashed var(--borda); border-radius: var(--raio); color: var(--sutil); }
+
+.abas { display: flex; gap: .25rem; border-bottom: 1px solid var(--borda); margin-bottom: .75rem; }
+.aba {
+  flex: 1 1 0; min-height: 44px; padding: .5rem; font: inherit; font-weight: 600; cursor: pointer;
+  background: transparent; color: var(--sutil); border: 0; border-bottom: 3px solid transparent;
+}
+.aba[aria-selected="true"] { color: var(--texto); border-bottom-color: var(--acento); }
+.colunas { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+.painel { min-width: 0; }
+.painel:not(.ativo) { display: none; }
+.par { display: grid; gap: .5rem 1rem; padding: .5rem 0 0; grid-template-columns: minmax(0, 1fr); }
+.lado { min-width: 0; padding: 0 1rem; }
+.lado .citacoes { padding: 0 0 .75rem; }
+
+@media (min-width: 768px) {
+  .abas { display: none; }
+  .colunas, .par { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .painel:not(.ativo) { display: block; }
+  h1 { font-size: 2rem; }
+}
+
+/* Ordem visual dos candidatos antes da hidratação (decisão 12); depois o DOM já vem na ordem. */
+html[data-ordem="ab"] [data-cand="flavio-bolsonaro"], html[data-ordem="ba"] [data-cand="lula"] { order: 1; }
+html[data-ordem="ab"] [data-cand="lula"], html[data-ordem="ba"] [data-cand="flavio-bolsonaro"] { order: 2; }
+.abas, .colunas, .par { display: flex; flex-wrap: wrap; }
+.abas > *, .colunas > *, .par > * { flex: 1 1 0; }
+.colunas > *, .par > * { flex-basis: 100%; }
+@media (min-width: 768px) {
+  .colunas > *, .par > * { flex-basis: 0; }
+  .abas { display: none; }
+}
+
+/* Sobre */
+.fontes { list-style: none; padding: 0; display: grid; gap: 1rem; }
+.fonte { background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); padding: 1rem; }
+.fonte dt { font-weight: 700; margin-top: .5rem; }
+.fonte dd { margin: 0; }
+.hash { font-size: .85rem; word-break: break-all; }
+.etapas li { margin: .5rem 0; }

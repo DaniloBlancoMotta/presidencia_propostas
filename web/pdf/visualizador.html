@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ver no PDF</title>
+    <meta name="robots" content="noindex" />
+    <script type="module" src="/src/visualizador.ts"></script>
+  </head>
+  <body class="visualizador">
+    <header class="barra">
+      <a class="botao" href="/">← Início</a>
+      <p id="titulo-pdf" class="titulo-pdf" aria-live="polite">Carregando o PDF…</p>
+      <nav class="paginacao" aria-label="Páginas">
+        <button type="button" class="botao" id="anterior">Página anterior</button>
+        <span id="indicador" aria-live="polite"></span>
+        <button type="button" class="botao" id="proxima">Próxima página</button>
+      </nav>
+      <a class="botao" id="baixar" href="#">Baixar o PDF original</a>
+    </header>
+    <p class="aviso-ia" role="note">Resumos gerados por IA a partir dos planos de governo registrados no TSE. Podem conter erros — o PDF original é a fonte definitiva.</p>
+    <main>
+      <canvas id="tela" role="img" aria-label="Página do PDF"></canvas>
+      <p id="erro" class="erro" hidden></p>
+    </main>
+    <footer class="rodape"><p class="coleta"><!--coleta--></p></footer>
+  </body>
+</html>

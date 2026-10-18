@@ -1,0 +1,15 @@
+:root { --fundo: #e5e7eb; --texto: #1f2328; --acento: #0f4c5c; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 1rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+.barra { position: sticky; top: 0; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .5rem; background: #fff; border-bottom: 1px solid #d0d7de; }
+.titulo-pdf { flex: 1 1 12rem; margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.paginacao { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; min-width: 0; }
+.barra > * { min-width: 0; }
+.botao { display: inline-flex; align-items: center; min-height: 44px; padding: .4rem .8rem; border: 1px solid var(--acento); border-radius: 10px; background: #fff; color: var(--acento); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.botao:disabled { opacity: .5; cursor: default; }
+:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+main { display: flex; flex-direction: column; align-items: center; padding: .5rem; }
+canvas { max-width: 100%; height: auto; background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .2); }
+.erro { background: #fff; padding: 1rem; border-radius: 10px; }
+.aviso-ia { margin: 0; padding: .5rem; font-size: .9rem; background: #e7eff1; }
+.rodape { padding: .5rem 1rem 1rem; font-size: .9rem; text-align: center; }
