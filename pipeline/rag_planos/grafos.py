@@ -1,6 +1,7 @@
 """Os três fluxos de LLM do pipeline como grafos LangGraph (decisão 10).
 
-- `comparar`: um resumo por candidato em paralelo (`Send`), filtro literal e comparação;
+- `comparar`: um resumo por candidato em paralelo (`Send`), filtro literal (que corrige a página
+  quando o trecho está em exatamente uma página da faixa enviada) e comparação;
 - `juiz`: um veredito por item que passou na checagem literal, em paralelo;
 - `classificar`: um pedido por chunk, em paralelo.
 Os nós que chamam o modelo têm `RETRY` e passam pelo cache de `llm.Gerador`; a concorrência é
@@ -10,6 +11,7 @@ mesmo JSON e, portanto, o mesmo hash de aprovação.
 """
 from __future__ import annotations
 
+import copy
 import json
 from typing import Annotated, Any, TypedDict
 
@@ -60,6 +62,28 @@ def _literal(bullet: Any, paginas: dict) -> bool:
     return True
 
 
+def _corrigir_paginas(bullet: Any, arquivo: str, faixa: list[int], paginas: dict) -> tuple[Any, list[dict]]:
+    """Cópia do bullet em que cada citação de `arquivo` com página inteira, cujo trecho não está na
+    página citada mas está literalmente em exatamente uma página de `faixa`, passa a citar essa
+    página. Devolve (bullet, trocas). Nada é inventado: o trecho é o mesmo, só a página fica certa."""
+    if not isinstance(bullet, dict) or not isinstance(bullet.get("citacoes"), list):
+        return bullet, []
+    novo, trocas = copy.deepcopy(bullet), []
+    for ci in novo["citacoes"]:
+        if not isinstance(ci, dict) or ci.get("arquivo") != arquivo:
+            continue
+        trecho, pagina = ci.get("trecho"), ci.get("pagina")
+        if not isinstance(trecho, str) or not isinstance(pagina, int) or isinstance(pagina, bool):
+            continue
+        if trecho_na_pagina(trecho, extrair.texto_da_pagina(paginas, arquivo, pagina) or ""):
+            continue
+        onde = [n for n in faixa if trecho_na_pagina(trecho, extrair.texto_da_pagina(paginas, arquivo, n) or "")]
+        if len(onde) == 1:
+            trocas.append({"trecho": trecho, "pagina_citada": pagina, "pagina": onde[0]})
+            ci["pagina"] = onde[0]
+    return novo, trocas
+
+
 def _validar_resumo(r: Any) -> None:
     if not isinstance(r, dict) or not isinstance(r.get("resumo"), list):
         raise ValueError("resposta de resumo fora do formato: " + json.dumps(r, ensure_ascii=False)[:120])
@@ -74,27 +98,35 @@ def _validar_comparar(r: Any) -> None:
 
 class EstadoComparar(TypedDict, total=False):
     tema: dict
-    pedidos: dict          # candidato -> prompt de resumo (só quem tem trechos no tema)
+    pedidos: dict          # candidato -> {"prompt", "paginas" (faixa)}; só quem tem trechos no tema
     paginas: dict
     brutos: Annotated[dict, _juntar]
     candidatos: dict
+    correcoes: list
     listas: dict
 
 
 def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
     def distribuir(s: EstadoComparar):
-        return [Send("resumo", {"cid": cid, "prompt": p}) for cid, p in s["pedidos"].items()] or ["filtrar"]
+        return [Send("resumo", {"cid": cid, "prompt": p["prompt"]})
+                for cid, p in s["pedidos"].items()] or ["filtrar"]
 
     def resumo(e: dict):
         return {"brutos": {e["cid"]: gerador.json(e["prompt"], "resumo", _validar_resumo)}}
 
     def filtrar(s: EstadoComparar):
-        candidatos = {}
-        for cid in config.CANDIDATOS:
+        candidatos, correcoes = {}, []
+        for cid, meta in config.CANDIDATOS.items():
             bullets = _dict(s.get("brutos", {}).get(cid)).get("resumo", [])
-            resumo = [b for b in bullets if _literal(b, s["paginas"])] if isinstance(bullets, list) else []
+            faixa = _dict(s["pedidos"].get(cid)).get("paginas", [])
+            resumo = []
+            for b in bullets if isinstance(bullets, list) else []:
+                b, trocas = _corrigir_paginas(b, meta["arquivo"], faixa, s["paginas"])
+                if _literal(b, s["paginas"]):
+                    resumo.append(b)
+                    correcoes += [{"candidato": cid, "texto": b.get("texto", ""), **t} for t in trocas]
             candidatos[cid] = {"nao_encontrado": not resumo, "resumo": resumo}
-        return {"candidatos": candidatos}
+        return {"candidatos": candidatos, "correcoes": correcoes}
 
     def comparar(s: EstadoComparar):
         r = _dict(gerador.json(llm.prompt("comparar", rotulo=s["tema"]["rotulo"],
@@ -113,10 +145,10 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
     return g.compile()
 
 
-def comparar(gerador: llm.Gerador, tema: dict, pedidos: dict[str, str], paginas: dict,
+def comparar(gerador: llm.Gerador, tema: dict, pedidos: dict[str, dict], paginas: dict,
              retry: RetryPolicy = RETRY) -> dict:
     s = _rodar(montar_comparar(gerador, retry), {"tema": tema, "pedidos": pedidos, "paginas": paginas})
-    return {"candidatos": s["candidatos"], **s["listas"]}
+    return {"candidatos": s["candidatos"], **s["listas"], "correcoes_pagina": s.get("correcoes", [])}
 
 
 # --- juiz ------------------------------------------------------------------------------------

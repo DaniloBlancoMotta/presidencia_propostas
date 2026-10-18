@@ -27,6 +27,7 @@ from . import config
 CODIGOS_TRANSITORIOS = {429, 500, 503}
 ESPERA_MAXIMA_SUGERIDA = 60.0
 CONCORRENCIA_PADRAO = 4
+MODELO_PADRAO = "gemini-3.8-flash"  # 2.5-flash: 404 para contas novas desde out/2026
 
 
 def _cadeia(exc: BaseException):
@@ -238,6 +239,6 @@ def provedor_padrao() -> Gerador | None:
     chave = os.environ.get("GEMINI_API_KEY")
     if not chave:
         return None
-    modelo = os.environ.get("GEMINI_MODELO") or "gemini-2.5-flash"
+    modelo = os.environ.get("GEMINI_MODELO") or MODELO_PADRAO
     rpm = rpm_configurado()
     return Gerador(gemini(modelo, chave), "gemini", modelo, limitador=limitador(rpm) if rpm else None)

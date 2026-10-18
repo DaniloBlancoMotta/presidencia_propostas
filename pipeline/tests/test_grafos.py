@@ -1,4 +1,4 @@
-"""Camada de LLM em LangGraph (checks L1-L11, L13 e L16-L24 de .checks/migracao-langgraph.md).
+"""Camada de LLM em LangGraph (checks L1-L11, L13, L16-L26 e L28-L30 de .checks/migracao-langgraph.md).
 
 Modelo falso em memória, ou o ChatGoogleGenerativeAI real contra um servidor HTTP local que imita
 o endpoint do Gemini. Nenhum teste sai para a rede.
@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import time
+from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib.metadata import version
 from pathlib import Path
@@ -21,8 +22,9 @@ import pytest
 
 from rag_planos import classificar, comparar, extrair, grafos, llm, relatorio, verificar
 from rag_planos.__main__ import main
+from rag_planos.chunk import cortar as cortar_em_chunks
 
-from .conftest import FLAVIO, LULA, bullet, cit
+from .conftest import FLAVIO, LULA, bullet, cit, pagina_falsa
 
 TEMA = {"id": "saude", "rotulo": "Saúde", "descricao": "SUS e atenção básica"}
 RAPIDO = grafos.RETRY._replace(initial_interval=0.01, jitter=False)
@@ -54,7 +56,7 @@ class ModeloFalso:
 
 
 def gerador(modelo, pasta):
-    return llm.Gerador(modelo, "gemini", "gemini-2.5-flash", pasta)
+    return llm.Gerador(modelo, "gemini", "gemini-3.8-flash", pasta)
 
 
 def chunk(candidato, pagina, texto, tema="saude"):
@@ -130,11 +132,11 @@ def test_cache_segunda_execucao_sem_chamadas(tmp_path, paginas_falsas):
     b = comparar.com_llm(TEMA, chunks_do_corpus(), paginas_falsas, g2)
     assert a == b
     assert len(m.prompts) == 3 and (g2.chamadas, g2.do_cache) == (0, 3)
-    assert g2.resumo() == ("LLM gemini:gemini-2.5-flash: 0 chamadas, 3 do cache, 0 falhas, "
+    assert g2.resumo() == ("LLM gemini:gemini-3.8-flash: 0 chamadas, 3 do cache, 0 falhas, "
                            "0 tokens de entrada, 0 de saída")
     assert len(list(tmp_path.glob("*.json"))) == 3
     for p in m.prompts:
-        nome = hashlib.sha256(("gemini:gemini-2.5-flash\n" + p).encode("utf-8")).hexdigest() + ".json"
+        nome = hashlib.sha256(("gemini:gemini-3.8-flash\n" + p).encode("utf-8")).hexdigest() + ".json"
         assert json.loads((tmp_path / nome).read_text(encoding="utf-8")) == {"resposta": responder(p)}
     outro = llm.Gerador(m, "gemini", "gemini-2.5-pro", tmp_path)
     assert outro.arquivo(m.prompts[0]) != g1.arquivo(m.prompts[0])
@@ -220,8 +222,8 @@ def servidor():
 
 
 def _comparar_real(servidor, pasta, paginas):
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
-                    "gemini", "gemini-2.5-flash", pasta)
+    g = llm.Gerador(llm.gemini(llm.MODELO_PADRAO, "chave-falsa", base_url=servidor.url),
+                    "gemini", llm.MODELO_PADRAO, pasta)
     return grafos.comparar(g, TEMA, {}, paginas, retry=RAPIDO)
 
 
@@ -255,7 +257,7 @@ def test_retry_desiste_depois_de_5_tentativas(servidor, tmp_path, paginas_falsas
 def test_requisicao_gemini(servidor, tmp_path, paginas_falsas):
     _comparar_real(servidor, tmp_path, paginas_falsas)
     p = servidor.pedidos[0]
-    assert p["path"] == "/v1beta/models/gemini-2.5-flash:generateContent"
+    assert p["path"] == "/v1beta/models/gemini-3.8-flash:generateContent"
     assert p["corpo"]["generationConfig"]["temperature"] == 0
     assert p["corpo"]["generationConfig"]["responseMimeType"] == "application/json"
     assert p["headers"]["x-goog-api-key"] == "chave-falsa"
@@ -289,8 +291,8 @@ def test_ritmo_por_cota(servidor, tmp_path, monkeypatch):
     assert isinstance(lim, InMemoryRateLimiter)
     assert (lim.requests_per_second, lim.check_every_n_seconds, lim.max_bucket_size) == (10, 0.05, 1)
     assert p.modelo.rate_limiter is None  # o limitador fica no Gerador, fora do relógio da latência
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
-                    "gemini", "gemini-2.5-flash", tmp_path, limitador=llm.limitador(600))
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-3.8-flash", tmp_path, limitador=llm.limitador(600))
     inicio = time.monotonic()
     for i in range(5):
         g.json(f"p{i}")
@@ -313,16 +315,16 @@ def test_retry_espera_sugerida(servidor, tmp_path, paginas_falsas):
     assert servidor.pedidos[1]["t"] - servidor.pedidos[0]["t"] >= 1.0
     servidor.pedidos.clear()
     servidor.roteiro = [_429_com_espera("30s")]
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
-                    "gemini", "gemini-2.5-flash", tmp_path / "b", espera_maxima=0.2)
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-3.8-flash", tmp_path / "b", espera_maxima=0.2)
     grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
     assert len(servidor.pedidos) == 2
     assert 0.2 <= servidor.pedidos[1]["t"] - servidor.pedidos[0]["t"] < 2.0
     assert llm.ESPERA_MAXIMA_SUGERIDA == 60.0 and llm.Gerador(None, "gemini", "m").espera_maxima == 60.0
     servidor.pedidos.clear()
     servidor.roteiro = [_429_com_espera("30s")] * 5  # a 5ª tentativa também recebe retryDelay
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
-                    "gemini", "gemini-2.5-flash", tmp_path / "c", espera_maxima=0.5)
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-3.8-flash", tmp_path / "c", espera_maxima=0.5)
     with pytest.raises(Exception):
         grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
     assert len(servidor.pedidos) == 5
@@ -335,15 +337,15 @@ def test_retry_rede_e_500(servidor, tmp_path, paginas_falsas):
     assert len(servidor.pedidos) == 2
     servidor.pedidos.clear()
     servidor.roteiro = [{"dormir": 1.5}]  # mais que o timeout do cliente
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url, timeout=0.5),
-                    "gemini", "gemini-2.5-flash", tmp_path / "b")
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-falsa", base_url=servidor.url, timeout=0.5),
+                    "gemini", "gemini-3.8-flash", tmp_path / "b")
     grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
     assert len(servidor.pedidos) == 2 and g.falhas == 1
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
         porta = s.getsockname()[1]
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=f"http://127.0.0.1:{porta}"),
-                    "gemini", "gemini-2.5-flash", tmp_path / "c")
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-falsa", base_url=f"http://127.0.0.1:{porta}"),
+                    "gemini", "gemini-3.8-flash", tmp_path / "c")
     with pytest.raises(Exception) as erro:
         grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
     assert llm.deve_repetir(erro.value) and (g.chamadas, g.falhas) == (5, 5)
@@ -373,7 +375,7 @@ def test_variaveis_vazias_ou_invalidas(monkeypatch):
     for nome in ("GEMINI_MODELO", "LLM_RPM", "LLM_CONCORRENCIA"):
         monkeypatch.setenv(nome, "")
     p = llm.provedor_padrao()
-    assert (p.nome_modelo, p.limitador, llm.concorrencia()) == ("gemini-2.5-flash", None, 4)
+    assert (p.nome_modelo, p.limitador, llm.concorrencia()) == ("gemini-3.8-flash", None, 4)
     for valor in ("nan", "abc", "0", "-5", "inf"):
         monkeypatch.setenv("LLM_RPM", valor)
         with pytest.raises(SystemExit, match="ERRO: LLM_RPM"):
@@ -404,8 +406,8 @@ def test_cota_diaria_nao_repete(servidor, tmp_path, paginas_falsas, monkeypatch)
     monkeypatch.setenv("LLM_CONCORRENCIA", "1")
     servidor.roteiro = [_429_cota("GenerateRequestsPerMinutePerProjectPerModel-FreeTier",
                                   "GenerateRequestsPerDayPerProjectPerModel-FreeTier")]
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
-                    "gemini", "gemini-2.5-flash", tmp_path / "dia")
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-3.8-flash", tmp_path / "dia")
     inicio = time.monotonic()
     with pytest.raises(Exception) as erro:
         grafos.classificar(g, [f"p{i}" for i in range(6)], retry=RAPIDO)
@@ -420,8 +422,8 @@ def test_cota_diaria_nao_repete(servidor, tmp_path, paginas_falsas, monkeypatch)
 def test_telemetria_local(servidor, tmp_path, paginas_falsas):
     servidor.uso = {"promptTokenCount": 11, "candidatesTokenCount": 7, "totalTokenCount": 18}
     servidor.roteiro = [429]
-    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-secreta-123", base_url=servidor.url),
-                    "gemini", "gemini-2.5-flash", tmp_path)
+    g = llm.Gerador(llm.gemini("gemini-3.8-flash", "chave-secreta-123", base_url=servidor.url),
+                    "gemini", "gemini-3.8-flash", tmp_path)
     grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
     grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)  # do cache: nenhuma linha nova
     bruto = (tmp_path / "chamadas.jsonl").read_text(encoding="utf-8")
@@ -429,12 +431,12 @@ def test_telemetria_local(servidor, tmp_path, paginas_falsas):
     assert [l["erro"] for l in linhas] == ["GoogleRateLimitError 429", None]
     assert (linhas[1]["tokens_entrada"], linhas[1]["tokens_saida"]) == (11, 7)
     assert {l["etapa"] for l in linhas} == {"comparar"}
-    assert {l["modelo"] for l in linhas} == {"gemini:gemini-2.5-flash"}
+    assert {l["modelo"] for l in linhas} == {"gemini:gemini-3.8-flash"}
     prompt = servidor.pedidos[0]["corpo"]["contents"][0]["parts"][0]["text"]
     assert {l["chave"] for l in linhas} == {g.arquivo(prompt).stem}
     assert "chave-secreta-123" not in bruto and "Você compara" not in bruto
     assert all(isinstance(l["ms"], int) and isinstance(l["espera_ms"], int) for l in linhas)
-    assert g.resumo() == ("LLM gemini:gemini-2.5-flash: 2 chamadas, 1 do cache, 1 falhas, "
+    assert g.resumo() == ("LLM gemini:gemini-3.8-flash: 2 chamadas, 1 do cache, 1 falhas, "
                           "11 tokens de entrada, 7 de saída")
 
 
@@ -448,7 +450,7 @@ def test_resumo_sai_mesmo_com_erro(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(llm, "provedor_padrao", lambda: g)
     with pytest.raises(ValueError, match="falha definitiva"):
         main(["comparar", "saude", "--origem", "gemini"])
-    assert "LLM gemini:gemini-2.5-flash: 3 chamadas, 0 do cache, 1 falhas" in capsys.readouterr().out
+    assert "LLM gemini:gemini-3.8-flash: 3 chamadas, 0 do cache, 1 falhas" in capsys.readouterr().out
 
     def falha(p):
         raise ErroHttp(400)
@@ -460,7 +462,7 @@ def test_resumo_sai_mesmo_com_erro(tmp_path, monkeypatch, capsys):
         with pytest.raises(ErroHttp):
             main(cmd)
         saida = capsys.readouterr().out
-        assert re.search(r"LLM gemini:gemini-2\.5-flash: [1-9]\d* chamadas, 0 do cache, [1-9]\d* falhas", saida), cmd
+        assert re.search(r"LLM gemini:gemini-3.8-flash: [1-9]\d* chamadas, 0 do cache, [1-9]\d* falhas", saida), cmd
 
 
 @pytest.mark.parametrize("etapa,resposta", [
@@ -647,3 +649,88 @@ def test_dependencias_fixadas():
     assert "pipeline.requirements.txt" in (RAIZ / "docker" / "pipeline.Dockerfile").read_text(encoding="utf-8")
     assert "pip install --no-cache-dir -r docker/pipeline.requirements.txt" in \
         (RAIZ / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+
+# --- L28, L29: marcadores de página, correção de página e registro ----------------------------
+
+PAGS = {LULA: [pagina_falsa(1, "Texto repetido A. Proposta um."),
+               pagina_falsa(2, "Texto repetido A. Proposta dois."),
+               pagina_falsa(3, "Proposta três exclusiva.")],
+        FLAVIO: [pagina_falsa(1, "Nada aqui.")]}
+
+
+def _chunk_lula_1_2():
+    """Chunk real (chunk.cortar) que cobre só as págs. 1 e 2 de Lula; a 3 fica fora da faixa."""
+    c = cortar_em_chunks(PAGS[LULA][:2], "lula", "PT", LULA)
+    assert len(c) == 1 and c[0]["paginas"] == [1, 2]
+    c[0]["temas"] = [{"theme_id": "saude", "confianca": 0.9}]
+    return c[0]
+
+
+def test_prompt_marca_viradas():
+    outro = {**_chunk_lula_1_2(), "pagina": 5, "paginas": [5], "viradas": [[0, 5]], "texto": "Página cinco."}
+    outro["temas"] = [{"theme_id": "saude", "confianca": 0.5}]
+    pedidos = comparar.pedidos_de_resumo(TEMA, [_chunk_lula_1_2(), outro])
+    assert list(pedidos) == ["lula"] and pedidos["lula"]["paginas"] == [1, 2, 5]
+    p = pedidos["lula"]["prompt"]
+    assert "[página 1] Texto repetido A. Proposta um. [página 2] Texto repetido A. Proposta dois." in p
+    assert "[página 5] Página cinco." in p and "[página 1-2]" not in p
+    assert "A `pagina` de uma citação é a do último marcador antes do trecho" in p
+
+
+def test_corrige_pagina_so_quando_unica_na_faixa(tmp_path):
+    def resp(p):
+        if p.startswith("Você resume"):
+            return json.dumps({"nao_encontrado": False, "resumo": [
+                bullet("Corrigida.", cit(LULA, 1, "Proposta dois.")),            # só na pág. 2 da faixa
+                bullet("Ambígua.", cit(LULA, 3, "Texto repetido A.")),           # nas págs. 1 e 2
+                bullet("Fora da faixa.", cit(LULA, 1, "Proposta três exclusiva.")),  # só na pág. 3
+                bullet("Certa.", cit(LULA, 1, "Proposta um.")),
+                bullet("Página em texto.", cit(LULA, "1", "Proposta dois.")),
+                bullet("Arquivo do outro.", cit(FLAVIO, 1, "Proposta dois."))]}, ensure_ascii=False)
+        return json.dumps({"semelhancas": [], "diferencas": [], "omissoes": []})
+
+    m = ModeloFalso(resp)
+    conteudo, correcoes = comparar.com_llm_e_correcoes(TEMA, [_chunk_lula_1_2()], PAGS, gerador(m, tmp_path))
+    lula = conteudo["candidatos"]["lula"]["resumo"]
+    assert [b["texto"] for b in lula] == ["Corrigida.", "Certa."]
+    assert [b["citacoes"][0]["pagina"] for b in lula] == [2, 1]
+    assert correcoes == [{"candidato": "lula", "texto": "Corrigida.", "trecho": "Proposta dois.",
+                          "pagina_citada": 1, "pagina": 2}]
+    assert conteudo["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": []}
+    pedido_comparar = next(p for p in m.prompts if p.startswith("Você compara"))
+    assert '"pagina": 2, "trecho": "Proposta dois."' in pedido_comparar
+    assert '"pagina": 1, "trecho": "Proposta dois."' not in pedido_comparar
+    assert comparar.com_llm(TEMA, [_chunk_lula_1_2()], PAGS, gerador(m, tmp_path)) == conteudo
+
+
+FONTES = [{"arquivo": LULA, "candidato": "lula", "sha256": "a" * 64, "coletado_em": "2026-10-17"},
+          {"arquivo": FLAVIO, "candidato": "flavio-bolsonaro", "sha256": "b" * 64, "coletado_em": "2026-10-17"}]
+
+
+def test_correcao_registrada_e_no_relatorio(tmp_path, conteudo_valido, paginas_falsas):
+    corr = [{"candidato": "lula", "texto": "Fortalecer o SUS.", "trecho": "Fortalecer <o> SUS",
+             "pagina_citada": 1, "pagina": 2}]
+    agora = datetime(2026, 10, 18, 12, 0, tzinfo=comparar.BRT)
+    comparar.registrar("saude", conteudo_valido, "x", tmp_path / "a", agora=agora)
+    comparar.registrar("saude", conteudo_valido, "x", tmp_path / "b", agora=agora, correcoes=[])
+    a = (tmp_path / "a" / "saude.json").read_bytes()
+    assert a == (tmp_path / "b" / "saude.json").read_bytes() and b"correcoes_pagina" not in a
+    reg = comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=agora, correcoes=corr)
+    assert json.loads((tmp_path / "c" / "saude.json").read_text(encoding="utf-8"))["correcoes_pagina"] == corr
+    depois = datetime(2026, 10, 19, 12, 0, tzinfo=comparar.BRT)
+    assert comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois,
+                              correcoes=corr)["gerado_em"] == reg["gerado_em"]
+    assert comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois)["gerado_em"] != \
+        reg["gerado_em"]
+
+    saida, descartes, mantidos = verificar.verificar("saude", conteudo_valido, paginas_falsas)
+    comp = verificar.montar("saude", "2026-10-18T12:00:00-03:00", saida, FONTES)
+    com = relatorio.gerar(TEMA, comp, "0" * 64, "gemini (x)", mantidos, descartes, tmp_path / "r1.html", corr)
+    sem = relatorio.gerar(TEMA, comp, "0" * 64, "gemini (x)", mantidos, descartes, tmp_path / "r2.html")
+    com, sem = com.read_text(encoding="utf-8"), sem.read_text(encoding="utf-8")
+    assert "Páginas corrigidas automaticamente (1)" in com and "pág. 1 → 2" in com
+    assert "Fortalecer &lt;o&gt; SUS" in com and "<o>" not in com
+    assert "Páginas corrigidas" not in sem
+    assert relatorio.gerar(TEMA, comp, "0" * 64, "gemini (x)", mantidos, descartes, tmp_path / "r3.html",
+                           []).read_text(encoding="utf-8") == sem

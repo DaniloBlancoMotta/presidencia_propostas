@@ -1,5 +1,9 @@
 """AC 4: tamanho, sobreposição e fronteira de seção."""
-from rag_planos import chunk
+import json
+import re
+
+from rag_planos import chunk, config, extrair
+from rag_planos.literal import trecho_na_pagina
 
 from .conftest import pagina_falsa
 
@@ -38,3 +42,34 @@ def test_secao_curta_um_chunk():
 def test_chunks_reais_respeitam_limites(chunks_reais):
     for c in chunks_reais:
         assert c["tokens"] <= 800
+
+
+def test_viradas_marcam_cada_pagina():
+    """L27: onde cada página começa no texto do chunk, e o texto com os marcadores para o prompt."""
+    a, b = _texto(200, "a"), _texto(200, "b")
+    cs = chunk.cortar([pagina_falsa(1, a, "S"), pagina_falsa(2, b, "S")], "lula", "PT", "x.pdf")
+    assert len(cs) == 1
+    c = cs[0]
+    assert c["viradas"] == [[0, 1], [len(a) + 1, 2]]
+    assert chunk.texto_marcado(c) == f"[página 1] {a} [página 2] {b}"
+    assert chunk.texto_marcado({**c, "viradas": None}) == f"[página 1-2] {c['texto']}"
+
+
+def test_viradas_reais_batem_com_as_paginas(chunks_reais, paginas):
+    """L27 nos 84 chunks reais: cada trecho entre marcadores está, literalmente, na sua página."""
+    assert len(chunks_reais) == 84
+    for c in chunks_reais:
+        v = c["viradas"]
+        assert v[0] == [0, c["pagina"]] and [p for _, p in v] == c["paginas"], c["id"]
+        assert re.sub(r"\[página \d+\] ", "", chunk.texto_marcado(c)) == c["texto"], c["id"]
+        for i, (inicio, pag) in enumerate(v):
+            fim = v[i + 1][0] if i + 1 < len(v) else len(c["texto"])
+            trecho = c["texto"][inicio:fim].strip()
+            assert trecho and trecho_na_pagina(trecho, extrair.texto_da_pagina(paginas, c["arquivo"], pag)), \
+                (c["id"], pag)
+
+
+def test_chunks_gravados_iguais_aos_recalculados(chunks_reais):
+    """L12 (rodada 4): dados/chunks/chunks.json é exatamente o que o código produz hoje."""
+    gravados = json.loads((config.DADOS / "chunks" / "chunks.json").read_text(encoding="utf-8"))
+    assert gravados == chunks_reais

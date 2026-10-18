@@ -55,8 +55,22 @@ def contagem_por_candidato(comparacao: dict) -> dict[str, int]:
     return n
 
 
+def _secao_correcoes(correcoes: list) -> list[str]:
+    """Páginas que o filtro literal da geração trocou (trecho idêntico, página verdadeira)."""
+    partes = [f"<h2>Páginas corrigidas automaticamente ({len(correcoes)})</h2>",
+              "<p>O trecho estava literalmente em uma só página da faixa enviada ao modelo, "
+              "diferente da que ele citou; a citação passou a apontar essa página.</p><ul>"]
+    for c in correcoes:
+        nome = config.CANDIDATOS.get(c.get("candidato"), {}).get("nome", str(c.get("candidato")))
+        partes.append(f"<li><q>{html.escape(str(c.get('trecho', '')))}</q> — {html.escape(nome)}, "
+                      f"pág. {html.escape(str(c.get('pagina_citada')))} → {html.escape(str(c.get('pagina')))}"
+                      f"<br><small>{html.escape(str(c.get('texto', '')))}</small></li>")
+    partes.append("</ul>")
+    return partes
+
+
 def gerar(tema: dict, comparacao: dict, sha256_json: str, origem: str, mantidos: list, descartes: list,
-          destino: Path) -> Path:
+          destino: Path, correcoes: list | None = None) -> Path:
     contagem = contagem_por_candidato(comparacao)
     juiz_pend = sum(1 for m in mantidos if m["juiz"] == "nao_executado")
     partes = [
@@ -82,6 +96,8 @@ def gerar(tema: dict, comparacao: dict, sha256_json: str, origem: str, mantidos:
     if juiz_pend:
         partes.append(f"<p><b>Atenção:</b> {juiz_pend} item(ns) sem veredito do juiz LLM "
                       "(<code>nao_executado</code>): conferir o sentido manualmente.</p>")
+    if correcoes:
+        partes += _secao_correcoes(correcoes)
     partes.append(f"<h2>Itens publicados ({len(mantidos)})</h2><ul>")
     for m in mantidos:
         extra = f" · juiz: <b>{html.escape(m['juiz'])}</b>"

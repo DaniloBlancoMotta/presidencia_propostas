@@ -78,14 +78,16 @@ def cmd_comparar(args) -> int:
             return 2
     with _resumo_llm(provedor):
         for tema in _temas_alvo(args):
+            correcoes = []
             if provedor:
                 chunks = json.loads((config.DADOS / "chunks" / "chunks.json").read_text(encoding="utf-8"))
-                conteudo = comparar.com_llm(tema, chunks, paginas, provedor)
+                conteudo, correcoes = comparar.com_llm_e_correcoes(tema, chunks, paginas, provedor)
                 origem = f"gemini ({provedor.nome_modelo})"
             else:
                 conteudo, origem = comparar.de_rascunho(tema["id"]), "rascunho (dados/rascunhos)"
-            reg = comparar.registrar(tema["id"], conteudo, origem)
-            print(f"gerado {tema['id']} · {reg['origem']} · {reg['gerado_em']}")
+            reg = comparar.registrar(tema["id"], conteudo, origem, correcoes=correcoes)
+            print(f"gerado {tema['id']} · {reg['origem']} · {reg['gerado_em']}"
+                  + (f" · {len(correcoes)} página(s) corrigida(s)" if correcoes else ""))
     return 0
 
 
@@ -133,7 +135,7 @@ def _verificar_tema(tema: dict, paginas: dict, lista_fontes: list, provedor) -> 
     destino.write_bytes(dados)
     sha = aprovar.sha256_arquivo(destino)
     rel = relatorio.gerar(tema, comp, sha, g["origem"], mantidos, descartes,
-                          config.DADOS / "relatorios" / f"{tema['id']}.html")
+                          config.DADOS / "relatorios" / f"{tema['id']}.html", g.get("correcoes_pagina"))
     pend = sum(1 for m in mantidos if m["juiz"] == "nao_executado")
     print(f"{tema['id']}: {len(mantidos)} mantidos, {len(descartes)} descartados, juiz pendente em {pend}"
           f" · {len(dados) / 1024:.1f} KB · relatório {rel.relative_to(config.RAIZ)}")
