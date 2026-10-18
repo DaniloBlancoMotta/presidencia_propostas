@@ -29,12 +29,18 @@ WD=web ./dock.sh web npm run <script>                 # site (Vite + React + Pla
 ```
 ./dock.sh pipeline python -m rag_planos fontes --tse-dir dados/tse   # confere SHA-256 com o TSE
 ./dock.sh pipeline python -m rag_planos ingest
-./dock.sh pipeline python -m rag_planos comparar saude               # --origem gemini com GEMINI_API_KEY
+./dock.sh pipeline python -m rag_planos comparar saude               # --origem gemini com GEMINI_API_KEY (*)
 ./dock.sh pipeline python -m rag_planos verificar saude              # JSON + dados/relatorios/saude.html
 ./dock.sh pipeline python -m rag_planos aprovar saude                # só o dono, depois de ler o relatório
 ./dock.sh pipeline python -m rag_planos ouro && ./dock.sh pipeline python -m rag_planos avaliar
 WD=web ./dock.sh web npm run build                                   # falha se algum JSON não estiver aprovado
 ```
+
+(*) Com chave, as chamadas ao Gemini passam pelos grafos LangGraph de `grafos.py`. Variáveis opcionais,
+repassadas pelo `dock.sh`: `GEMINI_MODELO` (padrão `gemini-2.5-flash`), `LLM_CONCORRENCIA` (padrão 4)
+e `LLM_RPM`, o limite de pedidos por minuto que o AI Studio mostra para a sua conta. Cada comando
+imprime chamadas, acertos de cache, falhas e tokens; o detalhe por chamada fica em
+`dados/cache-llm/chamadas.jsonl`, fora do git.
 
 ## Testes
 
