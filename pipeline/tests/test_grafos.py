@@ -707,6 +707,10 @@ def test_corrige_pagina_so_quando_unica_na_faixa(tmp_path):
     assert '"pagina": 2, "trecho": "Proposta dois."' in pedido_comparar
     assert '"pagina": 1, "trecho": "Proposta dois."' not in pedido_comparar
     assert comparar.com_llm(TEMA, [_chunk_lula_1_2()], PAGS, gerador(m, tmp_path)) == conteudo
+    # ocorrência inteira sob [página 1] e outra atravessando a virada 2 -> 3: vale só a primeira
+    sintetico = {"texto": "alfa beta gama delta beta gama epsilon", "viradas": [[0, 1], [15, 2], [26, 3]], "pagina": 1}
+    assert grafos._pagina_no_chunk("beta gama", [sintetico]) == 1
+    assert grafos._pagina_no_chunk("gama delta", [sintetico]) is None
 
 
 FONTES = [{"arquivo": LULA, "candidato": "lula", "sha256": "a" * 64, "coletado_em": "2026-10-17"},
@@ -726,6 +730,10 @@ def test_correcao_registrada_e_no_relatorio(tmp_path, conteudo_valido, paginas_f
     depois = datetime(2026, 10, 19, 12, 0, tzinfo=comparar.BRT)
     assert comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois,
                               correcoes=corr)["gerado_em"] == reg["gerado_em"]
+    outra = [{**corr[0], "pagina_citada": 3}]
+    trocada = comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois, correcoes=outra)
+    assert trocada["gerado_em"] == reg["gerado_em"]
+    assert json.loads((tmp_path / "c" / "saude.json").read_text(encoding="utf-8"))["correcoes_pagina"] == outra
     sem_trocas = comparar.registrar("saude", conteudo_valido, "x", tmp_path / "c", agora=depois)
     assert sem_trocas["gerado_em"] == reg["gerado_em"] and "correcoes_pagina" not in sem_trocas
     assert (tmp_path / "c" / "saude.json").read_bytes() == a  # mesmo conteúdo: mesmo arquivo, mesmo hash adiante
