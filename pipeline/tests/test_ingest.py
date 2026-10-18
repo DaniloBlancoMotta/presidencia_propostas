@@ -16,7 +16,6 @@ def test_todo_chunk_tem_campos(chunks_reais):
         for t in c["temas"]:
             assert t["theme_id"] in ids_temas
             assert 0 <= t["confianca"] <= 1
-    assert all(any(c["temas"]) for c in chunks_reais if c["tokens"] > 300) or True
 
 
 def test_texto_do_chunk_comeca_na_pagina_declarada(chunks_reais, paginas):
@@ -39,3 +38,20 @@ def test_cabecalho_e_numero_de_pagina_fora_do_corpo(paginas):
     p18 = extrair.texto_da_pagina(paginas, "Programa-Governo-LULA-2026.pdf", 18)
     assert not p18.lstrip().startswith("18")
     assert "\nP\nR\nO\n" not in p18
+
+
+def test_pagina_igual_ao_numero_impresso():
+    """AC 1: `pagina` é o número impresso na página. Toda página que imprime um número isolado
+    imprime o próprio índice no arquivo; nenhuma imprime outro número."""
+    import pymupdf
+    from rag_planos import config
+    conferidas = 0
+    for arquivo in config.ARQUIVO_PARA_CANDIDATO:
+        doc = pymupdf.open(config.CORPUS / arquivo)
+        for pagina in doc:
+            numeros = {s["text"].strip() for b in pagina.get_text("dict")["blocks"] for l in b.get("lines", [])
+                       for s in l["spans"] if s["text"].strip().isdigit() and s["size"] >= 9 and s["bbox"][1] > 700}
+            if numeros:
+                assert numeros == {str(pagina.number + 1)}, (arquivo, pagina.number + 1, numeros)
+                conferidas += 1
+    assert conferidas >= 120

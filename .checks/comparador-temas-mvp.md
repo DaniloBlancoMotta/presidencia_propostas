@@ -24,7 +24,7 @@ Repositório novo. Pipeline em `pipeline/rag_planos`, site em `web/`, contrato e
 | Contagem de tokens | `len(re.findall(r"\w+\|[^\w\s]", texto))` | tiktoken: baixa o vocabulário pela rede no primeiro uso e mede tokens de um modelo que não é o usado |
 | `secao` | Lula: faixas de página do índice da pág. 3 (13 diretrizes + texto de abertura); Flávio: títulos em Montserrat-Bold 16,6 pt (9 eixos + apresentação + conclusão). Subtítulos vão em `subsecao` | detectar por negrito genérico: no plano de Lula os subtítulos e o cabeçalho vertical "PROGRAMA DE GOVERNO" também são negrito |
 | Texto da página para checagem literal | só spans do corpo; removidos o número de página e o cabeçalho vertical (Lula: Transducer 9-10 pt; ambos: span que é só o número da página) | texto bruto: o cabeçalho letra-a-letra intercala com o corpo e quebra trechos legítimos |
-| Provedor de LLM | `llm.py` com interface `Provedor.gerar(prompt) -> str`; `gemini` (requer `GEMINI_API_KEY`) e `arquivo` (lê respostas já produzidas em `dados/rascunhos/<tema>.json`) | só Gemini: sem chave nesta máquina, nenhum tema seria gerado |
+| Provedor de LLM | `llm.py` com interface `Provedor.gerar(prompt) -> str` e a implementação `Gemini` (requer `GEMINI_API_KEY`); sem chave, `comparar.de_rascunho` lê `dados/rascunhos/<tema>.json` e `comparar --origem` registra a origem | só Gemini: sem chave nesta máquina, nenhum tema seria gerado |
 | Juiz LLM sem chave | `verificar` registra `juiz: "nao_executado"` no relatório, e o item segue para revisão humana marcado | descartar tudo sem juiz: nenhum tema chegaria à revisão |
 | Caminho do portão | build lê `APROVADOS` (env), padrão `revisao/aprovados.yaml` | caminho fixo: testes teriam de escrever no arquivo do dono |
 | Navegação | HTML pré-renderizado por rota + navegação no cliente (pushState) entre rotas internas, buscando `/comparacoes/<id>.json` | MPA puro: cada clique recarrega e re-sorteia a ordem, violando AC 20 |
@@ -47,6 +47,7 @@ Repositório novo. Pipeline em `pipeline/rag_planos`, site em `web/`, contrato e
 
 **C1** (AC 1) - todo chunk tem candidato, partido, arquivo, pagina ≥ 1, secao e temas com confianca em [0,1]
 Proof: `pytest pipeline/tests/test_ingest.py::test_todo_chunk_tem_campos`
+Proof: `pytest pipeline/tests/test_ingest.py::test_pagina_igual_ao_numero_impresso`
 
 **C2** (AC 2) - fontes.json grava sha256 e coletado_em de cada PDF
 Proof: `pytest pipeline/tests/test_fontes.py::test_grava_sha256_e_data`
@@ -88,22 +89,24 @@ Proof: `pytest pipeline/tests/test_verificar.py::test_sem_bullet_nao_encontrado`
 Proof: `npx vitest run tests/render.test.tsx -t "nao encontrado"`
 
 **C14** (AC 10) - camada ≠ plano falha o build
-Proof: `npx vitest run tests/guardas.test.ts -t "camada"`
+Proof: `npx vitest run tests/guardas.test.ts -t "camada"` (função e `npm run build`)
 
 **C15** (AC 11) - JSON > 30 KB falha o build
-Proof: `npx vitest run tests/guardas.test.ts -t "30 KB"`
+Proof: `npx vitest run tests/guardas.test.ts -t "30 KB"` (função e `npm run build`)
 
 **C16** (AC 12) - relatório HTML lista itens, trechos, link de página, descartes com motivo e contagem por candidato
 Proof: `pytest pipeline/tests/test_relatorio.py::test_relatorio_completo`
 
 **C17** (AC 13) - hash não registrado falha o build e nomeia o tema
-Proof: `npx vitest run tests/guardas.test.ts -t "hash"`
+Proof: `npx vitest run tests/guardas.test.ts -t "hash"` (função e `npm run build`)
 
 **C18** (AC 14) - recall < 90% sai ≠ 0 listando faltantes
 Proof: `pytest pipeline/tests/test_avaliar.py::test_recall_baixo_sai_nao_zero`
+Proof: `pytest pipeline/tests/test_avaliar.py::test_comando_avaliar_sai_nao_zero`
 
 **C19** (AC 15) - convergência faltando sai ≠ 0
 Proof: `pytest pipeline/tests/test_avaliar.py::test_convergencia_faltando_sai_nao_zero`
+Proof: real: `python -m rag_planos avaliar` sai 1 hoje por 2 convergências ausentes
 
 ### S3 - Navegar por tema no celular
 

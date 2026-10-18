@@ -1,15 +1,15 @@
 // AC 34: Lighthouse no perfil mobile padrão em / e /tema/<id>: Performance >= 90,
 // Acessibilidade >= 90, LCP < 2,0 s. Usa o Chromium da imagem do Playwright.
 import { spawn } from "node:child_process";
-import { readdirSync } from "node:fs";
-import { join, resolve } from "node:path";
+
+import { resolve } from "node:path";
 import { chromium } from "@playwright/test";
 import * as chromeLauncher from "chrome-launcher";
 import lighthouse from "lighthouse";
 
 const raiz = resolve(process.argv[2] ?? "dist");
 const porta = 4183;
-const tema = readdirSync(join(raiz, "tema"))[0];
+const tema = "saude"; // plano-final §6, CI passo 4
 const servidor = spawn(process.execPath, ["scripts/servir.mjs", raiz, String(porta)], { stdio: "ignore" });
 await new Promise((r) => setTimeout(r, 800));
 

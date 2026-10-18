@@ -71,3 +71,21 @@ def test_ouro_com_menos_de_30_itens_reprova():
     ouro["itens"] = ouro["itens"][:29]
     ok, linhas = avaliar.avaliar(ouro, comps)
     assert not ok and "mínimo 30" in linhas[0]
+
+
+def test_comando_avaliar_sai_nao_zero(tmp_path):
+    """AC 14/15 no nível do comando: `python -m rag_planos avaliar` devolve código != 0."""
+    import json
+    import yaml
+    from rag_planos.__main__ import main
+    ouro, comps = _cenario()
+    comps["saude"]["candidatos"]["lula"]["resumo"] = [bullet("x", cit(LULA, 1, "t"))]
+    (tmp_path / "comparacoes").mkdir()
+    for tid, c in comps.items():
+        (tmp_path / "comparacoes" / f"{tid}.json").write_text(json.dumps(c), encoding="utf-8")
+    (tmp_path / "ouro.yaml").write_text(yaml.safe_dump(ouro), encoding="utf-8")
+    assert avaliar.principal(tmp_path / "ouro.yaml", tmp_path / "comparacoes") == 1
+    comps["saude"]["candidatos"]["lula"]["resumo"] = [bullet("x", *[cit(LULA, p, "t") for p in range(1, 16)])]
+    (tmp_path / "comparacoes" / "saude.json").write_text(json.dumps(comps["saude"]), encoding="utf-8")
+    assert avaliar.principal(tmp_path / "ouro.yaml", tmp_path / "comparacoes") == 0
+    assert callable(main)

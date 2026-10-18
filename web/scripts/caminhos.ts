@@ -6,7 +6,7 @@ export const WEB = resolve(RAIZ, "web");
 
 export function entradasPadrao(): Entradas {
   return {
-    pastaComparacoes: resolve(RAIZ, "dados", "comparacoes"),
+    pastaComparacoes: process.env.COMPARACOES ? resolve(process.env.COMPARACOES) : resolve(RAIZ, "dados", "comparacoes"),
     aprovados: process.env.APROVADOS ? resolve(process.env.APROVADOS) : resolve(RAIZ, "revisao", "aprovados.yaml"),
     themes: resolve(RAIZ, "dados", "themes.yaml"),
     contrato: resolve(RAIZ, "contrato"),

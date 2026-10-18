@@ -1,11 +1,11 @@
 // AC 33: JS inicial (scripts e modulepreload da página inicial e de um tema) <= 200 KB em gzip.
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { gzipSync } from "node:zlib";
 
 const LIMITE = 200 * 1024;
 const raiz = resolve(process.argv[2] ?? "dist");
-const tema = readdirSync(join(raiz, "tema"))[0];
+const tema = "saude"; // plano-final §6, CI passo 4
 let falhou = false;
 for (const pagina of ["index.html", `tema/${tema}/index.html`]) {
   const html = readFileSync(join(raiz, pagina), "utf8");

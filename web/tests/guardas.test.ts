@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { cpSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { spawnSync } from "node:child_process";
 import { beforeEach, describe, expect, it } from "vitest";
 import { RAIZ } from "../scripts/caminhos";
 import { ErroGuarda, verificarGuardas, type Entradas } from "../scripts/guardas";
@@ -90,4 +91,40 @@ describe("guardas de build", () => {
     aprovar("saude", sha(arq));
     expect(falha()).toContain("saude: fora do schema");
   });
+});
+
+describe("npm run build (nível do comando)", () => {
+  function build() {
+    return spawnSync("npx", ["tsx", "scripts/build.ts"], {
+      cwd: resolve(RAIZ, "web"),
+      env: { ...process.env, COMPARACOES: e.pastaComparacoes, APROVADOS: e.aprovados, OUT_DIR: "dist-guardas" },
+      encoding: "utf8",
+    });
+  }
+  it("camada: o build sai com código 1 e nomeia o tema", () => {
+    const arq = join(e.pastaComparacoes, "saude.json");
+    const comp = JSON.parse(readFileSync(arq, "utf8"));
+    comp.omissoes[0].camada = "declaracao";
+    writeFileSync(arq, JSON.stringify(comp));
+    aprovar("saude", sha(arq));
+    const r = build();
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain('saude: camada diferente de "plano" (declaracao)');
+  }, 60_000);
+  it("30 KB: o build sai com código 1 e nomeia o tema", () => {
+    const arq = join(e.pastaComparacoes, "saude.json");
+    const comp = JSON.parse(readFileSync(arq, "utf8"));
+    while (JSON.stringify(comp).length <= 30 * 1024) comp.candidatos.lula.resumo.push(comp.candidatos.lula.resumo[0]);
+    writeFileSync(arq, JSON.stringify(comp));
+    aprovar("saude", sha(arq));
+    const r = build();
+    expect(r.status).toBe(1);
+    expect(r.stderr).toMatch(/saude: \d+ bytes, acima do limite de 30 KB/);
+  }, 60_000);
+  it("hash: o build sai com código 1 sem aprovação", () => {
+    writeFileSync(e.aprovados, "");
+    const r = build();
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain("saude: hash");
+  }, 60_000);
 });
