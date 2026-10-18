@@ -1,0 +1,12 @@
+web/node_modules/
+web/dist/
+web/dist-teste/
+web/.ssr/
+web/test-results/
+web/playwright-report/
+dados/cache-llm/
+dados/tse/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env

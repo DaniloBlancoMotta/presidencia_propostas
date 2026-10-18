@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://comparador.local/contrato/citacao.schema.json",
+  "title": "Citação",
+  "description": "Trecho literal de uma página de um dos dois PDFs (plano-final decisão 3).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["arquivo", "pagina", "trecho"],
+  "properties": {
+    "arquivo": { "enum": ["plano-de-governo_flavio.pdf", "Programa-Governo-LULA-2026.pdf"] },
+    "pagina": { "type": "integer", "minimum": 1 },
+    "trecho": { "type": "string", "minLength": 1, "maxLength": 280 }
+  }
+}
