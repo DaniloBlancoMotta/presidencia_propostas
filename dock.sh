@@ -13,7 +13,9 @@ cd "$raiz"
 if [ -z "$(docker images -q "$img")" ] || [ "${REBUILD:-0}" = 1 ]; then
   docker build -q -t "$img" -f "docker/$svc.Dockerfile" docker >/dev/null
 fi
-if [ -z "$(docker ps -q -f "name=^${nome}$")" ]; then
+# recria quando não está rodando ou quando a imagem foi refeita (REBUILD=1) depois de ele subir
+if [ -z "$(docker ps -q -f "name=^${nome}$")" ] \
+   || [ "$(docker inspect -f '{{.Image}}' "$nome" 2>/dev/null)" != "$(docker image inspect -f '{{.Id}}' "$img")" ]; then
   docker rm -f "$nome" >/dev/null 2>&1 || true
   extra=()
   [ "$svc" = web ] && extra=(-v rag-planos-node-modules:/app/web/node_modules --ipc=host)

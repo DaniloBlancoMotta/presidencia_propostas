@@ -2,7 +2,9 @@
 name = "rag-planos"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["pymupdf==1.28.2", "pyyaml==6.0.2", "jsonschema==4.23.0"]
+# Diretas; o lock completo (transitivas incluídas) é docker/pipeline.requirements.txt.
+dependencies = ["pymupdf==1.28.2", "pyyaml==6.0.2", "jsonschema==4.23.0", "langgraph==1.2.16",
+                "langchain-google-genai==4.4.2"]
 
 [project.optional-dependencies]
 teste = ["pytest==8.3.4"]
