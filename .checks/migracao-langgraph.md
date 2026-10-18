@@ -42,6 +42,12 @@ Sources:
 | Erro definitivo (rodada 2) | o primeiro erro não repetível (400, resposta inválida) marca o `Gerador`; as chamadas seguintes levantam `RuntimeError` sem chamar o modelo | deixar a fila do LangGraph seguir: um worker liberado ainda começa a próxima tarefa e cumpre o retry inteiro |
 | Página da citação (rodada 2) | `pagina` tem de ser `int` (nem `bool`, nem float, nem texto) no filtro do grafo e em `verificar._problema_citacao`; fora disso, `trecho_nao_encontrado` | `int(...)` como antes: `37.0` passava e seria publicado como `37.0` |
 | Variáveis repassadas (rodada 2) | `dock.sh` repassa também `GEMINI_MODELO`, `LLM_CONCORRENCIA` e `LLM_RPM` | só as três de antes: definir a concorrência no host não teria efeito |
+| Formato exige as chaves (rodada 3; aperta a da rodada 2) | resumo: `isinstance(r.get("resumo"), list)`; comparação: `all(isinstance(r.get(k), list) for k in LISTAS)`; `{}` ou objeto sem a chave levanta `ValueError` | `r.get(k, [])`: `{}` passava, e o tema saía "não encontrado" com a resposta vazia no cache |
+| Cota diária (rodada 3) | 429 cujo `google.rpc.QuotaFailure` traz algum `violations[].quotaId` com `PerDay` não é repetido: `deve_repetir` falso, o `Gerador` marca erro definitivo e o resto da fila é cancelado. Forma do corpo conferida num relato real (google-gemini/gemini-cli#8437); não conferida contra a API com chave | repetir todo 429: com a cota do dia esgotada, cada tarefa da fila cumpriria 5 tentativas com espera de até 60 s (~11 min para falhar) |
+| Espera sugerida no início da tentativa (rodada 3; substitui o momento da rodada 2) | o `retryDelay` vira um prazo por chave; a próxima tentativa daquela chave dorme só o que falta até o prazo, descontado o backoff do `RetryPolicy`; depois da última tentativa ninguém dorme | dormir logo após o erro: na 5ª tentativa, até 60 s de espera sem próxima chamada |
+| Limitador no `Gerador` (rodada 3; substitui o lugar da rodada 2) | `Gerador(limitador=InMemoryRateLimiter(requests_per_second=LLM_RPM/60, check_every_n_seconds=0.05, max_bucket_size=1))` chama `acquire()` antes de medir; `chamadas.jsonl` ganha `espera_ms` (fila do limitador e espera sugerida) separado de `ms` (só a chamada ao modelo) | limitador dentro do `ChatGoogleGenerativeAI`: `ms` somaria a fila e mostraria dezenas de segundos que o servidor não gastou |
+| Variáveis vazias ou inválidas (rodada 3) | vazia = padrão (`GEMINI_MODELO`, `LLM_RPM`, `LLM_CONCORRENCIA`); `LLM_RPM` precisa ser número finito > 0 e `LLM_CONCORRENCIA` inteiro ≥ 1, senão `SystemExit` com `ERRO: <variável> ...` | `int('')`/`float('nan')` direto: quebra com traceback, ou o limitador com `nan` trava para sempre |
+| Página no relatório (rodada 3) | `relatorio._link` só põe `#page=<n>` com `int`; o texto `pág. ...` passa por `html.escape` | `int(c.get("pagina", 0))`: página em texto derrubava `verificar` ao gerar o relatório, e o valor entrava cru no HTML |
 
 ## Checks
 
@@ -90,25 +96,25 @@ Proof: `REBUILD=1 ./dock.sh pipeline 'python -c "import langgraph"'` sai com 0 s
 **L15** - a suíte anterior continua verde (32 testes)
 Proof: `WD=pipeline ./dock.sh pipeline python -m pytest -q`
 
-**L16** - com `LLM_RPM=600`, `provedor_padrao()` monta o modelo com `InMemoryRateLimiter` de 10 pedidos/s e 5 chamadas ao servidor falso levam ≥ 0,4 s; sem `LLM_RPM`, `rate_limiter` é `None`
+**L16** - com `LLM_RPM=600`, `provedor_padrao()` monta o `Gerador` com `InMemoryRateLimiter` de 10 pedidos/s, `check_every_n_seconds` 0,05 e `max_bucket_size` 1, e o modelo sem `rate_limiter`; 5 chamadas ao servidor falso levam ≥ 0,4 s; sem `LLM_RPM`, nenhum limitador
 Proof: `pytest pipeline/tests/test_grafos.py::test_ritmo_por_cota`
 
-**L17** - 429 com `RetryInfo.retryDelay` "1s" e depois 200: o nó espera ≥ 1 s antes da 2ª requisição; com "30s" e `espera_maxima` 0,2, a espera é limitada a 0,2 s
+**L17** - 429 com `RetryInfo.retryDelay` "1s" e depois 200: a 2ª requisição sai ≥ 1 s depois da 1ª; com "30s" e `espera_maxima` 0,2, o intervalo fica entre 0,2 s e 2 s; o teto padrão é 60 s; depois da 5ª tentativa com `retryDelay` o erro sobe em < 0,3 s
 Proof: `pytest pipeline/tests/test_grafos.py::test_retry_espera_sugerida`
 
-**L18** - telemetria: cada chamada ao modelo grava uma linha em `chamadas.jsonl` com os tokens que o servidor informou e `erro` com classe e código quando falha; cache servido não grava linha; nenhuma linha contém o prompt nem a chave de API; o resumo sai também quando o comando falha
+**L18** - telemetria: cada chamada ao modelo grava uma linha em `chamadas.jsonl` com os tokens que o servidor informou, `ms`, `espera_ms` e `erro` com classe e código quando falha; cache servido não grava linha; nenhuma linha contém o prompt nem a chave de API; o resumo sai também quando `comparar`, `verificar` ou `ingest` falha
 Proof: `pytest pipeline/tests/test_grafos.py::test_telemetria_local pipeline/tests/test_grafos.py::test_resumo_sai_mesmo_com_erro`
 
-**L19** - resposta de resumo ou de comparação com formato errado (lista em vez de objeto, `resumo` que não é lista): `ValueError`, nada no cache, e o comando para
+**L19** - resposta de resumo ou de comparação com formato errado (lista em vez de objeto, `{}`, chave ausente, `resumo` que não é lista): `ValueError`, nada no cache, e o comando para
 Proof: `pytest pipeline/tests/test_grafos.py::test_formato_invalido_fora_do_cache`
 
 **L20** - quatro prompts idênticos no mesmo fan-out: 1 chamada ao modelo e as quatro respostas iguais à do cache
 Proof: `pytest pipeline/tests/test_grafos.py::test_prompt_identico_uma_chamada`
 
-**L21** - depois de um erro não repetível, nenhuma nova chamada ao modelo: com 10 prompts e concorrência 2, no máximo 2 chamadas e o erro original sobe
+**L21** - depois de um erro não repetível, nenhuma nova chamada ao modelo: com 10 prompts e concorrência 2, no máximo 2 chamadas e o erro original sobe; `grafos._rodar` troca `ChamadaCancelada` pelo erro original, com a cadeia `__cause__` intacta
 Proof: `pytest pipeline/tests/test_grafos.py::test_erro_definitivo_interrompe`
 
-**L22** - `pagina` float, texto, `bool` ou ausente reprova no filtro do grafo e em `verificar` (`trecho_nao_encontrado`); os 8 JSONs publicados seguem byte a byte (L12)
+**L22** - `pagina` float, texto, `bool` ou ausente reprova no filtro do grafo e em `verificar` (`trecho_nao_encontrado`); o relatório de um descarte com `pagina` "abc" ou `"<b>"` sai sem quebrar e com o valor escapado; os 8 JSONs publicados seguem byte a byte (L12)
 Proof: `pytest pipeline/tests/test_grafos.py::test_pagina_nao_inteira_reprova`
 
 **L23** - `dock.sh` repassa `GEMINI_MODELO`, `LLM_CONCORRENCIA` e `LLM_RPM`
@@ -117,10 +123,16 @@ Proof: `GEMINI_MODELO=m LLM_CONCORRENCIA=3 LLM_RPM=5 ./dock.sh pipeline 'echo $G
 **L24** - pelo cliente real: 500, tempo esgotado e conexão recusada são repetidos (`deve_repetir` verdadeiro e nova requisição); `max_concurrency` limita as chamadas simultâneas (10 prompts, concorrência 2 → pico 2)
 Proof: `pytest pipeline/tests/test_grafos.py::test_retry_rede_e_500 pipeline/tests/test_grafos.py::test_concorrencia_limitada`
 
+**L25** - variáveis: `GEMINI_MODELO`, `LLM_RPM` e `LLM_CONCORRENCIA` vazias caem no padrão (`gemini-2.5-flash`, sem limitador, 4); `LLM_RPM` "nan", "abc" ou "0" e `LLM_CONCORRENCIA` "0" ou "x" saem com `SystemExit` e mensagem `ERRO: <variável>`
+Proof: `pytest pipeline/tests/test_grafos.py::test_variaveis_vazias_ou_invalidas`
+
+**L26** - cota diária: 429 com `QuotaFailure` de `quotaId` `GenerateRequestsPerDayPerProjectPerModel-FreeTier` → 1 requisição, sem repetição, e as tarefas seguintes canceladas sem chamar o servidor; 429 só com `quotaId` `...PerMinute...` → repetido
+Proof: `pytest pipeline/tests/test_grafos.py::test_cota_diaria_nao_repete`
+
 ## Swept
 
 - validation: L8 (JSON inválido), L19 (formato), L22 (página); citação sem `trecho` ou `pagina` reprova no filtro literal em vez de derrubar o grafo
-- failure modes: L6, L17, L21, L24; erro definitivo (400, resposta inválida) sobe com a mensagem do SDK, interrompe as chamadas seguintes e o comando sai ≠ 0; o que já foi respondido fica no cache e a nova execução retoma dali (L3); 429 de cota diária ainda é repetido 5 vezes, porque o 429 não diz se a cota é por minuto ou por dia
+- failure modes: L6, L17, L21, L24; erro definitivo (400, resposta inválida) sobe com a mensagem do SDK, interrompe as chamadas seguintes e o comando sai ≠ 0; o que já foi respondido fica no cache e a nova execução retoma dali (L3); 429 de cota diária não é repetido e interrompe a fila (L26)
 - idempotency and retry: L3, L6; `registrar` mantém `gerado_em` quando o conteúdo não muda (já coberto)
 - authorization: a chave só vem de env e vai no header (L7)
 - concurrency and ordering: L5, L20, L24; `max_concurrency`; trava por chave; escrita do cache por arquivo temporário + `os.replace`
@@ -137,3 +149,5 @@ Um lote: `llm.py`, `grafos.py` (novo), `comparar.py`, `classificar.py`, `verific
 - Decidido com o dono no meio do build: nada além do pedido "Mudar para langgraph"; a lente de engenharia de IA invocada por ele motivou L16-L18 (ritmo por cota, espera sugerida, telemetria).
 - Abandonado: limite padrão de pedidos por minuto no código (o Google não publica um número fixo para o plano gratuito).
 - Rodada 2: L16-L24 e as correções dos achados, no mesmo lote; verificação limitada ao diff da rodada e aos vereditos que não foram PASS.
+- Rodada 2 (verificador em `d683c2f`): FAIL - 24/24 checks provados, mas a linha de Landing "Formato" não batia (`{}` passava); 1 mutante sobreviveu de forma não determinística (L21 dependia de qual erro o LangGraph sorteia); 1 regressão média (cota diária com `retryDelay`: ~11 min para falhar) e 4 baixas.
+- Rodada 3: L25, L26 e as linhas de Landing "rodada 3". L16, L17, L18, L19, L21 e L22 ganharam valores mais estritos; nenhum foi afrouxado. É a última rodada antes de escalar ao dono.
