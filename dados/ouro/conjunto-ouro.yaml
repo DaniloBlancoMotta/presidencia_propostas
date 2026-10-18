@@ -1,0 +1,374 @@
+# Conjunto-ouro (AC 14, 15). Itens da §11.3 da especificação localizados nos PDFs;
+# cada `trecho` foi conferido literalmente na `pagina`. `nao_encontrados`: não
+# localizados no plano. O dono confere este arquivo antes de aprovar (decisão 21).
+itens:
+- theme_id: programas-sociais
+  candidato: lula
+  descricao: Manter e ampliar o Bolsa Família
+  pagina: 18
+  trecho: programas eficientes de transferência de renda. Por isso, devemos manter, aperfeiçoar e ampliar as políticas
+    de proteção social para quem mais necessita.
+- theme_id: programas-sociais
+  candidato: lula
+  descricao: Política Nacional de Cuidados
+  pagina: 25
+  trecho: o governo Lula instituiu a Política Nacional de Cuidados
+- theme_id: programas-sociais
+  candidato: lula
+  descricao: valorização do salário mínimo
+  pagina: 74
+  trecho: o novo mandato de Lula dará continuidade à política de valorização do salário mínimo como meio estratégico
+    de distribuição de renda, combate à pobreza e promoção do desenvolvimento econômico e social.
+- theme_id: programas-sociais
+  candidato: flavio-bolsonaro
+  descricao: Manter os programas existentes com gestão e combate a fraudes
+  pagina: 42
+  trecho: vamos manter os programas sociais existentes, com aperfeiçoamento da gestão, correção de distorções e
+    combate às fraudes.
+- theme_id: programas-sociais
+  candidato: flavio-bolsonaro
+  descricao: trilha de qualificação para beneficiários
+  pagina: 43
+  trecho: Criaremos uma trilha de qualificação e intermediação desenhada especialmente para quem recebe o benefício
+- theme_id: programas-sociais
+  candidato: flavio-bolsonaro
+  descricao: Casa Verde e Amarela (pág. ~47)
+  pagina: 47
+  trecho: Vamos retomar o Casa Verde e Amarela, com meta de 2,5 milhões de residências e a menor taxa de juros possível
+    no financiamento.
+- theme_id: seguranca-publica
+  candidato: lula
+  descricao: Ministério da Segurança Pública (condicionado à aprovação da PEC)
+  pagina: 30
+  trecho: Uma vez aprovada a PEC da Segurança Pública proposta pelo Executivo, criaremos o Ministério da Segurança
+    Pública
+- theme_id: seguranca-publica
+  candidato: lula
+  descricao: asfixia financeira das facções dentro dos limites constitucionais
+  pagina: 27
+  trecho: O crime organizado deve ser enfrentado com firmeza, nos marcos da Constituição e do Estado Democrático
+    de Direito, por meio da desarticulação de suas estruturas econômicas e financeiras.
+- theme_id: seguranca-publica
+  candidato: lula
+  descricao: câmeras corporais
+  pagina: 30
+  trecho: Ampliaremos o programa de estímulos para uso de câmeras corporais, com padrões nacionais para utilização,
+    gestão e preservação das imagens.
+- theme_id: seguranca-publica
+  candidato: lula
+  descricao: R$ 10 bi do FIIS para estados e municípios
+  pagina: 27
+  trecho: O programa prevê R$ 10 bilhões do Fundo Nacional de Investimento em
+- theme_id: seguranca-publica
+  candidato: flavio-bolsonaro
+  descricao: Classificar PCC e CV como narcoterroristas
+  pagina: 13
+  trecho: PCC, CV, milícias e todas as outras facções serão declaradas como organizações narcoterroristas.
+- theme_id: seguranca-publica
+  candidato: flavio-bolsonaro
+  descricao: 5 presídios federais de segurança máxima
+  pagina: 14
+  trecho: O Brasil terá 5 novos presídios de segurança máxima no modelo adotado por El Salvador. Junto com os atuais
+    5 presídios federais, eles formarão o Complexo Federal de Segurança Máxima.
+- theme_id: seguranca-publica
+  candidato: flavio-bolsonaro
+  descricao: reconhecimento facial ("Muralha Brasileira")
+  pagina: 15
+  trecho: Vamos implantar o Muralha Brasileira - um sistema nacional de reconhecimento facial integrado a bancos
+    de dados criminais
+- theme_id: seguranca-publica
+  candidato: flavio-bolsonaro
+  descricao: dobrar investimento federal em segurança
+  pagina: 15
+  trecho: O novo governo do Brasil vai dobrar os investimentos federais em segurança pública ao longo do mandato.
+- theme_id: saude
+  candidato: lula
+  descricao: Fortalecer o SUS e o programa Agora Tem Especialistas
+  pagina: 37
+  trecho: As ações do Agora Tem Especialistas serão ainda mais impulsionadas.
+- theme_id: saude
+  candidato: lula
+  descricao: saúde digital
+  pagina: 35
+  trecho: Vamos intensificar o apoio ao uso de ferramentas de saúde digital, como teleconsultas, teleorientação
+    e teleacolhimento na rede básica de saúde.
+- theme_id: saude
+  candidato: lula
+  descricao: Farmácia Popular
+  pagina: 36
+  trecho: Retomamos o Farmácia Popular, ampliando para 41 o número de medicamentos gratuitos distribuídos.
+- theme_id: saude
+  candidato: flavio-bolsonaro
+  descricao: Corrigir a tabela SUS (pág. ~37)
+  pagina: 37
+  trecho: Vamos garantir as condições para que seja possível a correção efetiva da tabela SUS.
+- theme_id: saude
+  candidato: flavio-bolsonaro
+  descricao: prontuário único (pág. ~26)
+  pagina: 26
+  trecho: Vamos implantar o prontuário eletrônico único, vinculado ao CPF e integrado ao Gov.br, interoperável entre
+    as redes pública e privada
+- theme_id: saude
+  candidato: flavio-bolsonaro
+  descricao: ampliar a Saúde da Família
+  pagina: 37
+  trecho: Vamos ampliar a Estratégia Saúde da Família, levando o cuidado para perto de casa
+- theme_id: saude
+  candidato: flavio-bolsonaro
+  descricao: integrar capacidade privada já existente
+  pagina: 37
+  trecho: Para usar bem o que já existe, vamos contratar serviços e exames na rede privada nos horários ociosos
+- theme_id: tecnologia-ia
+  candidato: lula
+  descricao: Soberania digital
+  pagina: 54
+  trecho: Garantiremos a soberania digital para que o Brasil e os brasileiros tenham capacidade de desenvolver,
+    operar, regular e governar tecnologias estratégicas
+- theme_id: tecnologia-ia
+  candidato: lula
+  descricao: Nova Indústria Brasil com incentivo a IA
+  pagina: 50
+  trecho: O foco estratégico está na inovação, IA, minerais críticos e outros ativos capazes de colocar o Brasil
+    de uma vez por todas como protagonista em áreas portadoras de futuro.
+- theme_id: tecnologia-ia
+  candidato: lula
+  descricao: regras para direitos autorais na era da IA
+  pagina: 42
+  trecho: Trabalharemos pela aprovação de lei do direito autoral em ambiente digital e a regulamentação da inteligência
+    artificial,
+- theme_id: tecnologia-ia
+  candidato: lula
+  descricao: conectividade escolar
+  pagina: 32
+  trecho: estamos levando internet de qualidade às escolas brasileiras, já tendo alcançado 75% delas com conectividade
+    nos parâmetros adequados. Vamos universalizar este serviço no próximo mandato,
+- theme_id: tecnologia-ia
+  candidato: flavio-bolsonaro
+  descricao: Identidade digital única no Gov.br
+  pagina: 25
+  trecho: A identidade digital única, com autenticação integrada ao Gov.br, permitirá que assistentes automatizados
+    montem a trilha de serviços de cada cidadão, inclusive por comando de voz,
+- theme_id: tecnologia-ia
+  candidato: flavio-bolsonaro
+  descricao: assistente "ClarIA"
+  pagina: 18
+  trecho: Inspirada nas mais avançadas plataformas de inteligência artificial, com uma experiência simples e acessível,
+- theme_id: tecnologia-ia
+  candidato: flavio-bolsonaro
+  descricao: estratégia nacional de IA para micro, pequenas e médias empresas
+  pagina: 56
+  trecho: A Estratégia Nacional de Inteligência Artificial vai difundir a IA para as micro, pequenas e médias empresas
+    em larga escala, com prioridade para indústria, agronegócio, saúde e logística.
+- theme_id: tecnologia-ia
+  candidato: flavio-bolsonaro
+  descricao: atração de data centers
+  pagina: 53
+  trecho: torna o país competitivo para atrair data centers e inteligência artificial, que se instalam onde a energia
+    é barata e confiável.
+- theme_id: educacao
+  candidato: lula
+  descricao: Tempo integral
+  pagina: 31
+  trecho: O fomento à expansão da educação em tempo integral terá absoluta prioridade no novo mandato.
+- theme_id: educacao
+  candidato: lula
+  descricao: creches pelo Novo PAC
+  pagina: 31
+  trecho: O Novo PAC apoiou a construção de 3.562 creches e escolas de educação infantil em 2.360 municípios.
+- theme_id: educacao
+  candidato: lula
+  descricao: Pé-de-Meia
+  pagina: 32
+  trecho: Vamos dar continuidade e fortalecer o Pé-de-Meia. Nenhum jovem em situação de pobreza ou vulnerabilidade
+    social no Brasil deve deixar a escola por falta de renda.
+- theme_id: educacao
+  candidato: lula
+  descricao: piso do magistério
+  pagina: 33
+  trecho: O Piso Nacional do Magistério será mantido e daremos continuidade às medidas de apoio à formação docente
+- theme_id: educacao
+  candidato: lula
+  descricao: 111 novos institutos/campi
+  pagina: 33
+  trecho: Serão mais 111 IFs, com novos campus em 106 municípios de todos os estados.
+- theme_id: educacao
+  candidato: flavio-bolsonaro
+  descricao: Escolas cívico-militares
+  pagina: 35
+  trecho: Vamos ampliar as Escolas Cívico-Militares, que uniram disciplina e bom desempenho onde foram implantadas
+- theme_id: educacao
+  candidato: flavio-bolsonaro
+  descricao: alfabetização pelo método fônico
+  pagina: 35
+  trecho: Vamos priorizar o método fônico, que é o de melhor resultado comprovado pela ciência, ensinando a criança
+    a ligar cada som à sua letra
+- theme_id: educacao
+  candidato: flavio-bolsonaro
+  descricao: vouchers
+  pagina: 36
+  trecho: E onde faltar vaga na rede pública, a família receberá um voucher educacional para matricular o filho
+    em outra escola
+- theme_id: educacao
+  candidato: flavio-bolsonaro
+  descricao: repasses vinculados a metas
+  pagina: 35
+  trecho: o financiamento seguirá o orçamento por resultados, com repasses vinculados a metas de aprendizagem, sem
+    abandonar regiões que enfrentam maiores dificuldades.
+- theme_id: educacao
+  candidato: flavio-bolsonaro
+  descricao: ensino superior sob o MCTI
+  pagina: 36
+  trecho: No ensino superior, vamos transferir a governança para o Ministério da Ciência, Tecnologia e Inovações,
+    unificando ciência e ensino superior sob o mesmo teto.
+- theme_id: meio-ambiente
+  candidato: lula
+  descricao: Clima como emergência
+  pagina: 81
+  trecho: Serão prioridades de nossa ação externa a implementação da Aliança Global contra a Fome e a Pobreza e
+    o enfrentamento da emergência climática
+- theme_id: meio-ambiente
+  candidato: lula
+  descricao: desmatamento líquido zero em todos os biomas até 2030
+  pagina: 70
+  trecho: continuaremos trabalhando para alcançar o desmatamento líquido zero até 2030, meta que reafirmamos
+- theme_id: meio-ambiente
+  candidato: flavio-bolsonaro
+  descricao: Conservação com geração de renda, mercado de carbono, bioeconomia
+  pagina: 57
+  trecho: E vamos consolidar o mercado regulado de carbono com segurança jurídica, posicionando o Brasil como fornecedor
+    global de ativos ambientais, e impulsionar a bioeconomia
+- theme_id: meio-ambiente
+  candidato: flavio-bolsonaro
+  descricao: barragens e drenagem contra eventos extremos
+  pagina: 52
+  trecho: vamos ampliar a infraestrutura de prevenção a eventos climáticos extremos, com barragens de usos múltiplos,
+    reservatórios de controle de cheias, diques, canais e obras de drenagem e macrodrenagem
+- theme_id: custo-de-vida
+  candidato: lula
+  descricao: Plano Safra da Agricultura Familiar com foco na cesta básica
+  pagina: 59
+  trecho: Vamos continuar expandindo o Plano Safra da Agricultura Familiar, com juros compatíveis com o perfil do
+    agricultor e tipo de produto, com prioridade para produção de alimentos da cesta básica.
+- theme_id: custo-de-vida
+  candidato: lula
+  descricao: PAA (PT, págs. ~48–49, 58–60, 63–65)
+  pagina: 59
+  trecho: A ampliação do PAA será mantida, priorizando a compra de alimentos frescos e
+- theme_id: custo-de-vida
+  candidato: flavio-bolsonaro
+  descricao: Corredores logísticos
+  pagina: 31
+  trecho: Vamos criar os Corredores Logísticos Inteligentes, com foco direto na redução do custo de transporte
+- theme_id: custo-de-vida
+  candidato: flavio-bolsonaro
+  descricao: armazenagem
+  pagina: 31
+  trecho: Vamos também ampliar a capacidade de armazenamento das safras, hoje insuficiente para o que o país produz.
+- theme_id: custo-de-vida
+  candidato: flavio-bolsonaro
+  descricao: seguro rural
+  pagina: 31
+  trecho: 'ampliar o Seguro Rural, dando previsibilidade a quem planta: safra protegida é oferta garantida, e oferta
+    garantida é preço estável.'
+- theme_id: custo-de-vida
+  candidato: flavio-bolsonaro
+  descricao: fertilizantes nacionais (PL, págs. ~29–33)
+  pagina: 32
+  trecho: Vamos apoiar a produção nacional de fertilizantes, com os minerais que o Brasil possui, como o potássio
+    e o fosfato
+- theme_id: agronegocio
+  candidato: lula
+  descricao: Fertilizantes com participação central da Petrobras e bioinsumos
+  pagina: 63
+  trecho: a Petrobras retomou a produção com 3 unidades em Sergipe, Bahia, Paraná e as obras da unidade do Mato
+    Grosso do Sul foram reiniciadas. No próximo governo, seguiremos acelerando a produção nacional de fertilizantes.
+- theme_id: agronegocio
+  candidato: lula
+  descricao: regularização ligada à reforma agrária
+  pagina: 60
+  trecho: ampliando o acesso ao crédito fundiário. A regularização fundiária, especialmente na região Norte, também
+    é essencial para a segurança jurídica dos produtores rurais e incentivo aos investimentos.
+- theme_id: agronegocio
+  candidato: flavio-bolsonaro
+  descricao: Fertilizantes a partir de gás natural
+  pagina: 53
+  trecho: favorecer a produção nacional de fertilizantes a partir do gás, para reduzir a dependência externa que
+    fragiliza o agronegócio e a nossa segurança alimentar.
+- theme_id: agronegocio
+  candidato: flavio-bolsonaro
+  descricao: titulação acelerada
+  pagina: 27
+  trecho: acelerar a regularização fundiária e a titulação do pequeno proprietário rural, retomando o ritmo de titulação
+    que o governo Bolsonaro já havia acelerado
+- theme_id: agronegocio
+  candidato: flavio-bolsonaro
+  descricao: outorgas de irrigação mais simples
+  pagina: 27
+  trecho: Vamos simplificar as outorgas de irrigação
+nao_encontrados: []
+convergencias:
+- id: prontuario-eletronico-unico
+  theme_id: saude
+  paginas:
+    flavio-bolsonaro:
+    - 26
+    lula:
+    - 35
+- id: filas-do-sus
+  theme_id: saude
+  paginas:
+    flavio-bolsonaro:
+    - 26
+    lula:
+    - 38
+- id: ensino-integral
+  theme_id: educacao
+  paginas:
+    flavio-bolsonaro:
+    - 35
+    lula:
+    - 31
+- id: meio-ambiente-hidrica
+  theme_id: meio-ambiente
+  paginas:
+    flavio-bolsonaro:
+    - 52
+    lula:
+    - 72
+- id: meio-ambiente-desmatamento
+  theme_id: meio-ambiente
+  paginas:
+    flavio-bolsonaro:
+    - 58
+    lula:
+    - 70
+    - 72
+- id: meio-ambiente-conservacao
+  theme_id: meio-ambiente
+  paginas:
+    flavio-bolsonaro:
+    - 57
+    lula:
+    - 72
+- id: meio-ambiente
+  theme_id: meio-ambiente
+  paginas:
+    flavio-bolsonaro:
+    - 52
+    lula:
+    - 72
+- id: fertilizantes
+  theme_id: agronegocio
+  paginas:
+    flavio-bolsonaro:
+    - 54
+    lula:
+    - 60
+    - 63
+- id: regularizacao-fundiaria
+  theme_id: agronegocio
+  paginas:
+    flavio-bolsonaro:
+    - 54
+    lula:
+    - 60

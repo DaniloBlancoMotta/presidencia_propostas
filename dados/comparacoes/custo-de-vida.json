@@ -1,0 +1,403 @@
+{
+ "theme_id": "custo-de-vida",
+ "gerado_em": "2026-10-17T23:52:21-03:00",
+ "fontes": [
+  {
+   "arquivo": "plano-de-governo_flavio.pdf",
+   "candidato": "flavio-bolsonaro",
+   "sha256": "d304a25c51a710d8e88fd88c74c43237d512052f8f160920149a8a2578f17f1c",
+   "coletado_em": "2026-10-17"
+  },
+  {
+   "arquivo": "Programa-Governo-LULA-2026.pdf",
+   "candidato": "lula",
+   "sha256": "75e2dab7b9af27454a5c1a44c3bb0d7e0eaddbd1c355ccf1536f0d0be927e47b",
+   "coletado_em": "2026-10-17"
+  }
+ ],
+ "candidatos": {
+  "flavio-bolsonaro": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Propõe revisar a reforma tributária em curso, reduzir o IVA e assegurar a não cumulatividade, para que não se cobre imposto sobre imposto.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 30,
+       "trecho": "Vamos promover a revisão e o redimensionamento da reforma tributária em curso e da majoração de impostos efetuada pelo atual governo"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 30,
+       "trecho": "Vamos corrigir suas distorções, reduzir o IVA, hoje projetado num dos patamares mais altos do mundo, e assegurar a não cumulatividade, para que não se cobre imposto sobre imposto."
+      }
+     ]
+    },
+    {
+     "texto": "Simplificar a conta de luz, racionalizando encargos e subsídios cruzados, com redução gradual da CDE e das fontes incentivadas, mantida a tarifa social.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 31,
+       "trecho": "Vamos simplificar a conta de luz, racionalizando encargos e subsídios cruzados, e promover a redução gradual da CDE e das fontes incentivadas, mantida a tarifa social para quem mais precisa dela."
+      }
+     ]
+    },
+    {
+     "texto": "Reduzir impostos sobre energia elétrica e combustíveis, buscando segurança energética ao menor preço possível para o consumidor.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 31,
+       "trecho": "Vamos reduzir impostos sobre energia elétrica e combustíveis, buscar segurança energética ao menor preço possível para o consumidor"
+      }
+     ]
+    },
+    {
+     "texto": "Criar os Corredores Logísticos Inteligentes, com foco na redução do custo de transporte.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 31,
+       "trecho": "Vamos criar os Corredores Logísticos Inteligentes, com foco direto na redução do custo de transporte"
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar o Seguro Rural, para dar previsibilidade a quem planta e estabilidade de preço.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 31,
+       "trecho": "ampliar o Seguro Rural, dando previsibilidade a quem planta: safra protegida é oferta garantida, e oferta garantida é preço estável."
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar a capacidade de armazenamento das safras, para que o alimento fique disponível o ano inteiro.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 31,
+       "trecho": "Vamos também ampliar a capacidade de armazenamento das safras, hoje insuficiente para o que o país produz."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 32,
+       "trecho": "Com armazenagem, o alimento fica disponível o ano inteiro"
+      }
+     ]
+    },
+    {
+     "texto": "Apoiar a produção nacional de fertilizantes com minerais do país, como o potássio e o fosfato.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 32,
+       "trecho": "Vamos apoiar a produção nacional de fertilizantes, com os minerais que o Brasil possui, como o potássio e o fosfato"
+      }
+     ]
+    },
+    {
+     "texto": "Prevê estabilizar e reduzir a dívida pública para que os juros básicos fiquem em linha com a média internacional e a inflação volte ao centro da meta.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 33,
+       "trecho": "Ao estabilizar e reduzir a dívida pública, nosso governo vai criar as condições para que os juros básicos fiquem em linha com a média internacional e para que a inflação volte ao centro da meta."
+      }
+     ]
+    }
+   ]
+  },
+  "lula": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Expandir o Plano Safra da Agricultura Familiar, com juros compatíveis com o perfil do agricultor e prioridade para alimentos da cesta básica.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 59,
+       "trecho": "Vamos continuar expandindo o Plano Safra da Agricultura Familiar, com juros compatíveis com o perfil do agricultor e tipo de produto, com prioridade para produção de alimentos da cesta básica."
+      }
+     ]
+    },
+    {
+     "texto": "Manter a ampliação do PAA, priorizando a compra de alimentos frescos da agricultura familiar para equipamentos públicos e famílias vulneráveis.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 59,
+       "trecho": "A ampliação do PAA será mantida, priorizando a compra de alimentos frescos e"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 60,
+       "trecho": "diversificados da agricultura familiar e da sociobiodiversidade para equipamentos públicos e famílias vulneráveis."
+      }
+     ]
+    },
+    {
+     "texto": "Manter a inflação sob controle, garantindo que a renda real da população cresça acima do custo de vida.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 49,
+       "trecho": "Manteremos a inflação sob controle de forma duradoura e sustentável, garantindo que a renda real da população cresça acima do custo de vida."
+      }
+     ]
+    },
+    {
+     "texto": "Criar condições para a redução sustentada das taxas de juros, com inflação controlada e política fiscal responsável.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 49,
+       "trecho": "vamos criar as condições para uma redução sustentada das taxas de juros, com inflação controlada e assegurando uma política fiscal responsável."
+      }
+     ]
+    },
+    {
+     "texto": "Monitorar o endividamento das famílias e empresas, manter os fundos garantidores e aprimorar as regras de concessão de crédito, com maior proteção aos consumidores.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 49,
+       "trecho": "seguiremos monitorando a evolução do endividamento das famílias e das empresas, assegurando a continuidade dos fundos garantidores"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 49,
+       "trecho": "aprimorando as regras de oferta e responsabilidade na concessão de crédito, conferindo maior proteção aos consumidores."
+      }
+     ]
+    },
+    {
+     "texto": "Acelerar a produção nacional de fertilizantes e ampliar o fomento a bioinsumos para reduzir a dependência de fertilizantes químicos importados.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 63,
+       "trecho": "No próximo governo, seguiremos acelerando a produção nacional de fertilizantes."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 60,
+       "trecho": "Vamos ampliar o fomento à produção nacional de bioinsumos para reduzir a dependência de fertilizantes químicos importados."
+      }
+     ]
+    },
+    {
+     "texto": "Fortalecer o Garantia-Safra e a política de seguro rural, ampliando o acesso da agricultura familiar ao seguro rural.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 60,
+       "trecho": "daremos especial atenção ao fortalecimento do Programa Garantia-Safra e à ampliação do acesso ao seguro rural da agricultura familiar."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 62,
+       "trecho": "Daremos especial atenção ao fortalecimento da política de seguro rural."
+      }
+     ]
+    },
+    {
+     "texto": "Prevê atuar para mitigar a volatilidade dos preços internacionais, para que os brasileiros não fiquem expostos a choques externos.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 66,
+       "trecho": "Continuaremos a atuar para mitigar a volatilidade dos preços internacionais, garantindo que os brasileiros não fiquem expostos a choques externos."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "semelhancas": [
+  {
+   "texto": "Apoiar a ampliação da produção nacional de fertilizantes.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 32,
+      "trecho": "Vamos apoiar a produção nacional de fertilizantes, com os minerais que o Brasil possui, como o potássio e o fosfato"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 63,
+      "trecho": "No próximo governo, seguiremos acelerando a produção nacional de fertilizantes."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Ampliar ou fortalecer o seguro rural.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 31,
+      "trecho": "ampliar o Seguro Rural, dando previsibilidade a quem planta: safra protegida é oferta garantida, e oferta garantida é preço estável."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 62,
+      "trecho": "Daremos especial atenção ao fortalecimento da política de seguro rural."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Criar condições para a redução dos juros, associada às contas públicas e ao controle da inflação.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 33,
+      "trecho": "Ao estabilizar e reduzir a dívida pública, nosso governo vai criar as condições para que os juros básicos fiquem em linha com a média internacional e para que a inflação volte ao centro da meta."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 49,
+      "trecho": "vamos criar as condições para uma redução sustentada das taxas de juros, com inflação controlada e assegurando uma política fiscal responsável."
+     }
+    ]
+   }
+  }
+ ],
+ "diferencas": [
+  {
+   "texto": "Reforma tributária e tributos sobre o consumo.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 30,
+      "trecho": "Vamos promover a revisão e o redimensionamento da reforma tributária em curso e da majoração de impostos efetuada pelo atual governo"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 48,
+      "trecho": "consolidar os avanços promovidos pela reforma tributária"
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Preços de energia e combustíveis.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 31,
+      "trecho": "Vamos reduzir impostos sobre energia elétrica e combustíveis, buscar segurança energética ao menor preço possível para o consumidor"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 66,
+      "trecho": "Continuaremos a atuar para mitigar a volatilidade dos preços internacionais, garantindo que os brasileiros não fiquem expostos a choques externos."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Apostas on-line e endividamento das famílias.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 33,
+      "trecho": "Vamos proibir o uso dos recursos dos programas sociais para apostas"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 49,
+      "trecho": "mantendo os mecanismos de controle de gastos excessivos em apostas on-line"
+     }
+    ]
+   }
+  }
+ ],
+ "omissoes": [
+  {
+   "tratado_por": "lula",
+   "texto": "Compra pública de alimentos da agricultura familiar (PAA) para equipamentos públicos e famílias vulneráveis.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 59,
+     "trecho": "A ampliação do PAA será mantida, priorizando a compra de alimentos frescos e"
+    },
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 60,
+     "trecho": "diversificados da agricultura familiar e da sociobiodiversidade para equipamentos públicos e famílias vulneráveis."
+    }
+   ]
+  },
+  {
+   "tratado_por": "lula",
+   "texto": "Regras de oferta e de responsabilidade na concessão de crédito, com proteção aos consumidores.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 49,
+     "trecho": "aprimorando as regras de oferta e responsabilidade na concessão de crédito, conferindo maior proteção aos consumidores."
+    }
+   ]
+  },
+  {
+   "tratado_por": "flavio-bolsonaro",
+   "texto": "Orientação financeira à população para sair de dívidas, organizar o orçamento e poupar.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 33,
+     "trecho": "E vamos ampliar a orientação financeira, pela rede da CAIXA, para que o brasileiro aprenda a sair do vermelho, organizar o orçamento e começar a poupar."
+    }
+   ]
+  }
+ ]
+}

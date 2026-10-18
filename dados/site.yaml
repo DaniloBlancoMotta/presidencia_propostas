@@ -1,0 +1,3 @@
+# Responsável identificado em /sobre (plano-final §9, item 1). Fica null até o dono informar;
+# enquanto null, /sobre mostra "Responsável ainda não informado." e o site não vai a domínio público.
+responsavel: null

@@ -1,0 +1,421 @@
+{
+ "theme_id": "saude",
+ "gerado_em": "2026-10-17T23:52:21-03:00",
+ "fontes": [
+  {
+   "arquivo": "plano-de-governo_flavio.pdf",
+   "candidato": "flavio-bolsonaro",
+   "sha256": "d304a25c51a710d8e88fd88c74c43237d512052f8f160920149a8a2578f17f1c",
+   "coletado_em": "2026-10-17"
+  },
+  {
+   "arquivo": "Programa-Governo-LULA-2026.pdf",
+   "candidato": "lula",
+   "sha256": "75e2dab7b9af27454a5c1a44c3bb0d7e0eaddbd1c355ccf1536f0d0be927e47b",
+   "coletado_em": "2026-10-17"
+  }
+ ],
+ "candidatos": {
+  "flavio-bolsonaro": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Propõe garantir condições para a correção efetiva da tabela SUS, com remuneração que cubra o custo real do atendimento.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 37,
+       "trecho": "Vamos garantir as condições para que seja possível a correção efetiva da tabela SUS."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 37,
+       "trecho": "Vamos assegurar uma remuneração que cubra o custo real do atendimento"
+      }
+     ]
+    },
+    {
+     "texto": "Implantar o prontuário eletrônico único, vinculado ao CPF, integrado ao Gov.br e interoperável entre as redes pública e privada.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 26,
+       "trecho": "Vamos implantar o prontuário eletrônico único, vinculado ao CPF e integrado ao Gov.br, interoperável entre as redes pública e privada"
+      }
+     ]
+    },
+    {
+     "texto": "Completar a digitalização do SUS e usar inteligência artificial para agilizar o agendamento de consultas e exames.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 26,
+       "trecho": "vamos completar a digitalização do SUS e usar inteligência artificial para agilizar o agendamento de consultas e exames"
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar a Estratégia Saúde da Família e criar o Programa de Atendimento aos Idosos.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 37,
+       "trecho": "Vamos ampliar a Estratégia Saúde da Família, levando o cuidado para perto de casa, e criar o Programa de Atendimento aos Idosos"
+      }
+     ]
+    },
+    {
+     "texto": "Contratar serviços e exames na rede privada nos horários ociosos.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 37,
+       "trecho": "Para usar bem o que já existe, vamos contratar serviços e exames na rede privada nos horários ociosos"
+      }
+     ]
+    },
+    {
+     "texto": "Prevê telessaúde e teleatendimento por aplicativo, com médicos de regiões de baixa demanda atendendo onde as filas são longas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 38,
+       "trecho": "Com a telessaúde e o teleatendimento por aplicativo, médicos de regiões com baixa demanda poderão atender pacientes onde as filas são longas"
+      }
+     ]
+    },
+    {
+     "texto": "Criar um sistema de entrega de remédio em domicílio para idosos, pessoas com deficiência e doentes crônicos.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 38,
+       "trecho": "E um sistema de entrega de remédio em domicílio vai garantir que o idoso, a pessoa com deficiência e o doente crônico não precisem escolher entre buscar o tratamento e pagar o transporte."
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar o acesso a exames preventivos e manter a imunização e o incentivo à produção nacional de vacinas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 37,
+       "trecho": "Vamos ainda ampliar o acesso a exames preventivos e manter a imunização e o incentivo à produção nacional de vacinas"
+      }
+     ]
+    }
+   ]
+  },
+  "lula": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Propõe impulsionar o Agora Tem Especialistas, com terceiro turno nos serviços de saúde, Carretas da Saúde e mutirões para ampliar consultas, exames e cirurgias.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 37,
+       "trecho": "As ações do Agora Tem Especialistas serão ainda mais impulsionadas."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 37,
+       "trecho": "A expansão do terceiro turno nos serviços de saúde, o reforço das Carretas da Saúde e dos mutirões de atendimento seguirão como estratégias centrais"
+      }
+     ]
+    },
+    {
+     "texto": "Manter o apoio à expansão e qualificação das equipes de saúde da família, em especial as equipes multiprofissionais.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 34,
+       "trecho": "Seguiremos mantendo o apoio à expansão e qualificação das equipes de saúde"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 35,
+       "trecho": "da família, em especial as equipes multiprofissionais, que serão peça central no cuidado à uma população que envelhece com velocidade."
+      }
+     ]
+    },
+    {
+     "texto": "Intensificar o apoio a ferramentas de saúde digital, como teleconsultas, teleorientação e teleacolhimento na rede básica.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 35,
+       "trecho": "Vamos intensificar o apoio ao uso de ferramentas de saúde digital, como teleconsultas, teleorientação e teleacolhimento na rede básica de saúde."
+      }
+     ]
+    },
+    {
+     "texto": "Acelerar a consolidação do prontuário único do cidadão por meio da Rede Nacional de Dados em Saúde (RNDS).",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 35,
+       "trecho": "Vamos acelerar os esforços na consolidação do prontuário único do cidadão, que já avança por meio da Rede Nacional de Dados em Saúde (RNDS)."
+      }
+     ]
+    },
+    {
+     "texto": "Manter o Farmácia Popular 100% gratuito, com revisão contínua dos medicamentos ofertados.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 36,
+       "trecho": "Retomamos o Farmácia Popular, ampliando para 41 o número de medicamentos gratuitos distribuídos."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 36,
+       "trecho": "O programa será mantido, 100% gratuito, assegurando contínua revisão dos medicamentos ofertados"
+      }
+     ]
+    },
+    {
+     "texto": "Aprimorar a regulação do acesso à atenção especializada, com transparência das filas e fila única digital ordenada pelo risco clínico com uso de inteligência artificial.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 38,
+       "trecho": "Aprimoraremos ainda mais a regulação do acesso à atenção especializada, garantindo maior transparência das filas e utilizando inteligência artificial, com fila única digital e ordenada pelo risco clínico"
+      }
+     ]
+    },
+    {
+     "texto": "Dar continuidade à parceria com hospitais privados para ofertar exames e cirurgias ao SUS em troca de créditos financeiros ou de dívidas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 37,
+       "trecho": "Daremos continuidade à parceria com hospitais privados para assegurar, em troca de créditos financeiros ou de dívidas, a oferta de exames e cirurgias para o SUS."
+      }
+     ]
+    },
+    {
+     "texto": "Continuar ampliando o acesso e a adesão à vacinação, com a vacinação nas escolas como eixo prioritário.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 36,
+       "trecho": "Vamos manter todos os esforços para continuar ampliando o acesso e a adesão da população à vacinação em todo o território nacional"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 36,
+       "trecho": "A vacinação nas escolas seguirá como eixo prioritário para recuperar coberturas vacinais"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "semelhancas": [
+  {
+   "texto": "Implantar ou consolidar um prontuário eletrônico único do cidadão.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 26,
+      "trecho": "Vamos implantar o prontuário eletrônico único, vinculado ao CPF e integrado ao Gov.br"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 35,
+      "trecho": "Vamos acelerar os esforços na consolidação do prontuário único do cidadão"
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Ampliar a estratégia ou as equipes de Saúde da Família.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 37,
+      "trecho": "Vamos ampliar a Estratégia Saúde da Família, levando o cuidado para perto de casa"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 34,
+      "trecho": "Seguiremos mantendo o apoio à expansão e qualificação das equipes de saúde"
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Usar telessaúde e atendimento a distância para levar consultas a mais pacientes.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 38,
+      "trecho": "Com a telessaúde e o teleatendimento por aplicativo, médicos de regiões com baixa demanda poderão atender pacientes onde as filas são longas"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 35,
+      "trecho": "Vamos intensificar o apoio ao uso de ferramentas de saúde digital, como teleconsultas, teleorientação e teleacolhimento na rede básica de saúde."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Manter e ampliar a vacinação da população.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 37,
+      "trecho": "manter a imunização e o incentivo à produção nacional de vacinas"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 36,
+      "trecho": "Vamos manter todos os esforços para continuar ampliando o acesso e a adesão da população à vacinação em todo o território nacional"
+     }
+    ]
+   }
+  }
+ ],
+ "diferencas": [
+  {
+   "texto": "Forma de uso da rede privada para ofertar exames e cirurgias ao SUS.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 37,
+      "trecho": "vamos contratar serviços e exames na rede privada nos horários ociosos"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 37,
+      "trecho": "Daremos continuidade à parceria com hospitais privados para assegurar, em troca de créditos financeiros ou de dívidas, a oferta de exames e cirurgias para o SUS."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Acesso a medicamentos.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 38,
+      "trecho": "E um sistema de entrega de remédio em domicílio vai garantir que o idoso, a pessoa com deficiência e o doente crônico não precisem escolher entre buscar o tratamento e pagar o transporte."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 36,
+      "trecho": "O programa será mantido, 100% gratuito, assegurando contínua revisão dos medicamentos ofertados e a continuidade da distribuição de fraldas geriátricas."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Hospitais universitários federais.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 38,
+      "trecho": "Vamos também fortalecer a Rede Nacional de Hospitais Inteligentes (EBSERH), modernizando os hospitais universitários federais."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 34,
+      "trecho": "avançaremos na implantação de novos hospitais universitários e na sua articulação com o Agora tem Especialistas."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Atendimento de saúde a idosos.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 37,
+      "trecho": "criar o Programa de Atendimento aos Idosos, com atendimento facilitado e adequado a quem envelhece"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 22,
+      "trecho": "Vamos dar escala a esse programa do SUS para que idosos tenham acesso a esse direito em todo território nacional."
+     }
+    ]
+   }
+  }
+ ],
+ "omissoes": [
+  {
+   "tratado_por": "flavio-bolsonaro",
+   "texto": "Correção da tabela SUS e da remuneração do atendimento prestado por hospitais, santas casas e clínicas.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 37,
+     "trecho": "Vamos garantir as condições para que seja possível a correção efetiva da tabela SUS."
+    }
+   ]
+  },
+  {
+   "tratado_por": "lula",
+   "texto": "Dignidade menstrual e oferta de métodos contraceptivos no SUS.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 38,
+     "trecho": "Fortaleceremos, também, o Programa Dignidade Menstrual, com acesso aos insumos essenciais para a saúde menstrual – absorventes e medicamentos."
+    }
+   ]
+  }
+ ]
+}

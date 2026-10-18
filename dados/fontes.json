@@ -1,0 +1,20 @@
+[
+  {
+    "arquivo": "plano-de-governo_flavio.pdf",
+    "candidato": "flavio-bolsonaro",
+    "partido": "PL",
+    "sha256": "d304a25c51a710d8e88fd88c74c43237d512052f8f160920149a8a2578f17f1c",
+    "coletado_em": "2026-10-17",
+    "url_tse": "https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026-segundo-turno/planos-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026-2-turno",
+    "conferido_tse": false
+  },
+  {
+    "arquivo": "Programa-Governo-LULA-2026.pdf",
+    "candidato": "lula",
+    "partido": "PT",
+    "sha256": "75e2dab7b9af27454a5c1a44c3bb0d7e0eaddbd1c355ccf1536f0d0be927e47b",
+    "coletado_em": "2026-10-17",
+    "url_tse": "https://www.tse.jus.br/eleicoes/eleicoes-2026-content/propostas-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026-segundo-turno/planos-de-governo-dos-candidatos-ao-cargo-de-presidente-da-republica-eleicoes-2026-2-turno",
+    "conferido_tse": false
+  }
+]

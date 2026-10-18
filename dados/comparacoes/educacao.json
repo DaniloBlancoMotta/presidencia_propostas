@@ -1,0 +1,454 @@
+{
+ "theme_id": "educacao",
+ "gerado_em": "2026-10-17T23:52:21-03:00",
+ "fontes": [
+  {
+   "arquivo": "plano-de-governo_flavio.pdf",
+   "candidato": "flavio-bolsonaro",
+   "sha256": "d304a25c51a710d8e88fd88c74c43237d512052f8f160920149a8a2578f17f1c",
+   "coletado_em": "2026-10-17"
+  },
+  {
+   "arquivo": "Programa-Governo-LULA-2026.pdf",
+   "candidato": "lula",
+   "sha256": "75e2dab7b9af27454a5c1a44c3bb0d7e0eaddbd1c355ccf1536f0d0be927e47b",
+   "coletado_em": "2026-10-17"
+  }
+ ],
+ "candidatos": {
+  "flavio-bolsonaro": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Priorizar o método fônico na alfabetização, ensinando a criança a ligar cada som à sua letra.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 35,
+       "trecho": "Vamos priorizar o método fônico, que é o de melhor resultado comprovado pela ciência, ensinando a criança a ligar cada som à sua letra"
+      }
+     ]
+    },
+    {
+     "texto": "Propõe gestão escolar baseada em indicadores de resultado e proficiência, com repasses vinculados a metas de aprendizagem, sem abandonar regiões com maiores dificuldades.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 35,
+       "trecho": "A gestão passa a ser baseada em indicadores de resultado e proficiência"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 35,
+       "trecho": "o financiamento seguirá o orçamento por resultados, com repasses vinculados a metas de aprendizagem, sem abandonar regiões que enfrentam maiores dificuldades."
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar as Escolas Cívico-Militares.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 35,
+       "trecho": "Vamos ampliar as Escolas Cívico-Militares, que uniram disciplina e bom desempenho onde foram implantadas"
+      }
+     ]
+    },
+    {
+     "texto": "Prevê apoio à escola em tempo integral, com mais tempo de aprendizado, reforço e atividades formativas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 35,
+       "trecho": "Apoiamos a escola em tempo integral, para que a criança tenha mais tempo de aprendizado, reforço e atividades formativas"
+      }
+     ]
+    },
+    {
+     "texto": "Conceder voucher educacional quando faltar vaga na rede pública e voucher-creche para acesso à rede privada credenciada até surgir a vaga pública.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 36,
+       "trecho": "E onde faltar vaga na rede pública, a família receberá um voucher educacional para matricular o filho em outra escola"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 21,
+       "trecho": "Onde não houver vaga na rede pública, a família receberá um voucher-creche para acesso à rede privada credenciada até a vaga pública surgir"
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar a oferta de educação técnica para alunos do ensino médio, em parceria com o setor produtivo.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 36,
+       "trecho": "Vamos ampliar a oferta de educação técnica para os alunos do ensino médio, para que o jovem saia da escola já com uma profissão na mão"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 36,
+       "trecho": "E vamos fazer essa formação técnica em parceria com o setor produtivo, com foco na inovação"
+      }
+     ]
+    },
+    {
+     "texto": "Transferir a governança do ensino superior para o Ministério da Ciência, Tecnologia e Inovações.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 36,
+       "trecho": "No ensino superior, vamos transferir a governança para o Ministério da Ciência, Tecnologia e Inovações, unificando ciência e ensino superior sob o mesmo teto."
+      }
+     ]
+    },
+    {
+     "texto": "Adotar o Empréstimo Contingente à Renda no financiamento estudantil: o estudante só começa a pagar quando estiver empregado, com parcela proporcional ao que recebe.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 37,
+       "trecho": "vamos adotar o Empréstimo Contingente à Renda: o estudante só começa a pagar quando estiver empregado e ganhando, o valor da parcela é proporcional ao que ele recebe e o prazo é bem mais longo."
+      }
+     ]
+    }
+   ]
+  },
+  "lula": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Prevê prioridade ao fomento da expansão da educação em tempo integral.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 31,
+       "trecho": "O fomento à expansão da educação em tempo integral terá absoluta prioridade no novo mandato."
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar, na segunda edição do Novo PAC, o fomento a estados e municípios para creches e educação infantil, após o apoio à construção de 3.562 creches e escolas de educação infantil.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 31,
+       "trecho": "O Novo PAC apoiou a construção de 3.562 creches e escolas de educação infantil em 2.360 municípios."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 31,
+       "trecho": "Na segunda edição do Novo PAC, ampliaremos ainda mais o fomento a estados e municípios para juntos alcançarmos a metas do PNE."
+      }
+     ]
+    },
+    {
+     "texto": "Seguir com as ações pactuadas com estados e municípios para chegar a 80% das crianças alfabetizadas na idade certa.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 31,
+       "trecho": "Seguiremos com as ações e políticas já pactuadas com os estados e municípios brasileiros para chegarmos à meta de 80% das nossas crianças alfabetizadas na idade certa."
+      }
+     ]
+    },
+    {
+     "texto": "Dar continuidade e fortalecer o Pé-de-Meia, para que nenhum jovem em pobreza ou vulnerabilidade deixe a escola por falta de renda.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 32,
+       "trecho": "Vamos dar continuidade e fortalecer o Pé-de-Meia. Nenhum jovem em situação de pobreza ou vulnerabilidade social no Brasil deve deixar a escola por falta de renda."
+      }
+     ]
+    },
+    {
+     "texto": "Manter o Piso Nacional do Magistério e continuar as medidas de apoio à formação docente.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 33,
+       "trecho": "O Piso Nacional do Magistério será mantido e daremos continuidade às medidas de apoio à formação docente"
+      }
+     ]
+    },
+    {
+     "texto": "Prevê novo ciclo de expansão e interiorização da educação superior pública e medidas para aperfeiçoar a assistência estudantil.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 33,
+       "trecho": "Haverá também novo ciclo expansão e interiorização da educação superior pública para superar os vazios educacionais e as assimetrias regionais."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 33,
+       "trecho": "Adotaremos medidas para aperfeiçoar a assistência estudantil, para garantir a permanência e a conclusão dos cursos pelos estudantes nas instituições públicas."
+      }
+     ]
+    },
+    {
+     "texto": "Universalizar a internet de qualidade nas escolas, que já alcança 75% delas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 32,
+       "trecho": "estamos levando internet de qualidade às escolas brasileiras, já tendo alcançado 75% delas com conectividade nos parâmetros adequados. Vamos universalizar este serviço no próximo mandato"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "semelhancas": [
+  {
+   "texto": "Ampliar ou apoiar a educação em tempo integral.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 35,
+      "trecho": "Apoiamos a escola em tempo integral, para que a criança tenha mais tempo de aprendizado, reforço e atividades formativas"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 31,
+      "trecho": "O fomento à expansão da educação em tempo integral terá absoluta prioridade no novo mandato."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Ampliar a oferta de creches e educação infantil.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 21,
+      "trecho": "Vamos ampliar a oferta de creches para as crianças desde a primeira infância, em período integral, com alimentação digna e foco no desenvolvimento infantil."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 31,
+      "trecho": "O Novo PAC apoiou a construção de 3.562 creches e escolas de educação infantil em 2.360 municípios."
+     },
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 31,
+      "trecho": "Na segunda edição do Novo PAC, ampliaremos ainda mais o fomento a estados e municípios para juntos alcançarmos a metas do PNE."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Levar conectividade e internet às escolas.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 24,
+      "trecho": "E vamos levar conectividade às localidades de baixa cobertura, priorizando escolas, áreas rurais e regiões de fronteira"
+     },
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 35,
+      "trecho": "Vamos ainda levar robótica, computadores, tablets e internet às escolas"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 32,
+      "trecho": "estamos levando internet de qualidade às escolas brasileiras, já tendo alcançado 75% delas com conectividade nos parâmetros adequados. Vamos universalizar este serviço no próximo mandato"
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Ampliar a oferta de educação técnica.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 36,
+      "trecho": "Vamos ampliar a oferta de educação técnica para os alunos do ensino médio, para que o jovem saia da escola já com uma profissão na mão"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 33,
+      "trecho": "No novo mandato, continuaremos a expansão da nossa rede de institutos federais, priorizando a interiorização, os vazios educacionais, as periferias urbanas e os municípios com baixa oferta de cursos técnicos."
+     }
+    ]
+   }
+  }
+ ],
+ "diferencas": [
+  {
+   "texto": "Estratégia de alfabetização das crianças.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 35,
+      "trecho": "O começo de tudo é alfabetizar direito."
+     },
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 35,
+      "trecho": "Vamos priorizar o método fônico, que é o de melhor resultado comprovado pela ciência, ensinando a criança a ligar cada som à sua letra"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 31,
+      "trecho": "Seguiremos com as ações e políticas já pactuadas com os estados e municípios brasileiros para chegarmos à meta de 80% das nossas crianças alfabetizadas na idade certa."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Organização e expansão do ensino superior.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 36,
+      "trecho": "No ensino superior, vamos transferir a governança para o Ministério da Ciência, Tecnologia e Inovações, unificando ciência e ensino superior sob o mesmo teto."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 33,
+      "trecho": "Haverá também novo ciclo expansão e interiorização da educação superior pública para superar os vazios educacionais e as assimetrias regionais."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Apoio financeiro ao estudante do ensino superior.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 37,
+      "trecho": "vamos adotar o Empréstimo Contingente à Renda: o estudante só começa a pagar quando estiver empregado e ganhando, o valor da parcela é proporcional ao que ele recebe e o prazo é bem mais longo."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 33,
+      "trecho": "Adotaremos medidas para aperfeiçoar a assistência estudantil, para garantir a permanência e a conclusão dos cursos pelos estudantes nas instituições públicas."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Política para professores.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 35,
+      "trecho": "Os professores terão qualificação contínua baseada em evidências científicas, e não em modismos pedagógicos"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 33,
+      "trecho": "O Piso Nacional do Magistério será mantido e daremos continuidade às medidas de apoio à formação docente"
+     }
+    ]
+   }
+  }
+ ],
+ "omissoes": [
+  {
+   "tratado_por": "flavio-bolsonaro",
+   "texto": "Ampliação das Escolas Cívico-Militares.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 35,
+     "trecho": "Vamos ampliar as Escolas Cívico-Militares, que uniram disciplina e bom desempenho onde foram implantadas"
+    }
+   ]
+  },
+  {
+   "tratado_por": "flavio-bolsonaro",
+   "texto": "Voucher para matrícula em outra escola ou na rede privada quando faltar vaga na rede pública.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 36,
+     "trecho": "E onde faltar vaga na rede pública, a família receberá um voucher educacional para matricular o filho em outra escola"
+    },
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 21,
+     "trecho": "Onde não houver vaga na rede pública, a família receberá um voucher-creche para acesso à rede privada credenciada até a vaga pública surgir"
+    }
+   ]
+  },
+  {
+   "tratado_por": "lula",
+   "texto": "Piso salarial nacional do magistério.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 33,
+     "trecho": "O Piso Nacional do Magistério será mantido e daremos continuidade às medidas de apoio à formação docente"
+    }
+   ]
+  },
+  {
+   "tratado_por": "lula",
+   "texto": "Apoio de renda a jovens para que não deixem a escola por falta de renda (Pé-de-Meia).",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 32,
+     "trecho": "Vamos dar continuidade e fortalecer o Pé-de-Meia. Nenhum jovem em situação de pobreza ou vulnerabilidade social no Brasil deve deixar a escola por falta de renda."
+    }
+   ]
+  }
+ ]
+}

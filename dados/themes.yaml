@@ -1,0 +1,70 @@
+# Os 8 temas do MVP, na ordem da grade (plano-final §1).
+# rotulo e descricao: §5 da especificação. palavras_chave: entradas do índice temático do plano
+# de Flávio (págs. 5-7) e termos dos títulos das 13 diretrizes do plano de Lula (pág. 3).
+# macrotema_tse: null em todos - a página do TSE com os 8 macrotemas não pôde ser consultada
+# (HTTP 403 em 17/10/2026); preencher com o nome exato quando o dono conferir.
+temas:
+  - id: programas-sociais
+    rotulo: Programas sociais
+    icone: maos
+    descricao: Bolsa Família e transferência de renda, BPC, salário mínimo, combate à fome
+    palavras_chave: [programas sociais, bolsa família, transferência de renda, bpc, salário mínimo, fome,
+      assistência social, desigualdades, mobilidade social, trilha de qualificação, casa verde e amarela,
+      cuidados, vulnerabilidade, pobreza, cadastro único, idosos, pessoas com deficiência, habitação]
+    macrotema_tse: null
+  - id: seguranca-publica
+    rotulo: Segurança pública
+    icone: escudo
+    descricao: Crime organizado, polícias, presídios, fronteiras e violência
+    palavras_chave: [segurança pública, crime organizado, facções, presídios, fronteiras, polícia,
+      feminicídio, maioridade penal, reconhecimento facial, tráfico, armas, violência, homicídios,
+      sistema prisional, investimento em segurança, guarda]
+    macrotema_tse: null
+  - id: saude
+    rotulo: Saúde
+    icone: cruz
+    descricao: SUS, filas, atenção básica, medicamentos
+    palavras_chave: [saúde, sus, filas, atenção primária, atenção básica, medicamentos, remédio,
+      prontuário eletrônico, tabela sus, saúde da família, telessaúde, saúde mental, imunização, vacina,
+      hospitais, especialistas, farmácia popular, saúde digital, exames]
+    macrotema_tse: null
+  - id: tecnologia-ia
+    rotulo: Tecnologia e IA
+    icone: chip
+    descricao: Regulação de IA, governo digital, conectividade, soberania de dados, big techs
+    palavras_chave: [inteligência artificial, governo digital, serviços públicos digitalizados,
+      identidade digital, conectividade, internet, proteção de dados, soberania digital, data centers,
+      economia digital, plataformas digitais, big techs, inovação, tecnologia, patentes, digitalização]
+    macrotema_tse: null
+  - id: educacao
+    rotulo: Educação
+    icone: livro
+    descricao: Educação básica, ensino técnico, universidades
+    palavras_chave: [educação, escola, ensino, alfabetização, creche, professores, tempo integral,
+      ensino técnico, ensino superior, universidades, institutos federais, financiamento estudantil,
+      escolas cívico-militares, voucher, pé-de-meia, magistério, estudantes]
+    macrotema_tse: null
+  - id: meio-ambiente
+    rotulo: Meio ambiente
+    icone: folha
+    descricao: Desmatamento, clima, transição energética, Amazônia
+    palavras_chave: [meio ambiente, desmatamento, amazônia, clima, climática, biomas, bioeconomia,
+      mercado de carbono, queimadas, floresta, pagamento por serviços ambientais, sustentabilidade,
+      saneamento, segurança hídrica, eventos extremos, baixo carbono, transição energética, lixão]
+    macrotema_tse: null
+  - id: custo-de-vida
+    rotulo: Custo de vida
+    icone: carrinho
+    descricao: Custo de vida, dívidas e preço dos alimentos
+    palavras_chave: [custo de vida, preço dos alimentos, comida mais barata, cesta básica, inflação,
+      dívidas, endividamento, crédito, juros, conta de luz, impostos no consumo, orientação financeira,
+      segurança alimentar, abastecimento, armazenagem, logística]
+    macrotema_tse: null
+  - id: agronegocio
+    rotulo: Agronegócio
+    icone: espiga
+    descricao: Agronegócio, agricultura familiar e economia regional
+    palavras_chave: [agronegócio, agricultura, agricultura familiar, produção agrícola, campo,
+      fertilizantes, irrigação, seguro rural, armazenamento de safras, regularização fundiária,
+      reforma agrária, títulos rurais, plano safra, bioinsumos, direito de propriedade, cadastro ambiental rural]
+    macrotema_tse: null

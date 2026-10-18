@@ -1,0 +1,464 @@
+{
+ "theme_id": "meio-ambiente",
+ "origem": "rascunho (dados/rascunhos)",
+ "gerado_em": "2026-10-17T23:52:21-03:00",
+ "conteudo": {
+  "candidatos": {
+   "flavio-bolsonaro": {
+    "nao_encontrado": false,
+    "resumo": [
+     {
+      "texto": "Prevê a meta de zerar o desmatamento ilegal até 2029 e o combate às queimadas ilegais, com prevenção, monitoramento e fiscalização.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 58,
+        "trecho": "Teremos a meta de zerar o desmatamento ilegal até 2029"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 58,
+        "trecho": "combateremos as queimadas ilegais, fortalecendo a prevenção, o monitoramento, a fiscalização e o combate aos crimes ambientais"
+       }
+      ]
+     },
+     {
+      "texto": "Propõe combater crimes ambientais com inteligência artificial, bancos de dados em tempo real, imagens de satélite e ação coordenada das agências do Estado.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 58,
+        "trecho": "com ferramentas aperfeiçoadas por inteligência artificial, bancos de dados em tempo real, imagens de satélite e ação coordenada das agências do Estado"
+       }
+      ]
+     },
+     {
+      "texto": "Consolidar o mercado regulado de carbono com segurança jurídica e impulsionar a bioeconomia a partir da biodiversidade.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 57,
+        "trecho": "E vamos consolidar o mercado regulado de carbono com segurança jurídica, posicionando o Brasil como fornecedor global de ativos ambientais, e impulsionar a bioeconomia"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 57,
+        "trecho": "impulsionar a bioeconomia, com biotecnologia, fármacos, cosméticos e novos materiais a partir da biodiversidade"
+       }
+      ]
+     },
+     {
+      "texto": "Ampliar o pagamento por serviços ambientais e criar instrumentos para remunerar quem conserva a vegetação nativa, recupera áreas degradadas e protege recursos hídricos.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 57,
+        "trecho": "Vamos criar mecanismos de incentivo econômico à preservação, ampliando o pagamento por serviços ambientais"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 57,
+        "trecho": "instrumentos capazes de remunerar produtores, comunidades e proprietários rurais que conservam a vegetação nativa, recuperam áreas degradadas e protegem os recursos hídricos"
+       }
+      ]
+     },
+     {
+      "texto": "Ampliar a infraestrutura de prevenção a eventos climáticos extremos, com barragens de usos múltiplos, reservatórios de controle de cheias, diques, canais e obras de drenagem.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 52,
+        "trecho": "vamos ampliar a infraestrutura de prevenção a eventos climáticos extremos, com barragens de usos múltiplos, reservatórios de controle de cheias, diques, canais e obras de drenagem e macrodrenagem"
+       }
+      ]
+     },
+     {
+      "texto": "Concluir, iniciar e executar obras hídricas como o Ramal do Apodi, o Ramal do Salgado, a Adutora do Seridó e o Canal do Xingó.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 52,
+        "trecho": "Iremos concluir, iniciar, executar estruturas como o Ramal do Apodi, o Ramal do Salgado, a Adutora do Seridó, o Canal do Xingó"
+       }
+      ]
+     },
+     {
+      "texto": "Eliminar superposições entre Ibama, Funai e ICMBio e exigir transparência de financiadores e de projetos de ONGs que recebem recursos internacionais.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 59,
+        "trecho": "Vamos eliminar superposições entre Ibama, Funai e ICMBio, dando eficiência à fiscalização"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 59,
+        "trecho": "exigir transparência de financiadores e de projetos das ONGs que recebem recursos internacionais e judicializam ações contra a União"
+       }
+      ]
+     },
+     {
+      "texto": "Ampliar as alternativas de renda a partir da floresta preservada, com cadeias produtivas sustentáveis, manejo responsável e bioeconomia.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 59,
+        "trecho": "vamos ampliar as alternativas de renda a partir da floresta preservada, apoiando cadeias produtivas sustentáveis, manejo responsável, bioeconomia e agregação de valor aos produtos da biodiversidade"
+       }
+      ]
+     }
+    ]
+   },
+   "lula": {
+    "nao_encontrado": false,
+    "resumo": [
+     {
+      "texto": "Prevê alcançar o desmatamento líquido zero até 2030, com atuação integrada do governo nos planos de controle e prevenção do desmatamento.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 70,
+        "trecho": "continuaremos trabalhando para alcançar o desmatamento líquido zero até 2030, meta que reafirmamos"
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 70,
+        "trecho": "todas as instâncias do governo persistirão atuando de forma integrada na implementação dos planos de controle e prevenção do desmatamento"
+       }
+      ]
+     },
+     {
+      "texto": "Avançar na destinação de terras públicas para unidades de conservação, territórios indígenas e quilombolas ou assentamentos, e reforçar a regularização fundiária.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 70,
+        "trecho": "Vamos avançar na destinação das terras públicas para unidades de conservação, territórios indígenas e quilombolas ou assentamentos, e reforçar a regularização fundiária."
+       }
+      ]
+     },
+     {
+      "texto": "Expandir o monitoramento por satélite e o uso de inteligência artificial no combate a crimes ambientais.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 72,
+        "trecho": "Vamos expandir monitoramento satelital e uso de inteligência artificial no combate a crimes ambientais."
+       }
+      ]
+     },
+     {
+      "texto": "Aprimorar programas de Pagamento por Serviços Ambientais (PSA) voltados à biodiversidade.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 72,
+        "trecho": "Vamos aprimorar a implementação de programas de Pagamento por Serviços Ambientais (PSA) voltados à biodiversidade"
+       }
+      ]
+     },
+     {
+      "texto": "Ampliar instrumentos de financiamento climático, mantendo o Fundo Clima e o Eco Invest para financiar a descarbonização da economia.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 71,
+        "trecho": "Seguiremos ampliando os instrumentos necessários para o financiamento climático. O Fundo Clima e o Eco Invest continuarão a ser instrumentos fundamentais para o financiar a descarbonização da economia."
+       }
+      ]
+     },
+     {
+      "texto": "Revitalizar bacias hidrográficas e ampliar a infraestrutura de segurança hídrica, com água para beber e produzir e proteção contra cheias e enchentes.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 72,
+        "trecho": "vamos avançar nos investimentos para revitalizar as bacias hidrográficas e ampliar as infraestruturas para Segurança hídrica, garantindo água de qualidade para beber e produzir e proteção contra cheias e enchentes"
+       }
+      ]
+     },
+     {
+      "texto": "Prevê como prioridade da ação externa o enfrentamento da emergência climática.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 81,
+        "trecho": "Serão prioridades de nossa ação externa a implementação da Aliança Global contra a Fome e a Pobreza e o enfrentamento da emergência climática"
+       }
+      ]
+     },
+     {
+      "texto": "Acelerar a substituição progressiva de combustíveis fósseis por biocombustíveis e combustíveis de baixa intensidade de carbono.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 64,
+        "trecho": "acelerar a substituição progressiva de combustíveis fósseis por biocombustíveis e combustíveis de baixa intensidade de carbono, incluindo derivados de hidrogênio"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "semelhancas": [
+   {
+    "texto": "Ampliar a infraestrutura hídrica para proteger a população contra cheias e enchentes.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 52,
+       "trecho": "vamos ampliar a infraestrutura de prevenção a eventos climáticos extremos, com barragens de usos múltiplos, reservatórios de controle de cheias, diques, canais e obras de drenagem e macrodrenagem"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 72,
+       "trecho": "vamos avançar nos investimentos para revitalizar as bacias hidrográficas e ampliar as infraestruturas para Segurança hídrica, garantindo água de qualidade para beber e produzir e proteção contra cheias e enchentes"
+      }
+     ]
+    }
+   },
+   {
+    "texto": "Combater o desmatamento e os crimes ambientais com monitoramento por satélite e inteligência artificial.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 58,
+       "trecho": "com ferramentas aperfeiçoadas por inteligência artificial, bancos de dados em tempo real, imagens de satélite e ação coordenada das agências do Estado"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 58,
+       "trecho": "Teremos a meta de zerar o desmatamento ilegal até 2029"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 72,
+       "trecho": "Vamos expandir monitoramento satelital e uso de inteligência artificial no combate a crimes ambientais."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 70,
+       "trecho": "continuaremos trabalhando para alcançar o desmatamento líquido zero até 2030, meta que reafirmamos"
+      }
+     ]
+    }
+   },
+   {
+    "texto": "Ampliar ou aprimorar o pagamento por serviços ambientais.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 57,
+       "trecho": "Vamos criar mecanismos de incentivo econômico à preservação, ampliando o pagamento por serviços ambientais"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 72,
+       "trecho": "Vamos aprimorar a implementação de programas de Pagamento por Serviços Ambientais (PSA) voltados à biodiversidade"
+      }
+     ]
+    }
+   },
+   {
+    "texto": "Estabelecer rastreabilidade das cadeias produtivas.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 28,
+       "trecho": "Vamos instituir a rastreabilidade completa das cadeias produtivas, integrando em um só sistema os cadastros fundiários e ambientais"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 72,
+       "trecho": "Buscaremos dialogar com o setor produtivo nacional para estabelecer mecanismos de rastreabilidade e devida diligência nas cadeias produtivas."
+      }
+     ]
+    }
+   },
+   {
+    "texto": "Ampliar a produção de biocombustíveis, como etanol, biodiesel e SAF.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 53,
+       "trecho": "E vamos transformar o Brasil em potência de biocombustíveis: etanol, biodiesel, HVO, SAF e biogás"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 63,
+       "trecho": "Continuaremos ampliando e fortalecendo a produção de biocombustíveis, como etanol de milho e cana, biodiesel e combustível sustentável de aviação (SAF)."
+      }
+     ]
+    }
+   }
+  ],
+  "diferencas": [
+   {
+    "texto": "Meta e prazo para o desmatamento.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 58,
+       "trecho": "Teremos a meta de zerar o desmatamento ilegal até 2029"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 70,
+       "trecho": "continuaremos trabalhando para alcançar o desmatamento líquido zero até 2030, meta que reafirmamos"
+      }
+     ]
+    }
+   },
+   {
+    "texto": "Papel dos combustíveis fósseis na política energética.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 52,
+       "trecho": "permitir a exploração do gás não convencional (fracking) com responsabilidade ambiental e cumprindo a lei"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 64,
+       "trecho": "acelerar a substituição progressiva de combustíveis fósseis por biocombustíveis e combustíveis de baixa intensidade de carbono, incluindo derivados de hidrogênio"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 71,
+       "trecho": "Continuaremos acompanhando e participando do debate internacional sobre a construção de um mapa do caminho global para longe dos combustíveis fósseis"
+      }
+     ]
+    }
+   },
+   {
+    "texto": "Terras públicas e ocupação irregular.",
+    "camada": "plano",
+    "citacoes": {
+     "flavio-bolsonaro": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 58,
+       "trecho": "O foco será identificar e combater a grilagem de terras, a ocupação ilegal de áreas públicas e os responsáveis pelo desmatamento ilegal"
+      }
+     ],
+     "lula": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 70,
+       "trecho": "Vamos avançar na destinação das terras públicas para unidades de conservação, territórios indígenas e quilombolas ou assentamentos, e reforçar a regularização fundiária."
+      }
+     ]
+    }
+   }
+  ],
+  "omissoes": [
+   {
+    "tratado_por": "flavio-bolsonaro",
+    "texto": "Reorganização de Ibama, Funai e ICMBio e transparência de ONGs que recebem recursos internacionais.",
+    "camada": "plano",
+    "citacoes": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 59,
+      "trecho": "Vamos eliminar superposições entre Ibama, Funai e ICMBio, dando eficiência à fiscalização"
+     },
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 59,
+      "trecho": "exigir transparência de financiadores e de projetos das ONGs que recebem recursos internacionais e judicializam ações contra a União"
+     }
+    ]
+   },
+   {
+    "tratado_por": "lula",
+    "texto": "Cumprimento da NDC brasileira e redução de emissões de gases de efeito estufa.",
+    "camada": "plano",
+    "citacoes": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 71,
+      "trecho": "Articularemos as políticas e mobilizaremos todos os atores governamentais, privados e da sociedade civil para que cumpramos a nossa nova NDC."
+     },
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 72,
+      "trecho": "avançaremos na inclusão da Caatinga como ativo estratégico para a adaptação às mudanças do clima e para a mitigação das emissões de gases de efeito estufa"
+     }
+    ]
+   },
+   {
+    "tratado_por": "lula",
+    "texto": "Caatinga, Semiárido, combate à desertificação e restauração ecológica.",
+    "camada": "plano",
+    "citacoes": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 72,
+      "trecho": "avançaremos na inclusão da Caatinga como ativo estratégico para a adaptação às mudanças do clima e para a mitigação das emissões de gases de efeito estufa"
+     },
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 72,
+      "trecho": "reconhecendo que adaptação climática, combate à desertificação e restauração ecológica constituem investimentos estratégicos para o desenvolvimento nacional"
+     }
+    ]
+   },
+   {
+    "tratado_por": "lula",
+    "texto": "Proteção e direitos dos animais domésticos, com castração e cadastro de cães e gatos.",
+    "camada": "plano",
+    "citacoes": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 71,
+      "trecho": "Vamos ampliar o ProPatinhas, fortalecendo as caravanas de castração, e dar continuidade ao SinPatinhas, cadastro nacional de cães e gatos."
+     }
+    ]
+   }
+  ]
+ }
+}

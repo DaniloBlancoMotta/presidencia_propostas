@@ -1,0 +1,411 @@
+{
+ "theme_id": "programas-sociais",
+ "gerado_em": "2026-10-17T23:52:21-03:00",
+ "fontes": [
+  {
+   "arquivo": "plano-de-governo_flavio.pdf",
+   "candidato": "flavio-bolsonaro",
+   "sha256": "d304a25c51a710d8e88fd88c74c43237d512052f8f160920149a8a2578f17f1c",
+   "coletado_em": "2026-10-17"
+  },
+  {
+   "arquivo": "Programa-Governo-LULA-2026.pdf",
+   "candidato": "lula",
+   "sha256": "75e2dab7b9af27454a5c1a44c3bb0d7e0eaddbd1c355ccf1536f0d0be927e47b",
+   "coletado_em": "2026-10-17"
+  }
+ ],
+ "candidatos": {
+  "flavio-bolsonaro": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Manter os programas sociais existentes, com aperfeiçoamento da gestão, correção de distorções e combate às fraudes.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 42,
+       "trecho": "vamos manter os programas sociais existentes, com aperfeiçoamento da gestão, correção de distorções e combate às fraudes."
+      }
+     ]
+    },
+    {
+     "texto": "Dar ao beneficiário de programa social prioridade nas ações do Estado voltadas ao trabalho: primeiro emprego, qualificação profissional e intermediação de mão de obra.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 43,
+       "trecho": "o beneficiário de programa social terá prioridade em todas as ações do Estado voltadas ao trabalho: prioridade nos programas de primeiro emprego, nas ações de qualificação profissional e na intermediação de mão de obra."
+      }
+     ]
+    },
+    {
+     "texto": "Criar uma trilha de qualificação e intermediação desenhada para quem recebe o benefício.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 43,
+       "trecho": "Criaremos uma trilha de qualificação e intermediação desenhada especialmente para quem recebe o benefício"
+      }
+     ]
+    },
+    {
+     "texto": "Garantir o retorno imediato e sem fila ao benefício após o seguro-desemprego, mantidas as condições de elegibilidade, inclusive para quem aceitar trabalho temporário.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 43,
+       "trecho": "garantiremos o retorno imediato e sem fila ao benefício após o seguro-desemprego, mantidas as condições de elegibilidade"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 54,
+       "trecho": "quem consegue um emprego, ainda que temporário, poderá voltar ao benefício se precisar"
+      }
+     ]
+    },
+    {
+     "texto": "Proibir o uso dos recursos dos programas sociais para apostas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 33,
+       "trecho": "Vamos proibir o uso dos recursos dos programas sociais para apostas"
+      }
+     ]
+    },
+    {
+     "texto": "Retomar o Casa Verde e Amarela, com meta de 2,5 milhões de residências e a menor taxa de juros possível no financiamento.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 47,
+       "trecho": "Vamos retomar o Casa Verde e Amarela, com meta de 2,5 milhões de residências e a menor taxa de juros possível no financiamento."
+      }
+     ]
+    },
+    {
+     "texto": "Estruturar uma Rede Nacional de Cuidado, ampliando o apoio a idosos e pessoas com deficiência com centros-dia e atendimento domiciliar.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 21,
+       "trecho": "Também estruturaremos uma Rede Nacional de Cuidado, ampliando o apoio a idosos e pessoas com deficiência, com centros-dia e atendimento domiciliar"
+      }
+     ]
+    },
+    {
+     "texto": "Oferecer o programa Casa Segura para Envelhecer, com subsídio à acessibilidade domiciliar para famílias de menor renda.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 39,
+       "trecho": "vamos oferecer o programa Casa Segura para Envelhecer, com subsídio à acessibilidade domiciliar para famílias de menor renda."
+      }
+     ]
+    }
+   ]
+  },
+  "lula": {
+   "nao_encontrado": false,
+   "resumo": [
+    {
+     "texto": "Manter, aperfeiçoar e ampliar as políticas de proteção social para quem mais necessita, com programas de transferência de renda entre os instrumentos citados.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 18,
+       "trecho": "programas eficientes de transferência de renda. Por isso, devemos manter, aperfeiçoar e ampliar as políticas de proteção social para quem mais necessita."
+      }
+     ]
+    },
+    {
+     "texto": "Dar continuidade à política de valorização do salário mínimo como meio de distribuição de renda e combate à pobreza.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 74,
+       "trecho": "o novo mandato de Lula dará continuidade à política de valorização do salário mínimo como meio estratégico de distribuição de renda, combate à pobreza e promoção do desenvolvimento econômico e social."
+      }
+     ]
+    },
+    {
+     "texto": "Fortalecer a Proteção Social Básica e a Proteção Social Especial de média e alta complexidade.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 25,
+       "trecho": "No próximo mandato, avançaremos ainda mais no fortalecimento da Proteção Social Básica e da Proteção Social Especial de média e alta complexidade"
+      }
+     ]
+    },
+    {
+     "texto": "Fortalecer e dar escala às ações da Política Nacional de Cuidados, com apoio às Cuidotecas para crianças de 3 a 12 anos.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 25,
+       "trecho": "o governo Lula instituiu a Política Nacional de Cuidados"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 26,
+       "trecho": "Começamos a implementar as ações no âmbito desta política, que, no novo mandato, serão fortalecidas, e ganharão escala e sustentabilidade. Apoiaremos as Cuidotecas, espaços de acolhida de crianças de 3 a 12 anos"
+      }
+     ]
+    },
+    {
+     "texto": "Fomentar a construção de lavanderias públicas, cozinhas solidárias e restaurantes populares como infraestruturas de cuidados indiretos e comunitários.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 26,
+       "trecho": "Fomentaremos a construção de infraestruturas que ampliam os cuidados indiretos e comunitários, como as lavanderias públicas, as cozinhas solidárias e os restaurantes populares."
+      }
+     ]
+    },
+    {
+     "texto": "Ampliar e fortalecer as políticas para crianças por meio do enfrentamento da pobreza infantil e da garantia de acesso às políticas públicas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 24,
+       "trecho": "Continuaremos buscando ampliar e fortalecer as políticas para nossas crianças, por meio do enfrentamento da pobreza infantil, da garantia de acesso às políticas públicas e do direito ao brincar."
+      }
+     ]
+    },
+    {
+     "texto": "Avançar na garantia de alimentação saudável e continuar fortalecendo as instâncias de participação e governança da segurança alimentar.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 58,
+       "trecho": "internamente, vamos avançar ainda mais na garantia de alimentação saudável"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 58,
+       "trecho": "Para o próximo mandato, vamos continuar fortalecendo as instâncias de participação e governança na área da segurança alimentar e da produção de alimentos."
+      }
+     ]
+    },
+    {
+     "texto": "Manter e ampliar o Minha Casa Minha Vida para todas as faixas de renda, preservando o foco nas famílias de mais baixa renda.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 45,
+       "trecho": "O MCMV será mantido e ampliado no próximo mandato, para todas as faixas de renda e preservando seu foco nas famílias de mais baixa renda."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "semelhancas": [
+  {
+   "texto": "Manter e aperfeiçoar os programas e políticas de proteção social existentes.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 42,
+      "trecho": "vamos manter os programas sociais existentes, com aperfeiçoamento da gestão, correção de distorções e combate às fraudes."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 18,
+      "trecho": "programas eficientes de transferência de renda. Por isso, devemos manter, aperfeiçoar e ampliar as políticas de proteção social para quem mais necessita."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Ampliar o atendimento a idosos por meio de centros-dia e atendimento domiciliar.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 21,
+      "trecho": "Também estruturaremos uma Rede Nacional de Cuidado, ampliando o apoio a idosos e pessoas com deficiência, com centros-dia e atendimento domiciliar"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 22,
+      "trecho": "Vamos ampliar o apoio aos municípios para expandir e qualificar a rede de atendimento dos Centros-Dia"
+     },
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 22,
+      "trecho": "O outro para atendimento domiciliar, de ‘porta em porta’, em que o Estado vai até pessoas idosas com dificuldades de locomoção"
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Ampliar a oferta em instituições de longa permanência para idosos.",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 39,
+      "trecho": "vamos ampliar as instituições de longa permanência para idosos"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 22,
+      "trecho": "Seguiremos apoiando a ampliação das vagas públicas em Instituições de Longa Permanência"
+     }
+    ]
+   }
+  }
+ ],
+ "diferencas": [
+  {
+   "texto": "Apoio ao cuidado de crianças para liberar o tempo das famílias",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 21,
+      "trecho": "Onde não houver vaga na rede pública, a família receberá um voucher-creche para acesso à rede privada credenciada até a vaga pública surgir"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 26,
+      "trecho": "Apoiaremos as Cuidotecas, espaços de acolhida de crianças de 3 a 12 anos, que liberam o tempo das mulheres responsáveis pelo cuidado das crianças."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Uso da renda das famílias em apostas on-line",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 33,
+      "trecho": "Vamos proibir o uso dos recursos dos programas sociais para apostas"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 49,
+      "trecho": "mantendo os mecanismos de controle de gastos excessivos em apostas on-line"
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Programa habitacional para famílias de menor renda",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 47,
+      "trecho": "Vamos retomar o Casa Verde e Amarela, com meta de 2,5 milhões de residências e a menor taxa de juros possível no financiamento."
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 45,
+      "trecho": "O MCMV será mantido e ampliado no próximo mandato, para todas as faixas de renda e preservando seu foco nas famílias de mais baixa renda."
+     }
+    ]
+   }
+  },
+  {
+   "texto": "Segurança alimentar e acesso à comida",
+   "camada": "plano",
+   "citacoes": {
+    "flavio-bolsonaro": [
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 32,
+      "trecho": "Comida barata também é segurança alimentar"
+     },
+     {
+      "arquivo": "plano-de-governo_flavio.pdf",
+      "pagina": 32,
+      "trecho": "Vamos apoiar a produção nacional de fertilizantes, com os minerais que o Brasil possui, como o potássio e o fosfato"
+     }
+    ],
+    "lula": [
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 58,
+      "trecho": "internamente, vamos avançar ainda mais na garantia de alimentação saudável"
+     },
+     {
+      "arquivo": "Programa-Governo-LULA-2026.pdf",
+      "pagina": 58,
+      "trecho": "Para o próximo mandato, vamos continuar fortalecendo as instâncias de participação e governança na área da segurança alimentar e da produção de alimentos."
+     }
+    ]
+   }
+  }
+ ],
+ "omissoes": [
+  {
+   "tratado_por": "lula",
+   "texto": "Política de valorização do salário mínimo.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "Programa-Governo-LULA-2026.pdf",
+     "pagina": 74,
+     "trecho": "o novo mandato de Lula dará continuidade à política de valorização do salário mínimo como meio estratégico de distribuição de renda, combate à pobreza e promoção do desenvolvimento econômico e social."
+    }
+   ]
+  },
+  {
+   "tratado_por": "flavio-bolsonaro",
+   "texto": "Retorno do beneficiário ao programa social após emprego ou seguro-desemprego.",
+   "camada": "plano",
+   "citacoes": [
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 43,
+     "trecho": "garantiremos o retorno imediato e sem fila ao benefício após o seguro-desemprego, mantidas as condições de elegibilidade"
+    },
+    {
+     "arquivo": "plano-de-governo_flavio.pdf",
+     "pagina": 54,
+     "trecho": "quem consegue um emprego, ainda que temporário, poderá voltar ao benefício se precisar"
+    }
+   ]
+  }
+ ]
+}
