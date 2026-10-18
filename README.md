@@ -37,7 +37,7 @@ WD=web ./dock.sh web npm run build                                   # falha se 
 ```
 
 (*) Com chave, as chamadas ao Gemini passam pelos grafos LangGraph de `grafos.py`. Variáveis opcionais,
-repassadas pelo `dock.sh`: `GEMINI_MODELO` (padrão `gemini-2.5-flash`), `LLM_CONCORRENCIA` (padrão 4)
+repassadas pelo `dock.sh`: `GEMINI_MODELO` (padrão `gemini-3.8-flash`), `LLM_CONCORRENCIA` (padrão 4)
 e `LLM_RPM`, o limite de pedidos por minuto que o AI Studio mostra para a sua conta. Cada comando
 imprime chamadas, acertos de cache, falhas e tokens; o detalhe por chamada fica em
 `dados/cache-llm/chamadas.jsonl`, fora do git.

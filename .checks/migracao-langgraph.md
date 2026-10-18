@@ -47,6 +47,10 @@ Sources:
 | Espera sugerida no início da tentativa (rodada 3; substitui o momento da rodada 2) | o `retryDelay` vira um prazo por chave; a próxima tentativa daquela chave dorme só o que falta até o prazo, descontado o backoff do `RetryPolicy`; depois da última tentativa ninguém dorme | dormir logo após o erro: na 5ª tentativa, até 60 s de espera sem próxima chamada |
 | Limitador no `Gerador` (rodada 3; substitui o lugar da rodada 2) | `Gerador(limitador=InMemoryRateLimiter(requests_per_second=LLM_RPM/60, check_every_n_seconds=0.05, max_bucket_size=1))` chama `acquire()` antes de medir; `chamadas.jsonl` ganha `espera_ms` (fila do limitador e espera sugerida) separado de `ms` (só a chamada ao modelo) | limitador dentro do `ChatGoogleGenerativeAI`: `ms` somaria a fila e mostraria dezenas de segundos que o servidor não gastou |
 | Variáveis vazias ou inválidas (rodada 3) | vazia = padrão (`GEMINI_MODELO`, `LLM_RPM`, `LLM_CONCORRENCIA`); `LLM_RPM` precisa ser número finito > 0 e `LLM_CONCORRENCIA` inteiro ≥ 1, senão `SystemExit` com `ERRO: <variável> ...` | `int('')`/`float('nan')` direto: quebra com traceback, ou o limitador com `nan` trava para sempre |
+| Viradas de página no chunk (rodada 4) | cada chunk ganha `viradas: [[posição no texto, página], ...]`, a primeira em 0; `chunk.texto_marcado(c)` põe `[página N]` antes do trecho de cada página, e é isso que vai no prompt de resumo; `resumo.md` diz que a página da citação é a do último marcador antes do trecho e que um trecho não atravessa marcador | cabeçalho `[página 36-38]` por chunk: no teste real de 18/10 o modelo atribuiu tudo à primeira página, e 11 de 14 citações reprovaram; um chunk por página: mudaria tamanho e sobreposição (AC 4) |
+| Correção de página na geração (rodada 4) | no nó `filtrar`, citação do arquivo do candidato com `pagina` int cujo trecho não está na página citada: procura nas páginas da faixa (união das `paginas` dos chunks enviados no prompt daquele candidato); achou em exatamente uma, troca e registra `{candidato, texto, trecho, pagina_citada, pagina}`; em nenhuma ou em mais de uma, não troca e o bullet reprova. `verificar` não corrige nada | corrigir em `verificar`: temas já publicados que têm descartes passariam a mudar; procurar no PDF inteiro: trecho repetido em outra seção ganharia uma página que o modelo não viu |
+| Registro da correção (rodada 4) | `dados/geracao/<tema>.json` ganha `correcoes_pagina` só quando houve troca; `relatorio.gerar(..., correcoes)` mostra "Páginas corrigidas automaticamente" com o trecho e "pág. citada → pág. verdadeira"; sem troca, nem a chave nem a seção existem, e os rascunhos saem byte a byte iguais | só imprimir no terminal: o dono não veria a troca ao aprovar |
+| Modelo padrão (rodada 4; substitui o padrão da linha "Modelo") | `llm.MODELO_PADRAO = "gemini-3.8-flash"`. Em 18/10/2026 a API respondeu 404 para `gemini-2.5-flash`: "no longer available to new users. Please update your code to use models/gemini-3.8-flash" | manter 2.5 e exigir `GEMINI_MODELO`: toda conta nova falharia na primeira chamada |
 | Página no relatório (rodada 3) | `relatorio._link` só põe `#page=<n>` com `int`; o texto `pág. ...` passa por `html.escape` | `int(c.get("pagina", 0))`: página em texto derrubava `verificar` ao gerar o relatório, e o valor entrava cru no HTML |
 
 ## Checks
@@ -84,8 +88,8 @@ Proof: `pytest pipeline/tests/test_grafos.py::test_classificar_por_grafo`
 **L11** - sem `GEMINI_API_KEY`: `provedor_padrao()` é `None`, `comparar --origem gemini` sai com código 2 e o caminho sem chave não importa `langgraph`
 Proof: `pytest pipeline/tests/test_grafos.py -k sem_chave`
 
-**L12** - conteúdo publicado inalterado: os 8 `dados/comparacoes/*.json` são reproduzidos byte a byte a partir de `dados/geracao` + `dados/juiz`; e `comparar --todos` + `verificar --todos` depois da migração deixam os 17 SHA-256 de `comparacoes`, `geracao` e `chunks` iguais aos de antes
-Proof: `pytest pipeline/tests/test_comparacoes_reais.py::test_comparacoes_reproduziveis` e `sha256sum -c hashes-antes.txt` após os dois comandos
+**L12** - conteúdo publicado inalterado: os 8 `dados/comparacoes/*.json` são reproduzidos byte a byte a partir de `dados/geracao` + `dados/juiz`; `ingest` + `comparar --todos` + `verificar --todos` deixam os 16 SHA-256 de `comparacoes` e `geracao` iguais aos de antes da migração e `dados/relatorios` sem mudança. Renegociado na rodada 4 a pedido do dono: `dados/chunks/chunks.json` muda por causa de `viradas`; os 84 chunks mantêm todos os campos anteriores idênticos aos de `main`, e o arquivo gravado é o que o código produz
+Proof: `pytest pipeline/tests/test_comparacoes_reais.py::test_comparacoes_reproduziveis pipeline/tests/test_chunk.py::test_chunks_gravados_iguais_aos_recalculados`; `sha256sum -c` dos 16 hashes de `hashes-antes.txt` sem a linha de `chunks.json` após os comandos; e a comparação de `git show main:dados/chunks/chunks.json` com o arquivo atual sem a chave `viradas`
 
 **L13** - dependências fixadas: toda linha de `docker/pipeline.requirements.txt` tem `==`, a imagem e o job `pipeline` do CI instalam desse arquivo, `pip check` limpo
 Proof: `pytest pipeline/tests/test_grafos.py::test_dependencias_fixadas` e `./dock.sh pipeline pip check`
@@ -123,11 +127,23 @@ Proof: `GEMINI_MODELO=m LLM_CONCORRENCIA=3 LLM_RPM=5 ./dock.sh pipeline 'echo $G
 **L24** - pelo cliente real: 500, tempo esgotado e conexão recusada são repetidos (`deve_repetir` verdadeiro e nova requisição); `max_concurrency` limita as chamadas simultâneas (10 prompts, concorrência 2 → pico 2)
 Proof: `pytest pipeline/tests/test_grafos.py::test_retry_rede_e_500 pipeline/tests/test_grafos.py::test_concorrencia_limitada`
 
-**L25** - variáveis: `GEMINI_MODELO`, `LLM_RPM` e `LLM_CONCORRENCIA` vazias caem no padrão (`gemini-2.5-flash`, sem limitador, 4); `LLM_RPM` "nan", "abc" ou "0" e `LLM_CONCORRENCIA` "0" ou "x" saem com `SystemExit` e mensagem `ERRO: <variável>`
+**L25** - variáveis: `GEMINI_MODELO`, `LLM_RPM` e `LLM_CONCORRENCIA` vazias caem no padrão (`gemini-3.8-flash` desde a rodada 4, sem limitador, 4); `LLM_RPM` "nan", "abc" ou "0" e `LLM_CONCORRENCIA` "0" ou "x" saem com `SystemExit` e mensagem `ERRO: <variável>`
 Proof: `pytest pipeline/tests/test_grafos.py::test_variaveis_vazias_ou_invalidas`
 
 **L26** - cota diária: 429 com `QuotaFailure` de `quotaId` `GenerateRequestsPerDayPerProjectPerModel-FreeTier` → 1 requisição, sem repetição, e as tarefas seguintes canceladas sem chamar o servidor; 429 só com `quotaId` `...PerMinute...` → repetido
 Proof: `pytest pipeline/tests/test_grafos.py::test_cota_diaria_nao_repete`
+
+**L27** - viradas de página: num chunk sintético que cobre as páginas 1 e 2, `viradas` é `[[0, 1], [início da 1ª palavra da pág. 2, 2]]` e `texto_marcado` é `[página 1] <palavras da 1> [página 2] <palavras da 2>`; nos 84 chunks reais, as páginas de `viradas` são exatamente `paginas`, a primeira começa em 0, cada trecho entre marcadores ocorre literalmente na sua página, e tirar os marcadores devolve `texto`
+Proof: `pytest pipeline/tests/test_chunk.py::test_viradas_marcam_cada_pagina pipeline/tests/test_chunk.py::test_viradas_reais_batem_com_as_paginas`
+
+**L28** - o prompt de resumo leva `[página N]` em cada virada e a regra do marcador, e a faixa do candidato é a união das páginas dos chunks enviados; no filtro: trecho citado na página errada, mas presente em exatamente uma página da faixa, tem a página trocada e o bullet fica; presente em duas páginas da faixa, ou só fora dela, ou com `pagina` em texto: sem troca e o bullet sai; citação já certa não gera registro; a comparação recebe a página já corrigida
+Proof: `pytest pipeline/tests/test_grafos.py::test_prompt_marca_viradas pipeline/tests/test_grafos.py::test_corrige_pagina_so_quando_unica_na_faixa`
+
+**L29** - a troca fica registrada: `registrar(..., correcoes)` grava `correcoes_pagina`, e sem trocas o arquivo sai idêntico ao de antes (sem a chave); o relatório mostra "Páginas corrigidas automaticamente" com trecho escapado e "pág. 1 → 2"; sem trocas, a seção não aparece
+Proof: `pytest pipeline/tests/test_grafos.py::test_correcao_registrada_e_no_relatorio`
+
+**L30** - modelo padrão `gemini-3.8-flash`: `provedor_padrao()` sem `GEMINI_MODELO` usa `gemini-3.8-flash`, e a requisição vai para `/v1beta/models/gemini-3.8-flash:generateContent`
+Proof: `pytest pipeline/tests/test_grafos.py::test_variaveis_vazias_ou_invalidas pipeline/tests/test_grafos.py::test_requisicao_gemini`
 
 ## Swept
 
@@ -151,3 +167,7 @@ Um lote: `llm.py`, `grafos.py` (novo), `comparar.py`, `classificar.py`, `verific
 - Rodada 2: L16-L24 e as correções dos achados, no mesmo lote; verificação limitada ao diff da rodada e aos vereditos que não foram PASS.
 - Rodada 2 (verificador em `d683c2f`): FAIL - 24/24 checks provados, mas a linha de Landing "Formato" não batia (`{}` passava); 1 mutante sobreviveu de forma não determinística (L21 dependia de qual erro o LangGraph sorteia); 1 regressão média (cota diária com `retryDelay`: ~11 min para falhar) e 4 baixas.
 - Rodada 3: L25, L26 e as linhas de Landing "rodada 3". L16, L17, L18, L19, L21 e L22 ganharam valores mais estritos; nenhum foi afrouxado. É a última rodada antes de escalar ao dono.
+- Rodada 3 (verificador em `1fab36a`): PASS 26/26; 7 de 8 mutantes mortos (sobrevive a 2ª checagem de erro definitivo, sem teste); 1 regressão baixa (formato estrito aborta `{"nao_encontrado": true}` sem `resumo`), levada ao dono.
+- Teste real de 18/10 com a chave do dono (só `saude`, nada publicado): `gemini-2.5-flash` deu 404 para contas novas; com `gemini-3.8-flash`, 3 chamadas sem erro, 21.739 tokens de entrada e 12.508 de saída, mas 11 de 14 citações com o trecho literal na página errada (o modelo atribuía tudo à primeira página da faixa `[página a-b]`).
+- Decidido pelo dono em 18/10: as três correções da rodada 4 (viradas no prompt, correção de página na geração, modelo padrão 3.8). A L12 foi renegociada por isso: `chunks.json` muda.
+- Rodada 4: L27-L30 e L12 renegociada; verificação nova limitada ao diff da rodada; depois, um novo teste real só de `saude`, sem publicar.
