@@ -8,7 +8,7 @@ O plano em vigor é [.specs/plano-final.md](.specs/plano-final.md).
 Nada é instalado na máquina: todo comando roda em Docker pelo [dock.sh](dock.sh).
 
 ```
-./dock.sh pipeline python -m rag_planos <comando>     # pipeline (Python 3.11 + PyMuPDF)
+./dock.sh pipeline python -m rag_planos <comando>     # pipeline (Python 3.11 + PyMuPDF + LangGraph)
 WD=web ./dock.sh web npm run <script>                 # site (Vite + React + Playwright)
 ```
 
@@ -18,7 +18,8 @@ WD=web ./dock.sh web npm run <script>                 # site (Vite + React + Pla
 |---|---|
 | `corpus/` | os dois PDFs, imutáveis |
 | `contrato/` | JSON Schema de `Comparação`, `Citação` e `themes.yaml` |
-| `pipeline/rag_planos/` | extração, chunking, classificação, comparação, verificação, relatório, avaliação, aprovação |
+| `pipeline/rag_planos/` | extração, chunking, classificação, comparação, verificação, relatório, avaliação, aprovação; as chamadas ao LLM são grafos LangGraph em `grafos.py` |
+| `docker/pipeline.requirements.txt` | lock das 56 dependências do pipeline; mudou a imagem, rode com `REBUILD=1` |
 | `dados/` | `themes.yaml`, `fontes.json`, páginas extraídas, chunks, rascunhos, vereditos do juiz, comparações, relatórios, conjunto-ouro |
 | `revisao/aprovados.yaml` | portão de publicação: `theme_id: sha256` do JSON aprovado |
 | `web/` | site; `scripts/build.ts` aplica as guardas e pré-renderiza as rotas |

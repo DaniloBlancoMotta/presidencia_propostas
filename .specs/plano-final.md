@@ -37,7 +37,7 @@ embeddings, cadeia de provedores, Cloud Run); aba "Na imprensa" e as camadas `de
 | 7 | Portão de publicação | `revisao/aprovados.yaml`: mapa `theme_id: sha256`. O build do site **só inclui** temas cujo JSON tem hash igual ao registrado; um JSON presente sem hash, ou com hash divergente, **falha o build** e nomeia o tema. Nada regerado vai ao ar sem nova aprovação. |
 | 8 | Recorte do MVP | 8 temas. Se em D4 algum tema não estiver aprovado, ele fica fora da grade e o site publica com os aprovados. Não há recorte menor planejado. |
 | 9 | Chunking | 400–800 tokens, sobreposição de **15%**, nunca cruza fronteira de `secao`; seção com menos de 400 tokens vira um chunk só. |
-| 10 | LLM da pré-computação | **Gemini Flash (free tier)**, chamado só offline, por um adaptador com retry/backoff e **cache em disco por hash do prompt**. Regerar um tema não gasta cota com o que já passou. |
+| 10 | LLM da pré-computação | **Gemini Flash (free tier)**, chamado só offline, orquestrado por **LangGraph** (decidido pelo dono em 18/10): grafos `comparar`, `juiz` e `classificar` em `grafos.py`, com fan-out paralelo e `RetryPolicy` (429/500/503 e rede, 5 tentativas) por nó; modelo por langchain-google-genai; **cache em disco próprio por hash do prompt**, que guarda só o texto da resposta. Versões fixadas em `docker/pipeline.requirements.txt`. Regerar um tema não gasta cota com o que já passou. |
 | 11 | "Ver no PDF" | **PDF.js (`pdfjs-dist`) hospedado no próprio domínio** em `/pdf/visualizador.html`, carregado só nessa rota, abrindo `/pdf/<arquivo>.pdf` na página citada. O PDF servido é o mesmo arquivo cujo SHA-256 está em `fontes.json`. |
 | 12 | Ordem dos candidatos | Sorteada 50/50 por um script inline no `<head>` que grava `data-ordem="ab"` ou `"ba"` no `<html>` antes da primeira pintura; o CSS inverte colunas e abas por esse atributo. Vale em todas as telas até recarregar. O botão "Trocar ordem dos candidatos" inverte o atributo. Não vai no link e não é guardada. |
 | 13 | Celular | Duas **abas**, uma por candidato, abaixo de 768 px; duas colunas de mesma largura a partir de 768 px. |
@@ -103,7 +103,8 @@ Rag_planos_presidencia/
 │   │   ├── verificar.py            # literal + juiz LLM, motivos de descarte
 │   │   ├── relatorio.py            # HTML de revisão
 │   │   ├── avaliar.py              # recall do ouro + convergências
-│   │   ├── llm.py                  # adaptador Gemini Flash, retry, cache em disco
+│   │   ├── llm.py                  # Gemini Flash (langchain-google-genai), cache em disco, deve_repetir
+│   │   ├── grafos.py               # LangGraph: comparar, juiz, classificar; RetryPolicy por nó
 │   │   └── prompts/                # classificar.md, resumo.md, comparar.md, juiz.md
 │   └── tests/
 ├── dados/
