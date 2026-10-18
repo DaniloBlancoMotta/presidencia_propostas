@@ -93,12 +93,15 @@ async function principal() {
       comparacoes: Object.fromEntries(p.ids.map((id) => [id, pub.comparacoes[id]])),
     };
     const { html, titulo } = renderizar(dados);
+    // Funções de substituição: o 2º argumento de .replace/.replaceAll é interpretado como padrão
+    // especial ($&, $', $`, $$) quando é uma string. titulo e html vêm do conteúdo aprovado dos
+    // planos (pode conter "R$"), e um texto com "$'" ou "$$" corromperia a página sem aviso.
     const pagina = modelo
       .replace("<!--ordem-->", `<script>${SCRIPT_ORDEM}</script>`)
-      .replaceAll("<!--titulo-->", escaparAttr(titulo))
-      .replaceAll("<!--descricao-->", escaparAttr(DESCRICAO_PREVIA))
-      .replace("<!--app-->", html)
-      .replace("<!--dados-->", `<script id="dados" type="application/json">${escaparJson(dados)}</script>`);
+      .replaceAll("<!--titulo-->", () => escaparAttr(titulo))
+      .replaceAll("<!--descricao-->", () => escaparAttr(DESCRICAO_PREVIA))
+      .replace("<!--app-->", () => html)
+      .replace("<!--dados-->", () => `<script id="dados" type="application/json">${escaparJson(dados)}</script>`);
     escrever(resolve(SAIDA, p.arquivo), pagina);
   }
   const coleta = fontes.map((f) => f.coletado_em).sort()[0];
