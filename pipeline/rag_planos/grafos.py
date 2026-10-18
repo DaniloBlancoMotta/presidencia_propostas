@@ -33,6 +33,15 @@ def _execucao() -> dict:
     return {"max_concurrency": int(os.environ.get("LLM_CONCORRENCIA", "4"))}
 
 
+def _rodar(grafo, entrada: dict) -> dict:
+    """Invoca o grafo; se o LangGraph trouxer a tarefa cancelada, sobe o erro que a cancelou."""
+    try:
+        return grafo.invoke(entrada, _execucao())
+    except llm.ChamadaCancelada as e:
+        original = e.original
+    raise original  # fora do except: a cadeia __cause__ do erro original fica intacta
+
+
 def _dict(x: Any) -> dict:
     return x if isinstance(x, dict) else {}
 
@@ -44,13 +53,22 @@ def _literal(bullet: Any, paginas: dict) -> bool:
     for ci in bullet.get("citacoes", []):
         if not isinstance(ci, dict) or not isinstance(ci.get("trecho"), str):
             return False
-        try:
-            pagina = int(ci.get("pagina", 0))
-        except (TypeError, ValueError):
+        pagina = ci.get("pagina")
+        if not isinstance(pagina, int) or isinstance(pagina, bool):
             return False
         if not trecho_na_pagina(ci["trecho"], extrair.texto_da_pagina(paginas, ci.get("arquivo"), pagina) or ""):
             return False
     return True
+
+
+def _validar_resumo(r: Any) -> None:
+    if not isinstance(r, dict) or not isinstance(r.get("resumo", []), list):
+        raise ValueError("resposta de resumo fora do formato: " + json.dumps(r, ensure_ascii=False)[:120])
+
+
+def _validar_comparar(r: Any) -> None:
+    if not isinstance(r, dict) or not all(isinstance(r.get(k, []), list) for k in LISTAS):
+        raise ValueError("resposta de comparação fora do formato: " + json.dumps(r, ensure_ascii=False)[:120])
 
 
 # --- comparar --------------------------------------------------------------------------------
@@ -69,7 +87,7 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
         return [Send("resumo", {"cid": cid, "prompt": p}) for cid, p in s["pedidos"].items()] or ["filtrar"]
 
     def resumo(e: dict):
-        return {"brutos": {e["cid"]: gerador.json(e["prompt"])}}
+        return {"brutos": {e["cid"]: gerador.json(e["prompt"], "resumo", _validar_resumo)}}
 
     def filtrar(s: EstadoComparar):
         candidatos = {}
@@ -81,7 +99,8 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
 
     def comparar(s: EstadoComparar):
         r = _dict(gerador.json(llm.prompt("comparar", rotulo=s["tema"]["rotulo"],
-                                          resumos=json.dumps(s["candidatos"], ensure_ascii=False))))
+                                          resumos=json.dumps(s["candidatos"], ensure_ascii=False)),
+                               "comparar", _validar_comparar))
         return {"listas": {k: r.get(k, []) for k in LISTAS}}
 
     g = StateGraph(EstadoComparar)
@@ -97,8 +116,7 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
 
 def comparar(gerador: llm.Gerador, tema: dict, pedidos: dict[str, str], paginas: dict,
              retry: RetryPolicy = RETRY) -> dict:
-    s = montar_comparar(gerador, retry).invoke({"tema": tema, "pedidos": pedidos, "paginas": paginas},
-                                               _execucao())
+    s = _rodar(montar_comparar(gerador, retry), {"tema": tema, "pedidos": pedidos, "paginas": paginas})
     return {"candidatos": s["candidatos"], **s["listas"]}
 
 
@@ -123,7 +141,7 @@ def montar_juiz(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
 
     def julgar(it: dict):
         trechos = "\n".join(f"[{c['arquivo']} p.{c['pagina']}] {c['trecho']}" for c in it["trechos"])
-        v = gerador.json(llm.prompt("juiz", afirmacao=it["texto"], trechos=trechos))
+        v = gerador.json(llm.prompt("juiz", afirmacao=it["texto"], trechos=trechos), "juiz")
         return {"vereditos": {it["chave"]: _veredito(v)}}
 
     g = StateGraph(EstadoJuiz)
@@ -136,7 +154,7 @@ def montar_juiz(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
 def julgar(gerador: llm.Gerador, itens: list[dict], retry: RetryPolicy = RETRY) -> dict[str, dict]:
     if not itens:
         return {}
-    return montar_juiz(gerador, retry).invoke({"itens": itens}, _execucao()).get("vereditos", {})
+    return _rodar(montar_juiz(gerador, retry), {"itens": itens}).get("vereditos", {})
 
 
 # --- classificar -----------------------------------------------------------------------------
@@ -151,7 +169,7 @@ def montar_classificar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
         return [Send("classificar", p) for p in s["pedidos"]] or [END]
 
     def classificar(p: dict):
-        return {"respostas": {p["i"]: gerador.json(p["prompt"])}}
+        return {"respostas": {p["i"]: gerador.json(p["prompt"], "classificar")}}
 
     g = StateGraph(EstadoClassificar)
     g.add_node("classificar", classificar, retry_policy=retry)
@@ -164,6 +182,5 @@ def classificar(gerador: llm.Gerador, prompts: list[str], retry: RetryPolicy = R
     """Resposta decodificada de cada prompt, na ordem dos prompts."""
     if not prompts:
         return []
-    s = montar_classificar(gerador, retry).invoke(
-        {"pedidos": [{"i": i, "prompt": p} for i, p in enumerate(prompts)]}, _execucao())
+    s = _rodar(montar_classificar(gerador, retry), {"pedidos": [{"i": i, "prompt": p} for i, p in enumerate(prompts)]})
     return [s["respostas"][i] for i in range(len(prompts))]

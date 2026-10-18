@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from rag_planos import comparar, config, extrair, verificar
+from rag_planos import comparar, config, extrair, temas, verificar
 from rag_planos.literal import trecho_na_pagina
 
 ARQUIVOS = sorted((config.DADOS / "comparacoes").glob("*.json"))
@@ -47,6 +47,7 @@ def test_todo_json_ate_30kb():
 @pytest.mark.skipif(not ARQUIVOS, reason="nenhuma comparação gerada ainda")
 def test_comparacoes_reproduziveis(paginas):
     """L12: cada JSON publicado sai byte a byte de dados/geracao + dados/juiz, sem chave de API."""
+    assert {a.stem for a in ARQUIVOS} == {t["id"] for t in temas.carregar()}
     fontes = json.loads((config.DADOS / "fontes.json").read_text(encoding="utf-8"))
     for arq in ARQUIVOS:
         tid = arq.stem

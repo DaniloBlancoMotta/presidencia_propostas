@@ -1,16 +1,18 @@
-"""Camada de LLM em LangGraph (checks L1-L11 e L13 de .checks/migracao-langgraph.md).
+"""Camada de LLM em LangGraph (checks L1-L11, L13 e L16-L24 de .checks/migracao-langgraph.md).
 
 Modelo falso em memória, ou o ChatGoogleGenerativeAI real contra um servidor HTTP local que imita
 o endpoint do Gemini. Nenhum teste sai para a rede.
 """
 import hashlib
+import itertools
 import json
 import re
+import socket
 import subprocess
 import sys
 import threading
 import time
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib.metadata import version
 from pathlib import Path
 
@@ -127,7 +129,8 @@ def test_cache_segunda_execucao_sem_chamadas(tmp_path, paginas_falsas):
     b = comparar.com_llm(TEMA, chunks_do_corpus(), paginas_falsas, g2)
     assert a == b
     assert len(m.prompts) == 3 and (g2.chamadas, g2.do_cache) == (0, 3)
-    assert g2.resumo() == "LLM gemini:gemini-2.5-flash: 0 chamadas, 3 do cache"
+    assert g2.resumo() == ("LLM gemini:gemini-2.5-flash: 0 chamadas, 3 do cache, 0 falhas, "
+                           "0 tokens de entrada, 0 de saída")
     assert len(list(tmp_path.glob("*.json"))) == 3
     for p in m.prompts:
         nome = hashlib.sha256(("gemini:gemini-2.5-flash\n" + p).encode("utf-8")).hexdigest() + ".json"
@@ -167,32 +170,43 @@ def test_mesma_entrada_mesmo_json(tmp_path, paginas_falsas, monkeypatch):
 # --- L6, L7: ChatGoogleGenerativeAI real contra servidor falso -------------------------------
 
 class ServidorGemini:
-    """POST /v1beta/models/<modelo>:generateContent; `roteiro` = status de erro antes do 200."""
+    """POST /v1beta/models/<modelo>:generateContent. `roteiro`: o que responder antes do 200 -
+    um status de erro, ou {"status", "corpo", "dormir"}; `uso`: usageMetadata do 200."""
 
     def __init__(self, texto='{"semelhancas": [], "diferencas": [], "omissoes": []}'):
-        self.roteiro, self.pedidos, self.texto = [], [], texto
+        self.roteiro, self.pedidos, self.texto, self.uso = [], [], texto, None
         srv = self
 
         class H(BaseHTTPRequestHandler):
             def do_POST(self):
                 corpo = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-                srv.pedidos.append({"path": self.path, "corpo": corpo,
+                srv.pedidos.append({"path": self.path, "corpo": corpo, "t": time.monotonic(),
                                     "headers": {k.lower(): v for k, v in self.headers.items()}})
-                status = srv.roteiro.pop(0) if srv.roteiro else 200
-                resp = ({"candidates": [{"content": {"role": "model", "parts": [{"text": srv.texto}]},
-                                         "finishReason": "STOP"}]} if status == 200
-                        else {"error": {"code": status, "message": "falso", "status": "FALSO"}})
+                passo = srv.roteiro.pop(0) if srv.roteiro else 200
+                passo = passo if isinstance(passo, dict) else {"status": passo}
+                time.sleep(passo.get("dormir", 0))
+                status = passo.get("status", 200)
+                if status == 200:
+                    resp = {"candidates": [{"content": {"role": "model", "parts": [{"text": srv.texto}]},
+                                            "finishReason": "STOP"}]}
+                    if srv.uso:
+                        resp["usageMetadata"] = srv.uso
+                else:
+                    resp = passo.get("corpo") or {"error": {"code": status, "message": "falso", "status": "FALSO"}}
                 dados = json.dumps(resp).encode()
-                self.send_response(status)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(dados)))
-                self.end_headers()
-                self.wfile.write(dados)
+                try:
+                    self.send_response(status)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(dados)))
+                    self.end_headers()
+                    self.wfile.write(dados)
+                except OSError:
+                    pass  # cliente já desistiu (teste de tempo esgotado)
 
             def log_message(self, *a):
                 pass
 
-        self.http = HTTPServer(("127.0.0.1", 0), H)
+        self.http = ThreadingHTTPServer(("127.0.0.1", 0), H)
         threading.Thread(target=self.http.serve_forever, daemon=True).start()
         self.url = f"http://127.0.0.1:{self.http.server_port}"
 
@@ -211,7 +225,8 @@ def _comparar_real(servidor, pasta, paginas):
 
 
 def test_retry_429_e_503_repetem(servidor, tmp_path, paginas_falsas):
-    assert (grafos.RETRY.max_attempts, grafos.RETRY.initial_interval, grafos.RETRY.backoff_factor) == (5, 2.0, 2.0)
+    r = grafos.RETRY
+    assert (r.max_attempts, r.initial_interval, r.backoff_factor, r.max_interval, r.jitter) == (5, 2.0, 2.0, 60.0, True)
     assert grafos.RETRY.retry_on is llm.deve_repetir and RAPIDO.max_attempts == 5
     servidor.roteiro = [429, 503]
     saida = _comparar_real(servidor, tmp_path, paginas_falsas)
@@ -250,13 +265,185 @@ def test_requisicao_gemini(servidor, tmp_path, paginas_falsas):
 
 def test_json_invalido_fora_do_cache(tmp_path):
     respostas = iter(["isto não é JSON", '{"ok": true}'])
-    g = gerador(ModeloFalso(lambda p: next(respostas)), tmp_path)
+    m = ModeloFalso(lambda p: next(respostas))
     with pytest.raises(ValueError):
-        g.json("p")
-    assert not list(tmp_path.iterdir())
+        gerador(m, tmp_path).json("p")
+    assert not list(tmp_path.glob("*.json"))
     assert not llm.deve_repetir(ValueError("x"))
+    g = gerador(m, tmp_path)  # a execução seguinte
     assert g.json("p") == {"ok": True}
-    assert [a.name for a in tmp_path.iterdir()] == [g.arquivo("p").name]
+    assert [a.name for a in tmp_path.glob("*.json")] == [g.arquivo("p").name]
+
+
+# --- L16, L17, L24: ritmo, espera sugerida, rede e concorrência ------------------------------
+
+def test_ritmo_por_cota(servidor, tmp_path, monkeypatch):
+    from langchain_core.rate_limiters import InMemoryRateLimiter
+    monkeypatch.setenv("GEMINI_API_KEY", "chave-falsa")
+    monkeypatch.delenv("LLM_RPM", raising=False)
+    assert llm.provedor_padrao().modelo.rate_limiter is None
+    monkeypatch.setenv("LLM_RPM", "600")
+    limitador = llm.provedor_padrao().modelo.rate_limiter
+    assert isinstance(limitador, InMemoryRateLimiter) and limitador.requests_per_second == 10
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url, rpm=600),
+                    "gemini", "gemini-2.5-flash", tmp_path)
+    inicio = time.monotonic()
+    for i in range(5):
+        g.json(f"p{i}")
+    assert time.monotonic() - inicio >= 0.4
+    assert len(servidor.pedidos) == 5
+
+
+def _429_com_espera(segundos):
+    return {"status": 429, "corpo": {"error": {"code": 429, "message": "cota", "status": "RESOURCE_EXHAUSTED",
+                                               "details": [{"@type": "type.googleapis.com/google.rpc.RetryInfo",
+                                                            "retryDelay": segundos}]}}}
+
+
+def test_retry_espera_sugerida(servidor, tmp_path, paginas_falsas):
+    servidor.roteiro = [_429_com_espera("1s")]
+    _comparar_real(servidor, tmp_path / "a", paginas_falsas)
+    assert len(servidor.pedidos) == 2
+    assert servidor.pedidos[1]["t"] - servidor.pedidos[0]["t"] >= 1.0
+    servidor.pedidos.clear()
+    servidor.roteiro = [_429_com_espera("30s")]
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url),
+                    "gemini", "gemini-2.5-flash", tmp_path / "b", espera_maxima=0.2)
+    grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
+    assert len(servidor.pedidos) == 2
+    assert 0.2 <= servidor.pedidos[1]["t"] - servidor.pedidos[0]["t"] < 2.0
+
+
+def test_retry_rede_e_500(servidor, tmp_path, paginas_falsas):
+    servidor.roteiro = [500]
+    _comparar_real(servidor, tmp_path / "a", paginas_falsas)
+    assert len(servidor.pedidos) == 2
+    servidor.pedidos.clear()
+    servidor.roteiro = [{"dormir": 1.5}]  # mais que o timeout do cliente
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=servidor.url, timeout=0.5),
+                    "gemini", "gemini-2.5-flash", tmp_path / "b")
+    grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
+    assert len(servidor.pedidos) == 2 and g.falhas == 1
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        porta = s.getsockname()[1]
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-falsa", base_url=f"http://127.0.0.1:{porta}"),
+                    "gemini", "gemini-2.5-flash", tmp_path / "c")
+    with pytest.raises(Exception) as erro:
+        grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
+    assert llm.deve_repetir(erro.value) and (g.chamadas, g.falhas) == (5, 5)
+
+
+def test_concorrencia_limitada(tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_CONCORRENCIA", "2")
+    estado, trava = {"agora": 0, "pico": 0}, threading.Lock()
+
+    def lento(p):
+        with trava:
+            estado["agora"] += 1
+            estado["pico"] = max(estado["pico"], estado["agora"])
+        time.sleep(0.05)
+        with trava:
+            estado["agora"] -= 1
+        return 0
+
+    grafos.classificar(gerador(ModeloFalso(lambda p: "[]", latencia=lento), tmp_path), [f"p{i}" for i in range(10)])
+    assert estado["pico"] == 2
+
+
+# --- L18-L22: telemetria, formato, prompt idêntico, erro definitivo, página -------------------
+
+def test_telemetria_local(servidor, tmp_path, paginas_falsas):
+    servidor.uso = {"promptTokenCount": 11, "candidatesTokenCount": 7, "totalTokenCount": 18}
+    servidor.roteiro = [429]
+    g = llm.Gerador(llm.gemini("gemini-2.5-flash", "chave-secreta-123", base_url=servidor.url),
+                    "gemini", "gemini-2.5-flash", tmp_path)
+    grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)
+    grafos.comparar(g, TEMA, {}, paginas_falsas, retry=RAPIDO)  # do cache: nenhuma linha nova
+    bruto = (tmp_path / "chamadas.jsonl").read_text(encoding="utf-8")
+    linhas = [json.loads(l) for l in bruto.splitlines()]
+    assert [l["erro"] for l in linhas] == ["GoogleRateLimitError 429", None]
+    assert (linhas[1]["tokens_entrada"], linhas[1]["tokens_saida"]) == (11, 7)
+    assert {l["etapa"] for l in linhas} == {"comparar"}
+    assert {l["modelo"] for l in linhas} == {"gemini:gemini-2.5-flash"}
+    prompt = servidor.pedidos[0]["corpo"]["contents"][0]["parts"][0]["text"]
+    assert {l["chave"] for l in linhas} == {g.arquivo(prompt).stem}
+    assert "chave-secreta-123" not in bruto and "Você compara" not in bruto
+    assert g.resumo() == ("LLM gemini:gemini-2.5-flash: 2 chamadas, 1 do cache, 1 falhas, "
+                          "11 tokens de entrada, 7 de saída")
+
+
+def test_resumo_sai_mesmo_com_erro(tmp_path, monkeypatch, capsys):
+    def resp(p):
+        if p.startswith("Você resume"):
+            return '{"nao_encontrado": true, "resumo": []}'
+        raise ValueError("falha definitiva na comparação")
+
+    g = gerador(ModeloFalso(resp), tmp_path)
+    monkeypatch.setattr(llm, "provedor_padrao", lambda: g)
+    with pytest.raises(ValueError, match="falha definitiva"):
+        main(["comparar", "saude", "--origem", "gemini"])
+    assert "LLM gemini:gemini-2.5-flash: 3 chamadas, 0 do cache, 1 falhas" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("etapa,resposta", [
+    ("resume", "[]"), ("resume", '{"resumo": {"texto": "x"}}'),
+    ("compara", '[{"semelhancas": []}]'), ("compara", '{"semelhancas": "nenhuma"}')])
+def test_formato_invalido_fora_do_cache(tmp_path, paginas_falsas, etapa, resposta):
+    g = gerador(ModeloFalso(lambda p: resposta if p.startswith("Você " + etapa) else responder(p)), tmp_path)
+    with pytest.raises(ValueError, match="fora do formato"):
+        comparar.com_llm(TEMA, chunks_do_corpus(), paginas_falsas, g)
+    gravados = [json.loads(a.read_text(encoding="utf-8"))["resposta"] for a in tmp_path.glob("*.json")]
+    assert resposta not in gravados
+
+
+def test_prompt_identico_uma_chamada(tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_CONCORRENCIA", "4")
+    n = itertools.count()
+    m = ModeloFalso(lambda p: json.dumps([{"theme_id": "saude", "confianca": 0.1 + next(n) / 100}]),
+                    latencia=lambda p: 0.05)
+    g = gerador(m, tmp_path)
+    respostas = grafos.classificar(g, ["mesmo prompt"] * 4)
+    assert len(m.prompts) == 1 and (g.chamadas, g.do_cache) == (1, 3)
+    cache = json.loads(json.loads(g.arquivo("mesmo prompt").read_text(encoding="utf-8"))["resposta"])
+    assert respostas == [cache] * 4
+
+
+class ErroHttp(Exception):
+    def __init__(self, code):
+        super().__init__(f"HTTP {code}")
+        self.code = code
+
+
+def test_erro_definitivo_interrompe(tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_CONCORRENCIA", "2")
+
+    def resp(p):
+        if p == "p0":
+            raise ErroHttp(400)
+        return "[]"
+
+    m = ModeloFalso(resp, latencia=lambda p: 0.0 if p == "p0" else 0.05)
+    with pytest.raises(ErroHttp):
+        grafos.classificar(gerador(m, tmp_path), [f"p{i}" for i in range(10)], retry=RAPIDO)
+    assert len(m.prompts) <= 2
+
+
+@pytest.mark.parametrize("pagina,trecho", [
+    (2.0, "Vamos corrigir a Tabela SUS."), ("2", "Vamos corrigir a Tabela SUS."),
+    (True, "Apoiamos a escola em tempo integral."), (None, "Vamos corrigir a Tabela SUS.")])
+def test_pagina_nao_inteira_reprova(pagina, trecho, paginas_falsas, conteudo_valido):
+    ci = cit(FLAVIO, pagina, trecho)
+    if pagina is None:
+        del ci["pagina"]
+    assert not grafos._literal({"texto": "x", "citacoes": [ci]}, paginas_falsas)
+    assert grafos._literal({"texto": "x", "citacoes": [cit(FLAVIO, 2, "Vamos corrigir a Tabela SUS.")]}, paginas_falsas)
+    for malformado in ([{"arquivo": FLAVIO, "pagina": 2}], ["Vamos corrigir a Tabela SUS."], "x"):
+        assert not grafos._literal({"texto": "x", "citacoes": malformado}, paginas_falsas)
+    conteudo_valido["candidatos"]["flavio-bolsonaro"]["resumo"][0]["citacoes"][0] = ci
+    _, descartes, _ = verificar.verificar("t", conteudo_valido, paginas_falsas)
+    assert [d["motivo"] for d in descartes if d["item"]["texto"] == "Corrigir a Tabela SUS."] == \
+        ["trecho_nao_encontrado"]
 
 
 # --- L9: grafo juiz --------------------------------------------------------------------------
@@ -313,6 +500,13 @@ def test_classificar_por_grafo(tmp_path, monkeypatch):
     assert chunks[0]["temas"] == [{"theme_id": "educacao", "confianca": 0.6}, {"theme_id": "saude", "confianca": 0.25}]
     assert chunks[1]["temas"] == [{"theme_id": "educacao", "confianca": 0.25}]
     assert chunks[2]["temas"] == []
+    malformada = json.dumps(["saude", {"theme_id": "educacao", "confianca": "alta"},
+                             {"theme_id": "saude", "confianca": 1}, {"theme_id": "educacao"}])
+    outro = [{"texto": "Mais verbas para o SUS."}, {"texto": "Outro texto."}]
+    m2 = ModeloFalso(lambda p: malformada if "Mais verbas" in p else '{"theme_id": "saude", "confianca": 0.9}')
+    classificar.classificar(outro, temas, gerador(m2, tmp_path / "m"))
+    assert outro[0]["temas"] == [{"theme_id": "saude", "confianca": 1.0}]
+    assert outro[1]["temas"] == []
 
 
 # --- L11: sem chave --------------------------------------------------------------------------

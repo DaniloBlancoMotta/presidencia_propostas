@@ -7,6 +7,7 @@ Comandos: fontes, ingest, comparar, exportar-juiz, verificar, ouro, avaliar, apr
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import sys
 from pathlib import Path
@@ -15,6 +16,16 @@ import yaml
 
 from . import (aprovar, avaliar, chunk, classificar, comparar, config, extrair, fontes, llm,
                relatorio, temas, verificar)
+
+
+@contextlib.contextmanager
+def _resumo_llm(provedor):
+    """Imprime chamadas, cache, falhas e tokens do LLM ao sair, também quando o comando falha."""
+    try:
+        yield
+    finally:
+        if provedor:
+            print(provedor.resumo(), flush=True)
 
 
 def _temas_alvo(args) -> list[dict]:
@@ -40,7 +51,8 @@ def cmd_ingest(args) -> int:
     for arquivo, pags in paginas.items():
         cid = config.ARQUIVO_PARA_CANDIDATO[arquivo]
         todos += chunk.cortar(pags, cid, config.CANDIDATOS[cid]["partido"], arquivo)
-    classificar.classificar(todos, lista_temas, provedor)
+    with _resumo_llm(provedor):
+        classificar.classificar(todos, lista_temas, provedor)
     destino = config.DADOS / "chunks" / "chunks.json"
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(json.dumps(todos, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -49,8 +61,6 @@ def cmd_ingest(args) -> int:
         print(f"ERRO: chunks sem página: {sem_pagina}", file=sys.stderr)
         return 1
     print(f"{len(todos)} chunks · classificação: {'palavras-chave + LLM' if provedor else 'palavras-chave'}")
-    if provedor:
-        print(provedor.resumo())
     for tid in (t["id"] for t in lista_temas):
         n = {cid: sum(1 for c in todos if c["candidato"] == cid and any(t["theme_id"] == tid for t in c["temas"]))
              for cid in config.CANDIDATOS}
@@ -66,16 +76,16 @@ def cmd_comparar(args) -> int:
         if provedor is None:
             print("ERRO: --origem gemini exige GEMINI_API_KEY", file=sys.stderr)
             return 2
-    for tema in _temas_alvo(args):
-        if provedor:
-            chunks = json.loads((config.DADOS / "chunks" / "chunks.json").read_text(encoding="utf-8"))
-            conteudo, origem = comparar.com_llm(tema, chunks, paginas, provedor), f"gemini ({provedor.nome_modelo})"
-        else:
-            conteudo, origem = comparar.de_rascunho(tema["id"]), "rascunho (dados/rascunhos)"
-        reg = comparar.registrar(tema["id"], conteudo, origem)
-        print(f"gerado {tema['id']} · {reg['origem']} · {reg['gerado_em']}")
-    if provedor:
-        print(provedor.resumo())
+    with _resumo_llm(provedor):
+        for tema in _temas_alvo(args):
+            if provedor:
+                chunks = json.loads((config.DADOS / "chunks" / "chunks.json").read_text(encoding="utf-8"))
+                conteudo = comparar.com_llm(tema, chunks, paginas, provedor)
+                origem = f"gemini ({provedor.nome_modelo})"
+            else:
+                conteudo, origem = comparar.de_rascunho(tema["id"]), "rascunho (dados/rascunhos)"
+            reg = comparar.registrar(tema["id"], conteudo, origem)
+            print(f"gerado {tema['id']} · {reg['origem']} · {reg['gerado_em']}")
     return 0
 
 
@@ -105,27 +115,30 @@ def cmd_verificar(args) -> int:
         return 2
     lista_fontes = json.loads(arq_fontes.read_text(encoding="utf-8"))
     provedor = llm.provedor_padrao()
-    for tema in _temas_alvo(args):
-        g = _geracao(tema["id"])
-        juiz = verificar.juiz_llm(provedor, g["conteudo"], paginas) if provedor else \
-            verificar.juiz_vereditos(config.DADOS / "juiz" / f"{tema['id']}.json")
-        verificado, descartes, mantidos = verificar.verificar(tema["id"], g["conteudo"], paginas, juiz)
-        comp = verificar.montar(tema["id"], g["gerado_em"], verificado, lista_fontes)
-        dados = verificar.serializar(comp)
-        destino = config.DADOS / "comparacoes" / f"{tema['id']}.json"
-        destino.parent.mkdir(parents=True, exist_ok=True)
-        destino.write_bytes(dados)
-        sha = aprovar.sha256_arquivo(destino)
-        rel = relatorio.gerar(tema, comp, sha, g["origem"], mantidos, descartes,
-                              config.DADOS / "relatorios" / f"{tema['id']}.html")
-        pend = sum(1 for m in mantidos if m["juiz"] == "nao_executado")
-        print(f"{tema['id']}: {len(mantidos)} mantidos, {len(descartes)} descartados, juiz pendente em {pend}"
-              f" · {len(dados) / 1024:.1f} KB · relatório {rel.relative_to(config.RAIZ)}")
-        for d in descartes:
-            print(f"    descartado [{d['motivo']}] {d['lista']}: {d['item'].get('texto', '')[:80]}")
-    if provedor:
-        print(provedor.resumo())
+    with _resumo_llm(provedor):
+        for tema in _temas_alvo(args):
+            _verificar_tema(tema, paginas, lista_fontes, provedor)
     return 0
+
+
+def _verificar_tema(tema: dict, paginas: dict, lista_fontes: list, provedor) -> None:
+    g = _geracao(tema["id"])
+    juiz = verificar.juiz_llm(provedor, g["conteudo"], paginas) if provedor else \
+        verificar.juiz_vereditos(config.DADOS / "juiz" / f"{tema['id']}.json")
+    verificado, descartes, mantidos = verificar.verificar(tema["id"], g["conteudo"], paginas, juiz)
+    comp = verificar.montar(tema["id"], g["gerado_em"], verificado, lista_fontes)
+    dados = verificar.serializar(comp)
+    destino = config.DADOS / "comparacoes" / f"{tema['id']}.json"
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_bytes(dados)
+    sha = aprovar.sha256_arquivo(destino)
+    rel = relatorio.gerar(tema, comp, sha, g["origem"], mantidos, descartes,
+                          config.DADOS / "relatorios" / f"{tema['id']}.html")
+    pend = sum(1 for m in mantidos if m["juiz"] == "nao_executado")
+    print(f"{tema['id']}: {len(mantidos)} mantidos, {len(descartes)} descartados, juiz pendente em {pend}"
+          f" · {len(dados) / 1024:.1f} KB · relatório {rel.relative_to(config.RAIZ)}")
+    for d in descartes:
+        print(f"    descartado [{d['motivo']}] {d['lista']}: {d['item'].get('texto', '')[:80]}")
 
 
 def cmd_ouro(args) -> int:

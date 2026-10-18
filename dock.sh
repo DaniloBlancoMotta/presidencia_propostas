@@ -24,7 +24,7 @@ fi
 docker exec "$nome" sh -c 'mkdir -p /app/web && find /app -mindepth 1 -maxdepth 1 ! -name web -exec rm -rf {} + && find /app/web -mindepth 1 -maxdepth 1 ! -name node_modules -exec rm -rf {} +'
 tar -cf - --exclude=./.git --exclude=./web/node_modules --exclude=./web/dist . | docker exec -i "$nome" tar -xf - -C /app
 set +e
-docker exec -i -e GEMINI_API_KEY -e APROVADOS -e PREVIA_RESPONSAVEL -w "/app/${WD:-}" "$nome" sh -c "$*"
+docker exec -i -e GEMINI_API_KEY -e GEMINI_MODELO -e LLM_CONCORRENCIA -e LLM_RPM -e APROVADOS -e PREVIA_RESPONSAVEL -w "/app/${WD:-}" "$nome" sh -c "$*"
 rc=$?
 set -e
 saidas="${SAIDAS:-dados revisao web/dist web/package-lock.json web/test-results web/relatorios}"

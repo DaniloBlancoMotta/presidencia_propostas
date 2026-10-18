@@ -33,7 +33,10 @@ def chave_item(texto: str, citacoes) -> str:
 def _problema_citacao(ci: dict, candidato: str, paginas: dict) -> str | None:
     if ci.get("arquivo") != config.CANDIDATOS[candidato]["arquivo"]:
         return "arquivo_errado"
-    texto = extrair.texto_da_pagina(paginas, ci["arquivo"], int(ci.get("pagina", 0)))
+    pagina = ci.get("pagina")
+    if not isinstance(pagina, int) or isinstance(pagina, bool):  # 37.0 ou "37" não é página
+        return "trecho_nao_encontrado"
+    texto = extrair.texto_da_pagina(paginas, ci["arquivo"], pagina)
     if texto is None or len(ci.get("trecho", "")) > config.TAMANHO_MAX_TRECHO:
         return "trecho_nao_encontrado"
     if not trecho_na_pagina(ci.get("trecho", ""), texto):
