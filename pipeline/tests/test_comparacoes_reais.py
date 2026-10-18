@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from rag_planos import config, extrair, verificar
+from rag_planos import comparar, config, extrair, verificar
 from rag_planos.literal import trecho_na_pagina
 
 ARQUIVOS = sorted((config.DADOS / "comparacoes").glob("*.json"))
@@ -42,3 +42,16 @@ def test_todo_trecho_publicado_e_literal(paginas):
 def test_todo_json_ate_30kb():
     for arq in ARQUIVOS:
         assert arq.stat().st_size <= 30 * 1024, arq.name
+
+
+@pytest.mark.skipif(not ARQUIVOS, reason="nenhuma comparação gerada ainda")
+def test_comparacoes_reproduziveis(paginas):
+    """L12: cada JSON publicado sai byte a byte de dados/geracao + dados/juiz, sem chave de API."""
+    fontes = json.loads((config.DADOS / "fontes.json").read_text(encoding="utf-8"))
+    for arq in ARQUIVOS:
+        tid = arq.stem
+        g = json.loads((config.DADOS / "geracao" / f"{tid}.json").read_text(encoding="utf-8"))
+        assert g["conteudo"] == comparar.de_rascunho(tid), tid
+        juiz = verificar.juiz_vereditos(config.DADOS / "juiz" / f"{tid}.json")
+        verificado, _, _ = verificar.verificar(tid, g["conteudo"], paginas, juiz)
+        assert verificar.serializar(verificar.montar(tid, g["gerado_em"], verificado, fontes)) == arq.read_bytes(), tid

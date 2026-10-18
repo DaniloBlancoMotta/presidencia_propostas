@@ -18,7 +18,7 @@ from typing import Callable
 import jsonschema
 from referencing import Registry, Resource
 
-from . import config, extrair, llm
+from . import config, extrair
 from .literal import trecho_na_pagina
 
 Juiz = Callable[[str, list[dict], str], "dict | None"]  # (texto, citações, chave do item)
@@ -132,11 +132,12 @@ def serializar(comparacao: dict) -> bytes:
 
 # --- juízes ---------------------------------------------------------------------------------
 
-def juiz_llm(provedor) -> Juiz:
-    def julgar(texto: str, citacoes: list[dict], chave: str) -> dict:
-        trechos = "\n".join(f"[{c['arquivo']} p.{c['pagina']}] {c['trecho']}" for c in citacoes)
-        return json.loads(provedor.gerar(llm.prompt("juiz", afirmacao=texto, trechos=trechos)))
-    return julgar
+def juiz_llm(gerador, conteudo: dict, paginas: dict) -> Juiz:
+    """Grafo `juiz` de grafos.py (LangGraph) sobre os mesmos itens que `exportar-juiz` entrega a um
+    juiz externo; os vereditos chegam por chave, como em `juiz_vereditos`."""
+    from . import grafos
+    vereditos = grafos.julgar(gerador, pendentes_para_juiz(conteudo, paginas))
+    return lambda texto, citacoes, chave: vereditos.get(chave)
 
 
 def juiz_vereditos(caminho: Path) -> Juiz | None:

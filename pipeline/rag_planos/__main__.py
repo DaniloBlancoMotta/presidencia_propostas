@@ -49,6 +49,8 @@ def cmd_ingest(args) -> int:
         print(f"ERRO: chunks sem página: {sem_pagina}", file=sys.stderr)
         return 1
     print(f"{len(todos)} chunks · classificação: {'palavras-chave + LLM' if provedor else 'palavras-chave'}")
+    if provedor:
+        print(provedor.resumo())
     for tid in (t["id"] for t in lista_temas):
         n = {cid: sum(1 for c in todos if c["candidato"] == cid and any(t["theme_id"] == tid for t in c["temas"]))
              for cid in config.CANDIDATOS}
@@ -58,18 +60,22 @@ def cmd_ingest(args) -> int:
 
 def cmd_comparar(args) -> int:
     paginas = extrair.carregar()
+    provedor = None
+    if args.origem == "gemini":
+        provedor = llm.provedor_padrao()
+        if provedor is None:
+            print("ERRO: --origem gemini exige GEMINI_API_KEY", file=sys.stderr)
+            return 2
     for tema in _temas_alvo(args):
-        if args.origem == "gemini":
-            provedor = llm.provedor_padrao()
-            if provedor is None:
-                print("ERRO: --origem gemini exige GEMINI_API_KEY", file=sys.stderr)
-                return 2
+        if provedor:
             chunks = json.loads((config.DADOS / "chunks" / "chunks.json").read_text(encoding="utf-8"))
-            conteudo, origem = comparar.com_llm(tema, chunks, paginas, provedor), f"gemini ({provedor.provedor.modelo})"
+            conteudo, origem = comparar.com_llm(tema, chunks, paginas, provedor), f"gemini ({provedor.nome_modelo})"
         else:
             conteudo, origem = comparar.de_rascunho(tema["id"]), "rascunho (dados/rascunhos)"
         reg = comparar.registrar(tema["id"], conteudo, origem)
         print(f"gerado {tema['id']} · {reg['origem']} · {reg['gerado_em']}")
+    if provedor:
+        print(provedor.resumo())
     return 0
 
 
@@ -101,7 +107,7 @@ def cmd_verificar(args) -> int:
     provedor = llm.provedor_padrao()
     for tema in _temas_alvo(args):
         g = _geracao(tema["id"])
-        juiz = verificar.juiz_llm(provedor) if provedor else \
+        juiz = verificar.juiz_llm(provedor, g["conteudo"], paginas) if provedor else \
             verificar.juiz_vereditos(config.DADOS / "juiz" / f"{tema['id']}.json")
         verificado, descartes, mantidos = verificar.verificar(tema["id"], g["conteudo"], paginas, juiz)
         comp = verificar.montar(tema["id"], g["gerado_em"], verificado, lista_fontes)
@@ -117,6 +123,8 @@ def cmd_verificar(args) -> int:
               f" · {len(dados) / 1024:.1f} KB · relatório {rel.relative_to(config.RAIZ)}")
         for d in descartes:
             print(f"    descartado [{d['motivo']}] {d['lista']}: {d['item'].get('texto', '')[:80]}")
+    if provedor:
+        print(provedor.resumo())
     return 0
 
 
