@@ -1,0 +1,70 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-24.04
+    container: python:3.11.9-slim
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --no-cache-dir pymupdf==1.28.2 pyyaml==6.0.2 jsonschema==4.23.0 pytest==8.3.4
+      - name: testes do pipeline (AC 1-9, 12-15)
+        working-directory: pipeline
+        run: python -m pytest -q
+      - name: avaliação do conjunto-ouro (AC 14, 15) - informativa até o dono decidir as 2 convergências pendentes
+        working-directory: pipeline
+        run: python -m rag_planos avaliar || echo "::warning::avaliação reprovada; ver saída acima"
+
+  web:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.49.1-noble
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci --no-audit --no-fund
+      - run: npx tsc --noEmit
+      - name: testes unitários (guardas AC 10, 11, 13; textos AC 9, 24)
+        run: npx vitest run
+      - name: build de teste com aprovação temporária (nunca publicado)
+        run: npm run build:teste
+      - name: e2e em Chrome desktop, Chrome Android e Safari iOS emulados (AC 2, 16-23, 25-32, 35-37)
+        run: npx playwright test
+        env:
+          HOME: /root
+      - name: orçamento de JS (AC 33)
+        run: npm run orcamento
+      - name: Lighthouse mobile (AC 34)
+        run: npm run lighthouse
+        env:
+          HOME: /root
+      - name: portão de publicação (AC 13) - build de produção com revisao/aprovados.yaml
+        run: npm run build
+
+  deploy:
+    # Produção só a partir de tag em main e com a conta do dono configurada (plano-final §6, §9 item 3).
+    if: startsWith(github.ref, 'refs/tags/') && vars.CLOUDFLARE_PROJETO != ''
+    needs: [pipeline, web]
+    runs-on: ubuntu-24.04
+    container: node:22.12.0-bookworm-slim
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci --no-audit --no-fund
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+      - run: npx --yes wrangler@3.99.0 pages deploy dist --project-name "$CLOUDFLARE_PROJETO" --branch main
+        working-directory: web
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PROJETO: ${{ vars.CLOUDFLARE_PROJETO }}
