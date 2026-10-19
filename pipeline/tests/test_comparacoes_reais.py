@@ -11,7 +11,7 @@ ARQUIVOS = sorted((config.DADOS / "comparacoes").glob("*.json"))
 
 def _citacoes(comp):
     for cid, area in comp["candidatos"].items():
-        for b in area["resumo"]:
+        for b in area["resumo"] + area["executivo"]:
             for c in b["citacoes"]:
                 yield cid, c
     for lista in ("semelhancas", "diferencas"):
@@ -36,6 +36,20 @@ def test_todo_trecho_publicado_e_literal(paginas):
             assert texto is not None and trecho_na_pagina(c["trecho"], texto), (arq.name, c)
             total += 1
     assert total > 0
+
+
+@pytest.mark.skipif(not ARQUIVOS, reason="nenhuma comparação gerada ainda")
+def test_resumo_executivo_publicado(paginas):
+    """AC 39 e 44 sobre o conteúdo real: até 3 pontos-chave por candidato, cada citação tirada do
+    resumo publicado do mesmo candidato, e todo candidato com resumo tem pontos-chave."""
+    for arq in ARQUIVOS:
+        comp = json.loads(arq.read_text(encoding="utf-8"))
+        for cid, area in comp["candidatos"].items():
+            base = {(c["arquivo"], c["pagina"], c["trecho"]) for b in area["resumo"] for c in b["citacoes"]}
+            assert 1 <= len(area["executivo"]) <= 3 or area["nao_encontrado"], (arq.name, cid)
+            for p in area["executivo"]:
+                for c in p["citacoes"]:
+                    assert (c["arquivo"], c["pagina"], c["trecho"]) in base, (arq.name, cid, p["texto"])
 
 
 @pytest.mark.skipif(not ARQUIVOS, reason="nenhuma comparação gerada ainda")

@@ -1,7 +1,8 @@
 """Os três fluxos de LLM do pipeline como grafos LangGraph (decisão 10).
 
 - `comparar`: um resumo por candidato em paralelo (`Send`), filtro literal (que corrige a página
-  pela página do marcador sob o qual o trecho aparece no chunk enviado) e comparação;
+  pela página do marcador sob o qual o trecho aparece no chunk enviado) e comparação, que devolve
+  também o resumo executivo (`executivo`, 3 pontos-chave por candidato sobre os resumos filtrados);
 - `juiz`: um veredito por item que passou na checagem literal, em paralelo;
 - `classificar`: um pedido por chunk, em paralelo.
 Os nós que chamam o modelo têm `RETRY` e passam pelo cache de `llm.Gerador`; a concorrência é
@@ -122,6 +123,7 @@ class EstadoComparar(TypedDict, total=False):
     candidatos: dict
     correcoes: list
     listas: dict
+    executivo: dict        # candidato -> pontos-chave, verificados depois por verificar.py
 
 
 def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
@@ -150,7 +152,10 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
         r = _dict(gerador.json(llm.prompt("comparar", rotulo=s["tema"]["rotulo"],
                                           resumos=json.dumps(s["candidatos"], ensure_ascii=False)),
                                "comparar", _validar_comparar))
-        return {"listas": {k: r.get(k, []) for k in LISTAS}}
+        executivo = _dict(r.get("executivo"))
+        return {"listas": {k: r.get(k, []) for k in LISTAS},
+                "executivo": {cid: executivo[cid] for cid in config.CANDIDATOS
+                              if isinstance(executivo.get(cid), list)}}
 
     g = StateGraph(EstadoComparar)
     g.add_node("resumo", resumo, retry_policy=retry)
@@ -166,7 +171,9 @@ def montar_comparar(gerador: llm.Gerador, retry: RetryPolicy = RETRY):
 def comparar(gerador: llm.Gerador, tema: dict, pedidos: dict[str, dict], paginas: dict,
              retry: RetryPolicy = RETRY) -> dict:
     s = _rodar(montar_comparar(gerador, retry), {"tema": tema, "pedidos": pedidos, "paginas": paginas})
-    return {"candidatos": s["candidatos"], **s["listas"], "correcoes_pagina": s.get("correcoes", [])}
+    executivo = s.get("executivo", {})
+    candidatos = {cid: {**area, "executivo": executivo.get(cid, [])} for cid, area in s["candidatos"].items()}
+    return {"candidatos": candidatos, **s["listas"], "correcoes_pagina": s.get("correcoes", [])}
 
 
 # --- juiz ------------------------------------------------------------------------------------

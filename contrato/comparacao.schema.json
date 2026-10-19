@@ -57,13 +57,19 @@
     "area_candidato": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["nao_encontrado", "resumo"],
+      "required": ["nao_encontrado", "resumo", "executivo"],
       "properties": {
         "nao_encontrado": { "type": "boolean" },
-        "resumo": { "type": "array", "items": { "$ref": "#/$defs/bullet" } }
+        "resumo": { "type": "array", "items": { "$ref": "#/$defs/bullet" } },
+        "executivo": {
+          "description": "Resumo executivo: até 3 pontos-chave que condensam o resumo; cada citação é uma citação do próprio resumo.",
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/bullet" }
+        }
       },
       "if": { "properties": { "nao_encontrado": { "const": true } } },
-      "then": { "properties": { "resumo": { "maxItems": 0 } } },
+      "then": { "properties": { "resumo": { "maxItems": 0 }, "executivo": { "maxItems": 0 } } },
       "else": { "properties": { "resumo": { "minItems": 1 } } }
     },
     "item_dois_lados": {

@@ -11,8 +11,8 @@ from pathlib import Path
 
 from . import config
 
-ROTULO_LISTA = {"resumo": "Resumo", "semelhancas": "Semelhança", "diferencas": "Diferença",
-                "omissoes": "Omissão"}
+ROTULO_LISTA = {"resumo": "Resumo", "executivo": "Ponto-chave", "semelhancas": "Semelhança",
+                "diferencas": "Diferença", "omissoes": "Omissão"}
 
 
 def _cits(item: dict) -> list[tuple[str, dict]]:
@@ -84,13 +84,21 @@ def gerar(tema: dict, comparacao: dict, sha256_json: str, origem: str, mantidos:
         f"<h1>Revisão do tema: {html.escape(tema['rotulo'])} (<code>{tema['id']}</code>)</h1>",
         f"<p>Gerado em {html.escape(comparacao['gerado_em'])} · origem da geração: <b>{html.escape(origem)}</b> · "
         f"SHA-256 do JSON: <code>{sha256_json}</code></p>",
-        "<h2>Citações por candidato</h2><table><tr><th>Candidato</th><th>Citações</th><th>Bullets no resumo</th></tr>",
+        "<h2>Citações por candidato</h2><table><tr><th>Candidato</th><th>Citações</th><th>Bullets no resumo</th>"
+        "<th>Pontos-chave</th></tr>",
     ]
+    sem_executivo = []
     for cid, meta in config.CANDIDATOS.items():
         area = comparacao["candidatos"][cid]
         nb = "não encontrado" if area["nao_encontrado"] else str(len(area["resumo"]))
-        partes.append(f"<tr><td>{html.escape(meta['nome'])}</td><td>{contagem[cid]}</td><td>{nb}</td></tr>")
+        partes.append(f"<tr><td>{html.escape(meta['nome'])}</td><td>{contagem[cid]}</td><td>{nb}</td>"
+                      f"<td>{len(area['executivo'])}</td></tr>")
+        if not area["nao_encontrado"] and len(area["executivo"]) < 3:
+            sem_executivo.append(f"{meta['nome']} ({len(area['executivo'])})")
     partes.append("</table>")
+    if sem_executivo:
+        partes.append("<p><b>Atenção:</b> resumo executivo com menos de 3 pontos-chave: "
+                      f"{html.escape(', '.join(sem_executivo))}.</p>")
     partes.append(f"<p>Semelhanças: {len(comparacao['semelhancas'])} · Diferenças: {len(comparacao['diferencas'])}"
                   f" · Omissões: {len(comparacao['omissoes'])}</p>")
     if juiz_pend:

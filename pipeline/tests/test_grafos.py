@@ -108,17 +108,35 @@ def test_comparar_filtra_antes_de_comparar(tmp_path, paginas_falsas):
     assert list(saida) == ["candidatos", "semelhancas", "diferencas", "omissoes"]
 
 
+def test_comparar_devolve_executivo(tmp_path, paginas_falsas):
+    """AC 39 e 44: o nó comparar devolve o resumo executivo, que entra em `candidatos` de cada um."""
+    def resp(p):
+        if p.startswith("Você compara"):
+            r = json.loads(responder(p))
+            r["executivo"] = {"lula": [bullet("Fortalecer o SUS.", cit(LULA, 2, "Fortalecer o Sistema Único de Saúde"))],
+                              "flavio-bolsonaro": "fora do formato"}
+            return json.dumps(r, ensure_ascii=False)
+        return responder(p)
+    m = ModeloFalso(resp)
+    saida = comparar.com_llm(TEMA, chunks_do_corpus(), paginas_falsas, gerador(m, tmp_path))
+    assert [b["texto"] for b in saida["candidatos"]["lula"]["executivo"]] == ["Fortalecer o SUS."]
+    assert saida["candidatos"]["flavio-bolsonaro"]["executivo"] == []
+    assert list(saida["candidatos"]["lula"]) == ["nao_encontrado", "resumo", "executivo"]
+    assert "`executivo`: para cada candidato, exatamente 3 pontos-chave" in next(
+        p for p in m.prompts if p.startswith("Você compara"))
+
+
 def test_candidato_sem_chunks_nao_chama_modelo(tmp_path, paginas_falsas):
     m = ModeloFalso(responder)
     saida = comparar.com_llm(TEMA, chunks_do_corpus(so="lula"), paginas_falsas, gerador(m, tmp_path / "a"))
     assert [_tipo(p) for p in m.prompts] == ["resume", "compara"]
     assert f"Arquivo: {LULA}" in m.prompts[0]
-    assert saida["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": []}
+    assert saida["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": [], "executivo": []}
     assert saida["candidatos"]["lula"]["nao_encontrado"] is False
     m2 = ModeloFalso(responder)
     vazio = comparar.com_llm(TEMA, [], paginas_falsas, gerador(m2, tmp_path / "b"))
     assert [_tipo(p) for p in m2.prompts] == ["compara"]
-    assert all(v == {"nao_encontrado": True, "resumo": []} for v in vazio["candidatos"].values())
+    assert all(v == {"nao_encontrado": True, "resumo": [], "executivo": []} for v in vazio["candidatos"].values())
 
 
 # --- L3, L4: cache ---------------------------------------------------------------------------
@@ -149,9 +167,9 @@ def test_cache_nao_colide_entre_temas(tmp_path, paginas_falsas):
     a = comparar.com_llm({**TEMA, "id": "tema-a"}, chunks_do_corpus("tema-a", so="flavio-bolsonaro"),
                          paginas_falsas, g)
     b = comparar.com_llm({**TEMA, "id": "tema-b"}, chunks_do_corpus("tema-b", so="lula"), paginas_falsas, g)
-    assert a["candidatos"]["lula"] == {"nao_encontrado": True, "resumo": []}
+    assert a["candidatos"]["lula"] == {"nao_encontrado": True, "resumo": [], "executivo": []}
     assert [x["texto"] for x in a["candidatos"]["flavio-bolsonaro"]["resumo"]] == ["Corrigir a Tabela SUS."]
-    assert b["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": []}
+    assert b["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": [], "executivo": []}
     assert [x["texto"] for x in b["candidatos"]["lula"]["resumo"]] == ["Fortalecer o SUS."]
 
 
@@ -702,7 +720,7 @@ def test_corrige_pagina_so_quando_unica_na_faixa(tmp_path):
     assert [b["citacoes"][0]["pagina"] for b in lula] == [2, 1]
     assert correcoes == [{"candidato": "lula", "texto": "Corrigida.", "trecho": "Proposta dois.",
                           "pagina_citada": 1, "pagina": 2}]
-    assert conteudo["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": []}
+    assert conteudo["candidatos"]["flavio-bolsonaro"] == {"nao_encontrado": True, "resumo": [], "executivo": []}
     pedido_comparar = next(p for p in m.prompts if p.startswith("Você compara"))
     assert '"pagina": 2, "trecho": "Proposta dois."' in pedido_comparar
     assert '"pagina": 1, "trecho": "Proposta dois."' not in pedido_comparar

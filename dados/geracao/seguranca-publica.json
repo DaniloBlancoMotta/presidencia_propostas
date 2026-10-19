@@ -1,7 +1,7 @@
 {
  "theme_id": "seguranca-publica",
  "origem": "rascunho (dados/rascunhos)",
- "gerado_em": "2026-10-17T23:52:21-03:00",
+ "gerado_em": "2026-10-18T13:12:13-03:00",
  "conteudo": {
   "candidatos": {
    "flavio-bolsonaro": {
@@ -97,6 +97,71 @@
         "arquivo": "plano-de-governo_flavio.pdf",
         "pagina": 15,
         "trecho": "vai usar toda a sua força para acabar com a progressão de regime de quem comete crimes hediondos."
+       }
+      ]
+     }
+    ],
+    "executivo": [
+     {
+      "texto": "Declarar facções como organizações narcoterroristas e bloquear os ativos e a lavagem de dinheiro que as sustentam.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 13,
+        "trecho": "PCC, CV, milícias e todas as outras facções serão declaradas como organizações narcoterroristas."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 13,
+        "trecho": "Vamos seguir o dinheiro do crime: bloquearemos ativos e desarticularemos a lavagem de dinheiro que sustenta as facções."
+       }
+      ]
+     },
+     {
+      "texto": "Reduzir a maioridade penal para 16 anos, acabar com a progressão de regime em crimes hediondos e construir 5 presídios de segurança máxima.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 13,
+        "trecho": "O novo governo do Brasil vai apoiar e sancionar a redução da maioridade penal de 18 para 16 anos. Vamos punir também maiores de 14 anos que cometerem crimes graves"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 15,
+        "trecho": "vai usar toda a sua força para acabar com a progressão de regime de quem comete crimes hediondos."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 14,
+        "trecho": "O Brasil terá 5 novos presídios de segurança máxima no modelo adotado por El Salvador. Junto com os atuais 5 presídios federais, eles formarão o Complexo Federal de Segurança Máxima."
+       }
+      ]
+     },
+     {
+      "texto": "Criar o Sistema Nacional de Fronteira, dobrar o investimento federal em segurança e implantar o reconhecimento facial Muralha Brasileira.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 13,
+        "trecho": "Vamos criar o Sistema Nacional de Fronteira, uma tropa de elite do Exército, da Marinha e"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 14,
+        "trecho": "da Força Aérea Brasileira, equipada com armas de guerra, inteligência e tecnologia, responsável por criar um paredão na fronteira."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 15,
+        "trecho": "O novo governo do Brasil vai dobrar os investimentos federais em segurança pública ao longo do mandato."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 15,
+        "trecho": "Vamos implantar o Muralha Brasileira - um sistema nacional de reconhecimento facial integrado a bancos de dados criminais"
        }
       ]
      }
@@ -205,6 +270,66 @@
         "arquivo": "Programa-Governo-LULA-2026.pdf",
         "pagina": 29,
         "trecho": "Continuaremos expandindo e aprimorando o Programa Celular Seguro, que já conta com mais de 4 milhões de usuários cadastrados."
+       }
+      ]
+     }
+    ],
+    "executivo": [
+     {
+      "texto": "Criar o Ministério da Segurança Pública, após a aprovação da PEC da Segurança Pública, para coordenar as políticas com estados e municípios.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 30,
+        "trecho": "Uma vez aprovada a PEC da Segurança Pública proposta pelo Executivo, criaremos o Ministério da Segurança Pública para coordenar, em articulação com estados e municípios,"
+       }
+      ]
+     },
+     {
+      "texto": "Manter a asfixia financeira do crime organizado e ampliar o isolamento de lideranças criminosas no sistema penitenciário federal.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 27,
+        "trecho": "O crime organizado deve ser enfrentado com firmeza, nos marcos da Constituição e do Estado Democrático de Direito, por meio da desarticulação de suas estruturas econômicas e financeiras."
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 27,
+        "trecho": "Manteremos a estratégia de asfixia financeira do crime organizado por meio de ações articuladas,"
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 28,
+        "trecho": "Fortaleceremos o sistema penitenciário federal, ampliando sua capacidade operacional e de isolamento de lideranças criminosas"
+       }
+      ]
+     },
+     {
+      "texto": "Manter o controle de armas e munições, ampliar o uso de câmeras corporais e manter as Forças Armadas nas fronteiras amazônicas.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 28,
+        "trecho": "manteremos uma política de controle de armas e munições, fundamental para reduzir a violência"
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 28,
+        "trecho": "Aprimoraremos os mecanismos de rastreabilidade de armas e munições"
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 30,
+        "trecho": "Ampliaremos o programa de estímulos para uso de câmeras corporais, com padrões nacionais para utilização, gestão e preservação das imagens."
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 29,
+        "trecho": "Manteremos as Forças Armadas presentes nas fronteiras amazônicas e na Pan-Amazônia, com patrulhamento fluvial e aéreo, inteligência policial e ambiental"
        }
       ]
      }

@@ -68,7 +68,7 @@ def test_sem_bullet_nao_encontrado(conteudo_valido, paginas_falsas):
     c = copy.deepcopy(conteudo_valido)
     c["candidatos"]["lula"]["resumo"] = [bullet("Inventado.", cit(LULA, 2, "texto que não existe"))]
     saida, _, _ = verificar.verificar("t", c, paginas_falsas)
-    assert saida["candidatos"]["lula"] == {"nao_encontrado": True, "resumo": []}
+    assert saida["candidatos"]["lula"] == {"nao_encontrado": True, "resumo": [], "executivo": []}
     assert saida["candidatos"]["flavio-bolsonaro"]["nao_encontrado"] is False
 
 
@@ -78,3 +78,42 @@ def test_montar_valida_schema(conteudo_valido, paginas_falsas):
               {"arquivo": FLAVIO, "candidato": "flavio-bolsonaro", "sha256": "b" * 64, "coletado_em": "2026-10-17"}]
     comp = verificar.montar("saude", "2026-10-17T20:00:00-03:00", saida, fontes)
     assert comp["theme_id"] == "saude" and set(comp["candidatos"]) == {"lula", "flavio-bolsonaro"}
+
+
+def test_executivo_so_cita_o_resumo_verificado(conteudo_valido, paginas_falsas):
+    """AC 44: ponto-chave só cita o resumo verificado do mesmo candidato, e no máximo 3 por candidato."""
+    c = copy.deepcopy(conteudo_valido)
+    sus = cit(LULA, 2, "Fortalecer o Sistema Único de Saúde")
+    c["candidatos"]["lula"]["executivo"] = [
+        bullet("Fortalecer o SUS.", sus),
+        bullet("Escola integral.", cit(LULA, 1, "ampliar a escola em tempo integral")),  # literal, fora do resumo
+        bullet("Dois.", sus), bullet("Três.", sus), bullet("Quatro.", sus)]
+    c["candidatos"]["flavio-bolsonaro"]["executivo"] = [bullet("Do outro plano.", sus)]
+    saida, descartes, mantidos = verificar.verificar("t", c, paginas_falsas)
+    assert [b["texto"] for b in saida["candidatos"]["lula"]["executivo"]] == ["Fortalecer o SUS.", "Dois.", "Três."]
+    assert saida["candidatos"]["flavio-bolsonaro"]["executivo"] == []
+    assert [(d["lista"], d["candidato"], d["motivo"], d["item"]["texto"]) for d in descartes] == [
+        ("executivo", "flavio-bolsonaro", "fora_do_resumo", "Do outro plano."),
+        ("executivo", "lula", "fora_do_resumo", "Escola integral."),
+        ("executivo", "lula", "acima_do_limite", "Quatro.")]
+    assert [m["item"]["texto"] for m in mantidos if m["lista"] == "executivo"] == ["Fortalecer o SUS.", "Dois.", "Três."]
+    assert list(saida["candidatos"]["lula"]) == ["nao_encontrado", "resumo", "executivo"]
+
+
+def test_executivo_passa_pelo_juiz_e_cai_com_o_resumo(conteudo_valido, paginas_falsas):
+    """O juiz julga o ponto-chave; e um ponto que cita bullet descartado sai como fora_do_resumo."""
+    c = copy.deepcopy(conteudo_valido)
+    sus = cit(LULA, 2, "Fortalecer o Sistema Único de Saúde")
+    tabela = cit(FLAVIO, 2, "Vamos corrigir a Tabela SUS.")
+    c["candidatos"]["lula"]["executivo"] = [bullet("Fortalecer o SUS.", sus)]
+    c["candidatos"]["flavio-bolsonaro"]["executivo"] = [bullet("Ponto sem base.", tabela)]
+
+    def juiz(texto, citacoes, chave):
+        return {"sustentado": texto not in ("Ponto sem base.", "Fortalecer o SUS."), "justificativa": "x"}
+    saida, descartes, _ = verificar.verificar("t", c, paginas_falsas, juiz)
+    assert saida["candidatos"]["flavio-bolsonaro"]["executivo"] == []
+    assert saida["candidatos"]["lula"] == {"nao_encontrado": True, "resumo": [], "executivo": []}
+    assert [(d["lista"], d["candidato"], d["motivo"]) for d in descartes] == [
+        ("executivo", "flavio-bolsonaro", "nao_sustentado"),
+        ("resumo", "lula", "nao_sustentado"),
+        ("executivo", "lula", "fora_do_resumo")]
