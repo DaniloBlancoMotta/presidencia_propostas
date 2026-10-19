@@ -49,7 +49,7 @@ embeddings, cadeia de provedores, Cloud Run); aba "Na imprensa" e as camadas `de
 | 19 | Estados de tela | Sem estado de carregamento (tudo pré-renderizado). Rota inexistente responde `404` com link para `/`. |
 | 20 | Numeração dos critérios | A da §7 deste documento (AC 1–37) é a única. Qualquer referência a critério, inclusive na §11, usa essa numeração. |
 | 21 | Revisão humana | O **dono do projeto** revisa o relatório HTML de cada tema, confere as páginas do conjunto-ouro e registra os hashes em `revisao/aprovados.yaml`. Ele é também o responsável identificado em `/sobre`. |
-| 22 | Cores e identidade | Um único conjunto de tokens neutros (cinzas e um acento azul-petróleo escuro, longe de vermelho, azul-royal e verde-amarelo). Nenhum token, ícone ou estilo por candidato. Fontes do sistema; ícones SVG inline. |
+| 22 | Cores e identidade | **Alterada pelo dono em 18/10/2026.** Cada candidato tem uma cor de identidade, a cor tipográfica mais usada no próprio PDF: Lula `#ee481a` (laranja-avermelhado), Flávio Bolsonaro `#004f9f` (azul). A área de cada candidato (a coluna ou o painel dele e os itens de Omissões que só o plano dele trata) fica num tom claro dessa cor. A cor plena só aparece em elementos não textuais (faixas, fios, marcadores, aspas), com o mesmo componente, a mesma forma e a mesma espessura para os dois. Os tons têm a mesma luminosidade e o mesmo croma, para nenhum lado pesar mais, e o texto fica sempre nos tokens neutros. A concordância (Semelhanças) fica em verde neutro `#2f7a55`, que não aparece em nenhum dos PDFs, com a seção num tom claro de verde. Diferenças fica em grafite neutro, sem tom. Botões, links e foco ficam em tinta neutra, porque o azul passou a indicar um dos candidatos. Fontes do sistema; ícones SVG inline. |
 
 ## 3. Arquitetura
 
@@ -294,7 +294,7 @@ inglês porque o validador as procura.
 28. The site SHALL mostrar em toda tela o aviso "Resumos gerados por IA a partir dos planos de governo registrados no TSE. Podem conter erros — o PDF original é a fonte definitiva."
 29. WHEN a pessoa abre `/sobre` THEN o site SHALL mostrar, para cada plano, o nome do arquivo, o SHA-256, a data de coleta e o link para a página do TSE, e o responsável pelo site
 30. WHEN a pessoa abre `/metodologia` THEN o site SHALL mostrar as etapas ingestão → classificação → comparação → verificação automática → revisão humana e a regra "só documentos oficiais"
-31. The site SHALL exibir os dois candidatos com o mesmo componente e os mesmos tokens de cor, sem nenhuma cor, ícone ou estilo atribuído a um candidato específico
+31. The site SHALL exibir os dois candidatos com o mesmo componente, as mesmas classes e os mesmos estilos, e a única diferença SHALL ser a cor de identidade de cada um e o tom claro de área derivado dela (decisão 22, alterada pelo dono em 18/10/2026), com a cor plena só em elementos não textuais, o texto sempre nos tokens neutros e nenhum ícone ou estilo exclusivo de um candidato
 32. The site SHALL responder sem nenhum cabeçalho `Set-Cookie` e sem carregar script de outro domínio
 
 ### S5: Rápido e acessível no 4G
