@@ -1,9 +1,19 @@
+import type { ReactNode } from "react";
 import { linkPdf } from "./rotas";
 import type { CandidatoId, Citacao, Manifesto } from "./tipos";
 
 function nomeCandidato(m: Manifesto, c: CandidatoId) {
   const x = m.candidatos[c];
   return `${x.nome} (${x.partido})`;
+}
+
+/** Nome visível do candidato, com o quadradinho na cor de identidade dele (S7). */
+export function NomeCand({ manifesto, c }: { manifesto: Manifesto; c: CandidatoId }) {
+  return (
+    <span className="cand" data-cand={c}>
+      {nomeCandidato(manifesto, c)}
+    </span>
+  );
 }
 
 export function ListaCitacoes({ citacoes }: { citacoes: Citacao[] }) {
@@ -28,11 +38,13 @@ export function ListaCitacoes({ citacoes }: { citacoes: Citacao[] }) {
 export function ItemCitado(props: {
   texto: string;
   citacoes: Citacao[];
-  rotulo?: string;
+  rotulo?: ReactNode;
   aberto?: boolean;
+  /** Omissão: o item fica no tom do candidato que trata do ponto. */
+  cand?: CandidatoId;
 }) {
   return (
-    <li className="item">
+    <li className={props.cand ? "item omissao" : "item"} data-cand={props.cand}>
       <details open={props.aberto}>
         <summary>
           {props.rotulo && <span className="selo">{props.rotulo}</span>}
@@ -62,7 +74,9 @@ export function ItemDoisLados(props: {
         <div className="par">
           {props.ordem.map((c) => (
             <section key={c} className="lado" data-cand={c} aria-label={nomeCandidato(props.manifesto, c)}>
-              <h4 className="nome-candidato">{nomeCandidato(props.manifesto, c)}</h4>
+              <h4 className="nome-candidato">
+                <NomeCand manifesto={props.manifesto} c={c} />
+              </h4>
               <ListaCitacoes citacoes={props.citacoes[c]} />
             </section>
           ))}

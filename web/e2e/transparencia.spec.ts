@@ -57,7 +57,8 @@ test("neutro: os dois candidatos usam o mesmo componente, classes e estilos", as
         classe: el.className.replace(" ativo", ""),
         tag: el.tagName,
         h: [s.color, s.fontWeight, s.fontSize, s.backgroundColor].join("|"),
-        p: [p.color, p.backgroundColor, p.borderColor].join("|"),
+        // fundo e cor das bordas leem --tom-cand e --cor-cand (C73); o resto é igual nos dois
+        p: [p.color, p.borderTopWidth, p.borderTopStyle, p.padding].join("|"),
         item: el.querySelector(".item")?.className,
       };
     }),
@@ -66,10 +67,14 @@ test("neutro: os dois candidatos usam o mesmo componente, classes e estilos", as
   const abas = await page.getByRole("tab").evaluateAll((els) => els.map((e) => e.className));
   expect(abas[0]).toBe(abas[1]);
   const css = await page.evaluate(() => [...document.querySelectorAll("style")].map((s) => s.textContent).join("\n"));
-  // nenhuma regra de cor ou fundo amarrada a um candidato: data-cand só aparece com `order`
+  // regras amarradas a um candidato só definem `order` ou as três variáveis do candidato (C73)
   const regras = css.match(/[^{}]*data-cand[^{}]*\{[^}]*\}/g) ?? [];
   expect(regras.length).toBeGreaterThan(0);
-  for (const r of regras) expect(r.replace(/^[^{]*\{/, "").replace(/\}$/, "").trim()).toMatch(/^order:\s*[12];?$/);
+  for (const r of regras) {
+    const decl = r.replace(/^[^{]*\{/, "").replace(/\}$/, "").split(";").map((d) => d.trim()).filter(Boolean);
+    expect(decl.length, r).toBeGreaterThan(0);
+    for (const d of decl) expect(d, r).toMatch(/^(order:\s*[12]|--cor-cand:|--tom-cand:|--tom-cand-forte:)/);
+  }
 });
 
 test("mesma origem: só requisições ao próprio domínio, em todas as rotas e controles", async ({ page, baseURL }) => {

@@ -1,0 +1,25 @@
+/* Tokens de cor (plano interface-site, porta 3; decisão 22 alterada pelo dono em 18/10/2026).
+   Cada candidato tem a cor tipográfica mais usada no próprio PDF e um tom claro de área com a mesma
+   luminosidade e o mesmo croma para os dois; só o matiz muda. Verde = concordância (semelhanças),
+   grafite = diferença. As únicas regras com data-cand definem as três variáveis do candidato. */
+:root {
+  --papel: oklch(97.6% 0.008 85);
+  --papel-2: oklch(94.6% 0.012 85);
+  --tinta: oklch(24% 0.02 265);
+  --tinta-2: oklch(43% 0.018 265);
+  --fio: oklch(84% 0.013 85);
+  --cand-lula: #ee481a;
+  --cand-flavio-bolsonaro: #004f9f;
+  --semelhanca: #2f7a55;
+  --diferenca: var(--tinta-2);
+  --tom-lula: oklch(95% 0.03 35);
+  --tom-lula-forte: oklch(93.5% 0.04 35);
+  --tom-flavio-bolsonaro: oklch(95% 0.03 258);
+  --tom-flavio-bolsonaro-forte: oklch(93.5% 0.04 258);
+  --tom-semelhanca: oklch(95% 0.03 158);
+  --tom-semelhanca-forte: oklch(93.5% 0.04 158);
+}
+[data-cand="lula"] { --cor-cand: var(--cand-lula); --tom-cand: var(--tom-lula); --tom-cand-forte: var(--tom-lula-forte); }
+[data-cand="flavio-bolsonaro"] {
+  --cor-cand: var(--cand-flavio-bolsonaro); --tom-cand: var(--tom-flavio-bolsonaro); --tom-cand-forte: var(--tom-flavio-bolsonaro-forte);
+}

@@ -1,5 +1,5 @@
 import { useState, type KeyboardEvent } from "react";
-import { ItemCitado, ItemDoisLados, nomeCandidato } from "./Citado";
+import { ItemCitado, ItemDoisLados, NomeCand } from "./Citado";
 import { Icone } from "./icones";
 import { dataBR } from "./rotas";
 import {
@@ -59,13 +59,13 @@ export function Inicio({ manifesto }: Base) {
       </p>
       <nav aria-label="Temas">
         <ul className="grade">
-          <li className="destaque">
+          <li className="destaque sem">
             <a className="cartao" href="/semelhancas">
               <Icone nome="semelhancas" />
               <span>Semelhanças</span>
             </a>
           </li>
-          <li className="destaque">
+          <li className="destaque dif">
             <a className="cartao" href="/diferencas">
               <Icone nome="diferencas" />
               <span>Diferenças</span>
@@ -119,7 +119,7 @@ function Abas(props: {
           tabIndex={c === props.ativo ? 0 : -1}
           onClick={() => props.escolher(c)}
         >
-          {nomeCandidato(props.manifesto, c)}
+          <NomeCand manifesto={props.manifesto} c={c} />
         </button>
       ))}
     </div>
@@ -169,7 +169,9 @@ export function Tema(props: Base & { tema: TemaPublico; comp: Comparacao }) {
                   className={`painel${c === ativo ? " ativo" : ""}`}
                   data-cand={c}
                 >
-                  <h3 className="nome-candidato">{nomeCandidato(manifesto, c)}</h3>
+                  <h3 className="nome-candidato">
+                    <NomeCand manifesto={manifesto} c={c} />
+                  </h3>
                   {area.nao_encontrado ? (
                     <p className="nao-encontrado">{NAO_ENCONTRADO}</p>
                   ) : (
@@ -188,14 +190,20 @@ export function Tema(props: Base & { tema: TemaPublico; comp: Comparacao }) {
 
       {mostra("semelhancas") && (
         <section className="bloco" aria-labelledby="h-sem" data-lista="semelhancas">
-          <h2 id="h-sem">Semelhanças</h2>
+          <h2 id="h-sem">
+            <Icone nome="semelhancas" classe="glifo" />
+            Semelhanças
+          </h2>
           <ListaDoisLados itens={comp.semelhancas} ordem={ordem} manifesto={manifesto} vazio="Nenhuma semelhança encontrada neste tema." />
         </section>
       )}
       {mostra("diferencas") && (
         <>
           <section className="bloco" aria-labelledby="h-dif" data-lista="diferencas">
-            <h2 id="h-dif">Diferenças</h2>
+            <h2 id="h-dif">
+              <Icone nome="diferencas" classe="glifo" />
+              Diferenças
+            </h2>
             <ListaDoisLados itens={comp.diferencas} ordem={ordem} manifesto={manifesto} vazio="Nenhuma diferença encontrada neste tema." />
           </section>
           <section className="bloco" aria-labelledby="h-omi" data-lista="omissoes">
@@ -232,7 +240,12 @@ function ListaOmissoes({ comp, manifesto, vazio }: { comp: Comparacao; manifesto
       {comp.omissoes.map((o, i) => (
         <ItemCitado
           key={i}
-          rotulo={`Omissão · só no plano de ${nomeCandidato(manifesto, o.tratado_por)}`}
+          cand={o.tratado_por}
+          rotulo={
+            <>
+              Omissão · só no plano de <NomeCand manifesto={manifesto} c={o.tratado_por} />
+            </>
+          }
           texto={o.texto}
           citacoes={o.citacoes}
         />
@@ -260,7 +273,12 @@ export function Transversal(props: Base & { tipo: "semelhancas" | "diferencas"; 
         <p className="vazio">{TRANSVERSAL_VAZIA}</p>
       ) : (
         grupos.map(({ t, c }) => (
-          <section key={t.id} className="bloco" aria-labelledby={`g-${t.id}`} data-tema={t.id}>
+          <section
+            key={t.id}
+            className={tipo === "semelhancas" ? "bloco grupo-sem" : "bloco"}
+            aria-labelledby={`g-${t.id}`}
+            data-tema={t.id}
+          >
             <h2 id={`g-${t.id}`}>
               <a href={`/tema/${t.id}`}>{t.rotulo}</a>
             </h2>
@@ -289,7 +307,9 @@ export function Sobre({ manifesto }: Base) {
       <ul className="fontes">
         {manifesto.fontes.map((f) => (
           <li key={f.arquivo} className="fonte" data-cand={f.candidato}>
-            <h2>{nomeCandidato(manifesto, f.candidato)}</h2>
+            <h2>
+              <NomeCand manifesto={manifesto} c={f.candidato} />
+            </h2>
             <dl>
               <dt>Arquivo</dt>
               <dd>

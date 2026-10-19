@@ -5,10 +5,13 @@ import "./visualizador.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
-const ARQUIVOS = new Set(["plano-de-governo_flavio.pdf", "Programa-Governo-LULA-2026.pdf"]);
+// Arquivo -> candidato: a barra leva no topo a faixa na cor do candidato daquele PDF (S7).
+const CANDIDATO: Record<string, string> = { "plano-de-governo_flavio.pdf": "flavio-bolsonaro", "Programa-Governo-LULA-2026.pdf": "lula" };
+const ARQUIVOS = new Set(Object.keys(CANDIDATO));
 const q = new URLSearchParams(location.search);
 const arquivo = q.get("arquivo") ?? "";
 const pedida = Math.max(1, parseInt(q.get("pagina") ?? "1", 10) || 1);
+if (ARQUIVOS.has(arquivo)) document.body.dataset.cand = CANDIDATO[arquivo];
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const tela = $<HTMLCanvasElement>("tela");

@@ -1,13 +1,15 @@
-/* Tokens neutros (decisão 22): cinzas e um acento azul-petróleo escuro. Nenhum token por candidato. */
+@import "./tokens.css";
+
+/* Tokens neutros. Botões, links e foco em tinta: o azul passou a indicar um candidato (decisão 22). */
 :root {
   --fundo: #fafaf9;
   --superficie: #ffffff;
   --texto: #1f2328;
   --sutil: #4b5563;
   --borda: #d0d7de;
-  --acento: #0f4c5c;
-  --acento-fundo: #e7eff1;
-  --foco: #0f4c5c;
+  --acento: var(--tinta);
+  --acento-fundo: var(--papel-2);
+  --foco: var(--tinta);
   --raio: 10px;
   color-scheme: light;
 }
@@ -240,3 +242,38 @@ html:has(.compositor) { scroll-padding-bottom: 7rem; }
 .contexto-inline > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; color: var(--acento); font-weight: 600; }
 .continuar { margin: .25rem 0; }
 .continuar a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+
+/* Cor e tom por candidato (S7): a área de cada candidato no tom claro do próprio PDF; a cor plena só
+   em fios e no quadradinho antes do nome, nunca no texto. Verde = semelhanças; grafite = diferenças.
+   Os componentes leem só --cor-cand, --tom-cand e --tom-cand-forte (definidas em tokens.css). */
+.cand::before {
+  content: ""; display: inline-block; width: .62em; height: .62em; margin-right: .32em;
+  background: var(--cor-cand); vertical-align: .06em;
+}
+.abas { gap: 0; margin-bottom: 0; border-bottom: 0; }
+.aba { border-top: 4px solid transparent; }
+.aba[aria-selected="true"] { background: var(--tom-cand); border-top-color: var(--cor-cand); border-bottom-color: transparent; }
+.painel { background: var(--tom-cand); padding: .75rem 1rem 1rem; }
+.painel .item summary:hover, .item.omissao summary:hover { background: var(--tom-cand-forte); }
+@media (min-width: 768px) {
+  .painel { border-top: 6px solid var(--cor-cand); }
+}
+.lado { border-top: 3px solid var(--cor-cand); padding-top: .5rem; }
+.item.omissao { background: var(--tom-cand); border-radius: var(--raio); }
+.item.omissao details { background: transparent; }
+.fonte { background: var(--tom-cand); border: 0; border-top: 6px solid var(--cor-cand); border-radius: 0; }
+
+.glifo { width: 1.5rem; height: 1.5rem; margin-right: .4rem; vertical-align: -.3em; }
+.bloco[data-lista="semelhancas"], .grupo-sem {
+  padding: .75rem 1rem 1rem; background: var(--tom-semelhanca); border-top: 6px solid var(--semelhanca);
+}
+.bloco[data-lista="semelhancas"] > h2, .grupo-sem > h2 { margin-top: 0; }
+.bloco[data-lista="semelhancas"] .item summary:hover, .grupo-sem .item summary:hover { background: var(--tom-semelhanca-forte); }
+.bloco[data-lista="semelhancas"] .glifo, .destaque.sem .icone { color: var(--semelhanca); }
+.bloco[data-lista="diferencas"] { padding-top: .75rem; border-top: 6px solid var(--diferenca); }
+.bloco[data-lista="diferencas"] > h2 { margin-top: 0; }
+.bloco[data-lista="diferencas"] .glifo, .destaque.dif .icone { color: var(--diferenca); }
+.bloco[data-lista="omissoes"] > h2 { padding-bottom: .4rem; border-bottom: 2px solid var(--diferenca); }
+.destaque .cartao { border: 0; border-radius: 0; }
+.destaque.sem .cartao { background: var(--tom-semelhanca); border-top: 4px solid var(--semelhanca); }
+.destaque.dif .cartao { background: var(--superficie); border-top: 4px solid var(--diferenca); }

@@ -13,9 +13,9 @@ const CAMINHOS: Record<string, string> = {
   espiga: "M12 21V8M12 8c-2-1-3-3-3-5 2 0 3 2 3 5Zm0 0c2-1 3-3 3-5-2 0-3 2-3 5Zm0 4c-2-1-4-1-5-3 2-1 4 0 5 3Zm0 0c2-1 4-1 5-3-2-1-4 0-5 3Zm0 4c-2-1-4-1-5-3 2-1 4 0 5 3Zm0 0c2-1 4-1 5-3-2-1-4 0-5 3Z",
 };
 
-export function Icone({ nome }: { nome: string }) {
+export function Icone({ nome, classe = "icone" }: { nome: string; classe?: string }) {
   return (
-    <svg className="icone" viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" focusable="false">
+    <svg className={classe} viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" focusable="false">
       <path d={CAMINHOS[nome] ?? CAMINHOS.livro} fill="none" stroke="currentColor" strokeWidth="1.6"
         strokeLinecap="round" strokeLinejoin="round" />
     </svg>

@@ -1,4 +1,5 @@
-:root { --fundo: #e5e7eb; --texto: #1f2328; --acento: #0f4c5c; }
+@import "./tokens.css";
+:root { --fundo: #e5e7eb; --texto: #1f2328; --acento: var(--tinta); }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--fundo); color: var(--texto); font: 1rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
 .barra { position: sticky; top: 0; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .5rem; background: #fff; border-bottom: 1px solid #d0d7de; }
@@ -13,3 +14,5 @@ canvas { max-width: 100%; height: auto; background: #fff; box-shadow: 0 1px 4px 
 .erro { background: #fff; padding: 1rem; border-radius: 10px; }
 .aviso-ia { margin: 0; padding: .5rem; font-size: .9rem; background: #e7eff1; }
 .rodape { padding: .5rem 1rem 1rem; font-size: .9rem; text-align: center; }
+/* Faixa na cor do candidato do PDF aberto (S7); sem candidato conhecido, nenhuma faixa. */
+.barra { border-top: 6px solid var(--cor-cand, transparent); }
