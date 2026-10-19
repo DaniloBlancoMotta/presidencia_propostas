@@ -1,13 +1,19 @@
 /* Tokens de cor (plano interface-site, porta 3; decisão 22 alterada pelo dono em 18/10/2026).
    Cada candidato tem a cor tipográfica mais usada no próprio PDF e um tom claro de área com a mesma
    luminosidade e o mesmo croma para os dois; só o matiz muda. Verde = concordância (semelhanças),
-   grafite = diferença. As únicas regras com data-cand definem as três variáveis do candidato. */
+   grafite = diferença. As únicas regras com data-cand definem as três variáveis do candidato.
+   Este é o único arquivo com cores literais (C51): estilo.css e visualizador.css só leem var(--…). */
 :root {
   --papel: oklch(97.6% 0.008 85);
   --papel-2: oklch(94.6% 0.012 85);
+  --papel-3: oklch(92.5% 0.014 85);
   --tinta: oklch(24% 0.02 265);
   --tinta-2: oklch(43% 0.018 265);
+  --tinta-hover: oklch(32% 0.02 265);
   --fio: oklch(84% 0.013 85);
+  --fio-area: oklch(24% 0.02 265 / 0.14);
+  --toque: oklch(24% 0.02 265 / 0.12);
+  --cinza-pdf: oklch(90% 0.006 85);
   --cand-lula: #ee481a;
   --cand-flavio-bolsonaro: #004f9f;
   --semelhanca: #2f7a55;

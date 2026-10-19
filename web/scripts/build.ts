@@ -16,6 +16,11 @@ import { absoluta, geradoEm, jsonLd, llms, robots, sitemap } from "./seo";
 const SAIDA = resolve(WEB, process.env.OUT_DIR ?? "dist");
 const SSR = resolve(WEB, ".ssr");
 export const SCRIPT_ORDEM = `document.documentElement.dataset.ordem=Math.random()<0.5?"ab":"ba"`;
+const FONTES = [
+  ["newsreader", "newsreader-latin-wght-normal.woff2"],
+  ["newsreader", "newsreader-latin-wght-italic.woff2"],
+  ["atkinson-hyperlegible-next", "atkinson-hyperlegible-next-latin-wght-normal.woff2"],
+];
 
 function escrever(caminho: string, conteudo: string | Buffer) {
   mkdirSync(dirname(caminho), { recursive: true });
@@ -162,6 +167,10 @@ async function principal() {
       ]),
     );
   }
+  // Fontes próprias (porta 4): só o subconjunto latino em woff2, servido de /fontes/ do próprio domínio.
+  for (const [pacote, arquivo] of FONTES) {
+    escrever(resolve(SAIDA, "fontes", arquivo), readFileSync(resolve(WEB, "node_modules", "@fontsource-variable", pacote, "files", arquivo)));
+  }
   for (const f of fontes) {
     mkdirSync(resolve(SAIDA, "pdf"), { recursive: true });
     copyFileSync(resolve(RAIZ, "corpus", f.arquivo), resolve(SAIDA, "pdf", f.arquivo));
@@ -186,7 +195,7 @@ async function principal() {
       `  Content-Security-Policy: ${csp}`,
       "  X-Content-Type-Options: nosniff",
       "  Referrer-Policy: no-referrer",
-      "  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()",
+      "  Permissions-Policy: camera=(), microphone=(), geolocation=()",
       "/assets/*",
       "  Cache-Control: public, max-age=31536000, immutable",
       "",

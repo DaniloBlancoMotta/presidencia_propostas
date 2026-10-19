@@ -60,7 +60,8 @@ test("@ abre a lista de temas, o teclado escolhe e Enter mostra o resumo executi
   const ponto = r.locator('[data-lista="executivo"] .item').first();
   await ponto.locator("summary").click();
   await expect(ponto.locator(".trecho").first()).toBeVisible();
-  await expect(ponto.locator(".pagina").first()).toHaveText(/^pág\. \d+$/);
+  // "pág. N" com espaço não separável (C46)
+  await expect(ponto.locator(".pagina").first()).toHaveText(/^pág\.\xa0\d+$/);
   await expect(ponto.getByRole("link", { name: /Ver no PDF/ }).first()).toHaveAttribute("href", /\/pdf\/visualizador\.html\?arquivo=.+&pagina=\d+$/);
 });
 
@@ -217,7 +218,7 @@ test("conversa: a 1ª mensagem abre a página ampla, com o contexto da pergunta 
     await expect(inline.locator(".contexto-dados").first()).toContainText("Resumo executivo do tema");
   }
   // voltar à entrada mostra o atalho para continuar
-  await page.getByRole("link", { name: "← Chat por tema" }).click();
+  await page.getByRole("link", { name: "Chat por tema", exact: true }).first().click();
   await expect(page.getByRole("link", { name: "Continuar a conversa (2 perguntas)" })).toHaveAttribute("href", "/chat/conversa");
 });
 

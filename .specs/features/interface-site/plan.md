@@ -44,10 +44,10 @@ O site também não tem cara própria. Usa a fonte do sistema e cartões arredon
 
 Reusa o pré-render de `web/scripts/build.ts`, os componentes `Tema`, `Transversal` e `Citado`, o padrão `html[data-ordem]` da decisão 12 e os tokens neutros de `estilo.css`. Nenhuma biblioteca nova: a camada de texto do item 6 já vem no `pdfjs-dist` que o visualizador usa.
 
-1. a comparação aprovada -> `web/scripts/build.ts` (exists) - pré-renderiza cada rota com `App` (exists) e recalcula os hashes do CSP do CSS e do script inline
+1. a comparação aprovada -> `web/scripts/build.ts` (exists) - pré-renderiza cada rota com `App` (exists), recalcula os hashes do CSP do CSS e do script inline e copia as fontes para `/fontes/` (door 4)
 2. o navegador carrega a página -> script inline do head em `index.html` (exists) grava `data-ordem`, e `estilo.css` (exists) escolhe aba, painel e ordem antes da hidratação
-3. `entry-client.tsx` (exists) hidrata `App` (exists), que lê `?filtro` (door 1) e anuncia mudanças numa região `role="status"`
-4. navegação no cliente -> `App.tsx` (exists), função `ir` - mostra "Carregando…", busca `/comparacoes/<id>.json`, guarda e restaura a rolagem e deixa as âncoras da mesma página com o navegador
+3. `entry-client.tsx` (exists) hidrata `App` (exists), que anuncia mudanças numa região `role="status"`; a tela `Tema` (`paginas.tsx`, exists) lê `?filtro` (door 1)
+4. navegação no cliente -> `App.tsx` (exists), função `ir` - mostra "Carregando…", busca `/comparacoes/<id>.json`, guarda e restaura a rolagem; as âncoras da mesma página levam o foco ao destino sem entrada nova no histórico
 5. "Ver no PDF" -> `pdf/visualizador.html` (exists) e `visualizador.ts` (exists) - desenha com paginação serializada, foco preservado e, no item 6, camada de texto
 
 ## Impact
@@ -64,6 +64,8 @@ Reusa o pré-render de `web/scripts/build.ts`, os componentes `Tema`, `Transvers
 | GEO em paralelo | a sessão `rag-planos-presidencia-50` também acrescenta, a pedido do dono: `<title>` descritivo (`tituloDocumento`), `canonical`, JSON-LD, `og:locale`, `robots.txt`, `llms.txt` e `sitemap.xml`, além do componente `Atualizacao` ("Comparação gerada em…", com `<time datetime>`) no tema e nas visões transversais, com teste em `e2e/geo.spec.ts`. O redesenho mantém tudo isso (critério 74) |
 | já corrigido por outra sessão | `3efe517` (sessão `rag-planos-presidencia-a9`, relatório de segurança) trocou por função os `.replace` de placeholders do `web/scripts/build.ts`. O critério 50 fica só com a prova: um JSON de teste com `$&`, `$'` e `$$` sai idêntico no HTML. A mesma sessão levou a imagem do site para Playwright 1.64.1 em `12ffc5a`, e esta feature parte dessa base |
 | ambiente de teste | `docker/web.Dockerfile` ganha um alias do fontconfig para Liberation Sans, já presente na imagem, porque hoje as capturas saem sem negrito (D6, V23) |
+| ambiente de teste | `web/scripts/servir.mjs` passa a entregar HTML, JS, CSS e JSON com gzip a quem aceita, como o Cloudflare Pages já faz (o orçamento do AC 33 já é medido em gzip). Sem compressão, com as fontes da porta 4 o Lighthouse simulado media LCP de 2,39 s em `/` e 2,70 s em `/tema/saude`; com gzip, 1,57 s e 1,65 s. Quem depende: `npm run lighthouse` e os e2e, que leem as respostas já descomprimidas |
+| testes existentes | além dos pontos do C72, mudam só para o valor novo que um critério fixa: `ordem.spec.ts` e `pdf.spec.ts` acham o painel por `.painel`, porque a partir de 768 px ele não é mais `tabpanel` (crit. 39); `a11y.spec.ts` chega a "Mostrar tudo" com dois Tab depois de "Só semelhanças", porque ele agora vem depois de "Só diferenças" (crit. 5); `navegacao.spec.ts` espera as omissões de `/diferencas` na ordem vigente (crit. 6) e "pág. N" com U+00A0 (crit. 46), como `chat.spec.ts` |
 
 ## Relations
 

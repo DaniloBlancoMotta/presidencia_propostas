@@ -2,6 +2,11 @@
 
 export type CandidatoId = "flavio-bolsonaro" | "lula";
 export const CANDIDATOS_BASE: CandidatoId[] = ["flavio-bolsonaro", "lula"];
+// PDF de cada candidato (dados/fontes.json): as aspas de cada citação ficam na cor do candidato do arquivo citado.
+export const CANDIDATO_DO_ARQUIVO: Record<string, CandidatoId> = {
+  "plano-de-governo_flavio.pdf": "flavio-bolsonaro",
+  "Programa-Governo-LULA-2026.pdf": "lula",
+};
 export type Camada = "plano" | "declaracao" | "imprensa";
 
 export interface Citacao {
@@ -82,8 +87,10 @@ export interface DadosPagina {
 }
 
 export const NOME_SITE = "Compare os planos de governo 2026";
-export const LEAD_INICIO =
-  "Toque num tema para ver, lado a lado, o que cada plano de governo registrado no TSE propõe, com o trecho e a página do PDF original.";
+// A abertura de / começa por "Planos de governo de A e B, candidatos ao 2º turno de 2026, registrados no TSE.", com A e B
+// na ordem vigente (paginas.tsx). LEAD_INICIO é a frase que não depende da ordem: é também a descrição de / nos
+// dados estruturados, que precisam repetir texto visível sem fixar uma ordem.
+export const LEAD_INICIO = "Escolha um tema para comparar o que cada plano propõe, com o trecho e a página do PDF original.";
 export const LEAD_SEMELHANCAS = "Pontos em que os dois planos propõem a mesma coisa, em todos os temas publicados.";
 export const LEAD_DIFERENCAS =
   "Pontos que os dois planos tratam de formas diferentes, e pontos tratados por só um deles, em todos os temas publicados.";

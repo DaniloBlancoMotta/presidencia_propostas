@@ -1,9 +1,10 @@
 // AC 20 e AC 21: ordem sorteada 50/50, mantida entre telas até recarregar, e troca manual.
 import { expect, test, type Page } from "@playwright/test";
 
+// painel de cada candidato; a partir de 768 px ele não é mais tabpanel (C39)
 async function primeiro(page: Page) {
-  await page.waitForFunction(() => document.querySelector('[role="tabpanel"]') !== null);
-  return page.locator('[role="tabpanel"]').first().getAttribute("data-cand");
+  await page.waitForFunction(() => document.querySelector(".painel") !== null);
+  return page.locator(".painel").first().getAttribute("data-cand");
 }
 
 async function fixarSorteio(page: Page, valor: number) {
@@ -27,7 +28,7 @@ test("sorteio: a ordem vale em todas as telas até recarregar", async ({ page })
   await page.getByRole("link", { name: "Saúde" }).click();
   await expect(page.locator("h1")).toHaveText("Saúde");
   await expect.poll(() => primeiro(page)).toBe("lula");
-  await page.getByRole("link", { name: "← Todos os temas" }).click();
+  await page.getByRole("link", { name: "Todos os temas", exact: true }).click();
   await page.getByRole("link", { name: "Semelhanças" }).first().click();
   await expect(page.locator("h1")).toHaveText("Semelhanças");
   await page.locator(".item summary").first().click();
@@ -50,7 +51,7 @@ test("trocar: o botão inverte a ordem em todas as telas", async ({ page }) => {
   await page.getByRole("button", { name: "Trocar ordem dos candidatos" }).click();
   await expect.poll(() => primeiro(page)).toBe("lula");
   await expect(page.locator('[role="tab"]').first()).toHaveAttribute("data-cand", "lula");
-  await page.getByRole("link", { name: "← Todos os temas" }).click();
+  await page.getByRole("link", { name: "Todos os temas", exact: true }).click();
   await page.getByRole("link", { name: "Diferenças" }).first().click();
   await expect(page.locator("h1")).toHaveText("Diferenças");
   await page.locator(".item summary").first().click();

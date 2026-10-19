@@ -60,7 +60,9 @@ test("teclado: navegar, abrir tema, filtrar, trocar abas e expandir só com Tab/
   await tabAte(page, (f) => f.texto === "Só semelhanças");
   await page.keyboard.press("Space");
   await expect(page.getByRole("button", { name: "Só semelhanças" })).toHaveAttribute("aria-pressed", "true");
-  await page.keyboard.press("Shift+Tab");
+  // "Mostrar tudo" vem depois de "Só diferenças", como no desenho da §6 (C5)
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
   await page.keyboard.press("Enter");
   await expect(page.getByRole("button", { name: "Mostrar tudo" })).toHaveAttribute("aria-pressed", "true");
   await tabAte(page, (f) => f.role === "tab");

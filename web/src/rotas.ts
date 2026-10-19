@@ -38,3 +38,17 @@ export function dataBR(iso: string): string {
   const [a, m, d] = iso.slice(0, 10).split("-");
   return `${d}/${m}/${a}`;
 }
+
+/** Filtro da tela de tema (porta 1): `?filtro=semelhancas` ou `?filtro=diferencas`; sem o parâmetro, ou com
+ *  valor desconhecido, "Mostrar tudo". */
+export type Filtro = "tudo" | "semelhancas" | "diferencas";
+
+export function filtroDaUrl(busca: string): Filtro {
+  const f = new URLSearchParams(busca).get("filtro");
+  return f === "semelhancas" || f === "diferencas" ? f : "tudo";
+}
+
+/** Endereço do tema com o filtro: "Mostrar tudo" tira o parâmetro. */
+export function urlComFiltro(caminho: string, f: Filtro): string {
+  return f === "tudo" ? caminho : `${caminho}?filtro=${f}`;
+}

@@ -1,11 +1,13 @@
 // Servidor estático de teste que imita o Cloudflare Pages: índice de diretório, 404.html com
-// status 404, e os cabeçalhos de _headers. Uso: node scripts/servir.mjs <pasta> <porta>
+// status 404, os cabeçalhos de _headers e a compressão do texto. Uso: node scripts/servir.mjs <pasta> <porta>
 import { createServer } from "node:http";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
+import { gzipSync } from "node:zlib";
 
 const raiz = resolve(process.argv[2] ?? "dist");
 const porta = Number(process.argv[3] ?? 4173);
+const COMPRIMIVEIS = new Set([".html", ".js", ".mjs", ".css", ".json", ".svg", ".txt", ".xml", ".map"]);
 const TIPOS = {
   ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".pdf": "application/pdf",
@@ -55,6 +57,13 @@ createServer((req, res) => {
   }
   for (const r of regras()) if (casa(r.padrao, url.pathname)) for (const [k, v] of r.cabecalhos) res.setHeader(k, v);
   res.setHeader("Content-Type", TIPOS[extname(arq)] ?? "application/octet-stream");
+  // Como o Pages, entrega texto comprimido a quem aceita gzip (o orçamento do AC 33 já é medido em gzip).
+  let corpo = readFileSync(arq);
+  if (COMPRIMIVEIS.has(extname(arq)) && /\bgzip\b/.test(String(req.headers["accept-encoding"] ?? ""))) {
+    corpo = gzipSync(corpo);
+    res.setHeader("Content-Encoding", "gzip");
+    res.setHeader("Vary", "Accept-Encoding");
+  }
   res.writeHead(status);
-  res.end(req.method === "HEAD" ? undefined : readFileSync(arq));
+  res.end(req.method === "HEAD" ? undefined : corpo);
 }).listen(porta, () => console.log(`servindo ${raiz} em http://localhost:${porta}`));

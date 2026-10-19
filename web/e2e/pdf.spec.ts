@@ -6,7 +6,7 @@ import { fontes } from "./apoio";
 
 test("abre na página citada, no próprio domínio, com o PDF registrado", async ({ page, context, baseURL }) => {
   await page.goto("/tema/saude");
-  const item = page.locator('[role="tabpanel"]:visible .item').first();
+  const item = page.locator(".painel:visible .item").first();
   await item.locator("summary").click();
   const pagina = Number((await item.locator(".pagina").first().textContent())!.replace(/\D/g, ""));
   const arquivo = (await item.locator(".arquivo").first().textContent())!;

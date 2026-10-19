@@ -8,6 +8,7 @@ import { TAM_MAX_PERGUNTA, TEXTO_CARREGANDO, TEXTO_RECUSA, type RecorteAsk, type
 import { enviar as enviarAoEstado, limpar, perguntarIA, selecionar, semear, usarChat, type Mensagem } from "./chat-estado";
 import { ItemCitado, ItemDoisLados, nomeCandidato } from "./Citado";
 import { buscar, inserirMencao, interpretar, mencaoNoCursor, sugerir, type Consulta } from "./consulta";
+import { Cabeca, Trocar, Voltar } from "./paginas";
 import { dataBR, linkPdf } from "./rotas";
 import { NAO_ENCONTRADO, type CandidatoId, type Comparacao, type Manifesto, type TemaPublico } from "./tipos";
 
@@ -108,9 +109,9 @@ function Executivo({ ctx, tema, chave }: { ctx: Contexto; tema: TemaPublico; cha
           const pontos = area.executivo ?? [];
           const so = comp.omissoes.filter((o) => o.tratado_por === c);
           const todas = (
-            <ul className="itens">
+            <ul className="itens" role="list">
               {area.resumo.map((b, i) => (
-                <ItemCitado key={i} texto={b.texto} citacoes={b.citacoes} />
+                <ItemCitado key={i} n={i + 1} texto={b.texto} citacoes={b.citacoes} />
               ))}
             </ul>
           );
@@ -124,9 +125,9 @@ function Executivo({ ctx, tema, chave }: { ctx: Contexto; tema: TemaPublico; cha
                   {pontos.length > 0 ? (
                     <>
                       <h4>Pontos-chave</h4>
-                      <ul className="itens" data-lista="executivo">
+                      <ul className="itens" role="list" data-lista="executivo">
                         {pontos.map((b, i) => (
-                          <ItemCitado key={i} texto={b.texto} citacoes={b.citacoes} />
+                          <ItemCitado key={i} n={i + 1} texto={b.texto} citacoes={b.citacoes} />
                         ))}
                       </ul>
                     </>
@@ -139,9 +140,9 @@ function Executivo({ ctx, tema, chave }: { ctx: Contexto; tema: TemaPublico; cha
                   {so.length > 0 && (
                     <>
                       <h4>Só neste plano ({so.length})</h4>
-                      <ul className="itens" data-lista="so-neste">
+                      <ul className="itens" role="list" data-lista="so-neste">
                         {so.map((o, i) => (
-                          <ItemCitado key={i} texto={o.texto} citacoes={o.citacoes} />
+                          <ItemCitado key={i} n={i + 1} texto={o.texto} citacoes={o.citacoes} />
                         ))}
                       </ul>
                     </>
@@ -166,9 +167,9 @@ function Executivo({ ctx, tema, chave }: { ctx: Contexto; tema: TemaPublico; cha
 function Omissoes({ ctx, comp }: { ctx: Contexto; comp: Comparacao }) {
   const itens = ctx.ordem.flatMap((c) => comp.omissoes.filter((o) => o.tratado_por === c));
   return (
-    <ul className="itens" data-lista="omissoes">
+    <ul className="itens" role="list" data-lista="omissoes">
       {itens.map((o, i) => (
-        <ItemCitado key={i} rotulo={`Só no plano de ${nomeCandidato(ctx.manifesto, o.tratado_por)}`} texto={o.texto} citacoes={o.citacoes} />
+        <ItemCitado key={i} n={i + 1} rotulo={`Só no plano de ${nomeCandidato(ctx.manifesto, o.tratado_por)}`} texto={o.texto} citacoes={o.citacoes} />
       ))}
     </ul>
   );
@@ -183,9 +184,9 @@ function Comparar({ ctx, tema, chave, tipo }: { ctx: Contexto; tema: TemaPublico
         <>
           <h3>Em comum ({comp.semelhancas.length})</h3>
           {comp.semelhancas.length ? (
-            <ul className="itens" data-lista="semelhancas">
+            <ul className="itens" role="list" data-lista="semelhancas">
               {comp.semelhancas.map((it, i) => (
-                <ItemDoisLados key={i} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
+                <ItemDoisLados key={i} n={i + 1} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
               ))}
             </ul>
           ) : (
@@ -197,9 +198,9 @@ function Comparar({ ctx, tema, chave, tipo }: { ctx: Contexto; tema: TemaPublico
         <>
           <h3>Divergências ({comp.diferencas.length})</h3>
           {comp.diferencas.length ? (
-            <ul className="itens" data-lista="diferencas">
+            <ul className="itens" role="list" data-lista="diferencas">
               {comp.diferencas.map((it, i) => (
-                <ItemDoisLados key={i} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
+                <ItemDoisLados key={i} n={i + 1} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
               ))}
             </ul>
           ) : (
@@ -251,12 +252,12 @@ function Busca({ ctx, consulta, chave }: { ctx: Contexto; consulta: Consulta; ch
                         Nenhum ponto publicado do plano de {nome} menciona {termos} neste tema.
                       </p>
                     ) : (
-                      <ul className="itens" data-lista="achados">
+                      <ul className="itens" role="list" data-lista="achados">
                         {r.resumo.map((b, i) => (
-                          <ItemCitado key={`r${i}`} texto={b.texto} citacoes={b.citacoes} />
+                          <ItemCitado key={`r${i}`} n={i + 1} texto={b.texto} citacoes={b.citacoes} />
                         ))}
                         {r.omissoes.map((o, i) => (
-                          <ItemCitado key={`o${i}`} rotulo="Só neste plano" texto={o.texto} citacoes={o.citacoes} />
+                          <ItemCitado key={`o${i}`} n={r.resumo.length + i + 1} rotulo="Só neste plano" texto={o.texto} citacoes={o.citacoes} />
                         ))}
                       </ul>
                     )}
@@ -267,9 +268,9 @@ function Busca({ ctx, consulta, chave }: { ctx: Contexto; consulta: Consulta; ch
             {a.semelhancas.length > 0 && (
               <>
                 <h3>Em comum ({a.semelhancas.length})</h3>
-                <ul className="itens">
+                <ul className="itens" role="list">
                   {a.semelhancas.map((it, i) => (
-                    <ItemDoisLados key={i} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
+                    <ItemDoisLados key={i} n={i + 1} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
                   ))}
                 </ul>
               </>
@@ -277,9 +278,9 @@ function Busca({ ctx, consulta, chave }: { ctx: Contexto; consulta: Consulta; ch
             {a.diferencas.length > 0 && (
               <>
                 <h3>Divergências ({a.diferencas.length})</h3>
-                <ul className="itens">
+                <ul className="itens" role="list">
                   {a.diferencas.map((it, i) => (
-                    <ItemDoisLados key={i} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
+                    <ItemDoisLados key={i} n={i + 1} texto={it.texto} citacoes={it.citacoes} ordem={ctx.ordem} manifesto={ctx.manifesto} />
                   ))}
                 </ul>
               </>
@@ -296,7 +297,7 @@ function Panorama({ ctx, chave }: { ctx: Contexto; chave: string }) {
   return (
     <Bloco id={chave} titulo="Panorama dos temas">
       <p className="meta">Por tema, quantos pontos os dois planos têm em comum, onde divergem e quantos só um deles trata.</p>
-      <ul className="panorama">
+      <ul className="panorama" role="list">
         {ctx.manifesto.temas.map((t) => {
           const c = ctx.comps[t.id];
           return (
@@ -470,9 +471,9 @@ function BlocoIA({ ctx, m, perguntar }: { ctx: Contexto; m: Mensagem; perguntar:
                 {area.nao_encontrado ? (
                   <p className="nao-encontrado">{NAO_ENCONTRADO}</p>
                 ) : (
-                  <ul className="itens" data-lista="ia">
+                  <ul className="itens" role="list" data-lista="ia">
                     {area.resumo.map((b, i) => (
-                      <ItemCitado key={i} texto={b.texto} citacoes={b.citacoes} />
+                      <ItemCitado key={i} n={i + 1} texto={b.texto} citacoes={b.citacoes} />
                     ))}
                   </ul>
                 )}
@@ -661,7 +662,7 @@ function ContextoResposta({ ctx, m }: { ctx: Contexto; m: Mensagem }) {
                     <h4>
                       {nomeCandidato(ctx.manifesto, cid)} ({lista_.length})
                     </h4>
-                    <ol className="recortes" aria-label={`Trechos de ${nomeCandidato(ctx.manifesto, cid)}`}>
+                    <ol className="recortes" role="list" aria-label={`Trechos de ${nomeCandidato(ctx.manifesto, cid)}`}>
                       {lista_.map((rec, i) => (
                         <Recorte key={i} r={rec} citado={citados.some((t) => normal(rec.texto).includes(t))} />
                       ))}
@@ -824,6 +825,7 @@ export function Chat(props: {
   comparacoes: Record<string, Comparacao>;
   modo: "entrada" | "conversa";
   navegar: (caminho: string) => void;
+  trocar: () => void;
 }) {
   const { manifesto, ordem, modo, navegar } = props;
   const est = usarChat();
@@ -853,105 +855,106 @@ export function Chat(props: {
   if (modo === "entrada") {
     const n = est.mensagens.length;
     return (
-      <div className="chat">
-        <p className="voltar">
-          <a href="/">← Todos os temas</a>
-        </p>
-        <h1 id="titulo" tabIndex={-1}>
-          Chat por tema
-        </h1>
-        <div className="fala fala-site boas-vindas">
-          <p>
-            Digite <kbd>@</kbd> e escolha um tema para ver o resumo executivo de cada candidato: os pontos-chave, o que só ele
-            trata e todas as propostas do tema. Escreva “comparar” depois do tema para ver semelhanças e diferenças, ou uma
-            palavra, como “creche”, para buscar nos dois planos. A conversa abre numa página ampla, com o contexto de cada
-            resposta ao lado.
-          </p>
-          <Atalhos manifesto={manifesto} enviar={enviar} />
+      <>
+        <Cabeca voltar={<Voltar />} titulo="Chat por tema" />
+        <div className="envelope chat">
+          <div className="controles">
+            <Trocar trocar={props.trocar} />
+          </div>
+          <div className="fala fala-site boas-vindas">
+            <p>
+              Digite <kbd>@</kbd> e escolha um tema para ver o resumo executivo de cada candidato: os pontos-chave, o que só ele
+              trata e todas as propostas do tema. Escreva “comparar” depois do tema para ver semelhanças e diferenças, ou uma
+              palavra, como “creche”, para buscar nos dois planos. A conversa abre numa página ampla, com o contexto de cada
+              resposta ao lado.
+            </p>
+            <Atalhos manifesto={manifesto} enviar={enviar} />
+          </div>
+          {n > 0 && (
+            <p className="continuar">
+              <a href="/chat/conversa">
+                Continuar a conversa ({n} {n === 1 ? "pergunta" : "perguntas"})
+              </a>
+            </p>
+          )}
+          {status}
+          <Compositor manifesto={manifesto} enviar={enviar} />
+          <Dica manifesto={manifesto} />
         </div>
-        {n > 0 && (
-          <p className="continuar">
-            <a href="/chat/conversa">
-              Continuar a conversa ({n} {n === 1 ? "pergunta" : "perguntas"})
-            </a>
-          </p>
-        )}
-        {status}
-        <Compositor manifesto={manifesto} enviar={enviar} />
-        <Dica manifesto={manifesto} />
-      </div>
+      </>
     );
   }
 
   const sel = est.mensagens.find((m) => m.id === est.selecionada) ?? est.mensagens[est.mensagens.length - 1];
   return (
-    <div className="chat chat-conversa">
-      <p className="voltar">
-        <a href="/chat">← Chat por tema</a>
-      </p>
-      <h1 id="titulo" tabIndex={-1}>
-        Conversa
-      </h1>
-      <p className="lead">
-        Ao lado de cada resposta fica o contexto: como a pergunta foi entendida e de onde veio a resposta. A conversa fica só
-        nesta aba e some ao recarregar a página.
-      </p>
-      <div className="conversa-ampla">
-        <div className="coluna-conversa">
-          <section className="conversa" aria-label="Conversa">
-            {est.mensagens.length === 0 && (
-              <div className="fala fala-site boas-vindas">
-                <p>Nenhuma pergunta ainda. Digite @ e escolha um tema, ou use um atalho:</p>
-                <Atalhos manifesto={manifesto} enviar={enviar} />
-              </div>
-            )}
-            <ol className="falas">
-              {est.mensagens.map((m) => (
-                <li key={m.id} id={`fala-${m.id}`} className="troca" data-selecionada={sel?.id === m.id ? "sim" : "nao"}>
-                  <FalaPessoa texto={m.texto} manifesto={manifesto} />
-                  <div className="fala fala-site" aria-busy={m.estado === "carregando"}>
-                    <Resposta ctx={ctx} m={m} />
-                    {manifesto.ask && m.estado === "pronta" && m.consulta.intencao === "busca" && (
-                      <BlocoIA ctx={ctx} m={m} perguntar={() => perguntarIA(m.id, manifesto)} />
-                    )}
-                    <div className="acoes ver-contexto">
-                      <button
-                        type="button"
-                        className="botao pequeno"
-                        aria-pressed={sel?.id === m.id}
-                        aria-controls="painel-contexto"
-                        onClick={() => selecionar(m.id)}
-                      >
-                        Ver contexto
-                      </button>
-                    </div>
-                    <details className="contexto-inline">
-                      <summary>Contexto da pergunta e da resposta</summary>
-                      <ContextoResposta ctx={ctx} m={m} />
-                    </details>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
-          {status}
-          <Compositor manifesto={manifesto} enviar={enviar} />
-          <Dica manifesto={manifesto} />
-          {est.mensagens.length > 0 && (
-            <button type="button" className="limpar" onClick={limpar}>
-              Limpar conversa
-            </button>
-          )}
+    <>
+      <Cabeca voltar={<Voltar para="/chat" rotulo="Chat por tema" />} titulo="Conversa">
+        <p className="lead">
+          Ao lado de cada resposta fica o contexto: como a pergunta foi entendida e de onde veio a resposta. A conversa fica só
+          nesta aba e some ao recarregar a página.
+        </p>
+      </Cabeca>
+      <div className="envelope chat chat-conversa">
+        <div className="controles">
+          <Trocar trocar={props.trocar} />
         </div>
-        <aside id="painel-contexto" className="painel-contexto" aria-labelledby="h-contexto">
-          <h2 id="h-contexto">Contexto{sel ? `: “${sel.texto}”` : ""}</h2>
-          {sel ? (
-            <ContextoResposta ctx={ctx} m={sel} />
-          ) : (
-            <p className="meta">Faça uma pergunta para ver aqui como ela foi entendida e de onde veio a resposta.</p>
-          )}
-        </aside>
+        <div className="conversa-ampla">
+          <div className="coluna-conversa">
+            <section className="conversa" aria-label="Conversa">
+              {est.mensagens.length === 0 && (
+                <div className="fala fala-site boas-vindas">
+                  <p>Nenhuma pergunta ainda. Digite @ e escolha um tema, ou use um atalho:</p>
+                  <Atalhos manifesto={manifesto} enviar={enviar} />
+                </div>
+              )}
+              <ol className="falas" role="list">
+                {est.mensagens.map((m) => (
+                  <li key={m.id} id={`fala-${m.id}`} className="troca" data-selecionada={sel?.id === m.id ? "sim" : "nao"}>
+                    <FalaPessoa texto={m.texto} manifesto={manifesto} />
+                    <div className="fala fala-site" aria-busy={m.estado === "carregando"}>
+                      <Resposta ctx={ctx} m={m} />
+                      {manifesto.ask && m.estado === "pronta" && m.consulta.intencao === "busca" && (
+                        <BlocoIA ctx={ctx} m={m} perguntar={() => perguntarIA(m.id, manifesto)} />
+                      )}
+                      <div className="acoes ver-contexto">
+                        <button
+                          type="button"
+                          className="botao pequeno"
+                          aria-pressed={sel?.id === m.id}
+                          aria-controls="painel-contexto"
+                          onClick={() => selecionar(m.id)}
+                        >
+                          Ver contexto
+                        </button>
+                      </div>
+                      <details className="contexto-inline">
+                        <summary>Contexto da pergunta e da resposta</summary>
+                        <ContextoResposta ctx={ctx} m={m} />
+                      </details>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+            {status}
+            <Compositor manifesto={manifesto} enviar={enviar} />
+            <Dica manifesto={manifesto} />
+            {est.mensagens.length > 0 && (
+              <button type="button" className="limpar" onClick={limpar}>
+                Limpar conversa
+              </button>
+            )}
+          </div>
+          <aside id="painel-contexto" className="painel-contexto" aria-labelledby="h-contexto">
+            <h2 id="h-contexto">Contexto{sel ? `: “${sel.texto}”` : ""}</h2>
+            {sel ? (
+              <ContextoResposta ctx={ctx} m={sel} />
+            ) : (
+              <p className="meta">Faça uma pergunta para ver aqui como ela foi entendida e de onde veio a resposta.</p>
+            )}
+          </aside>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

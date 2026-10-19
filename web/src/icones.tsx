@@ -21,3 +21,21 @@ export function Icone({ nome, classe = "icone" }: { nome: string; classe?: strin
     </svg>
   );
 }
+
+// Glifos fora do subconjunto latino das fontes (▸ ▾ ← → ⇄) são SVG com aria-hidden, nunca texto (crit. 69).
+function Desenho({ classe, d, cheio }: { classe: string; d: string; cheio?: boolean }) {
+  const traco = cheio
+    ? { fill: "currentColor" }
+    : { fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  return (
+    <svg className={classe} viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+      <path d={d} {...traco} />
+    </svg>
+  );
+}
+
+/** Indicador de item expansível: ▸ fechado; o CSS gira 90° quando aberto (▾). */
+export const Seta = () => <Desenho classe="seta" d="M7 4 19 12 7 20Z" cheio />;
+export const SetaVoltar = () => <Desenho classe="seta-voltar" d="M20 12H5m0 0 6-6m-6 6 6 6" />;
+export const SetaDireita = () => <Desenho classe="seta-direita" d="M4 12h15m0 0-6-6m6 6-6 6" />;
+export const IconeTrocar = () => <Desenho classe="icone-trocar" d="M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4-4m-4 4 4 4" />;
