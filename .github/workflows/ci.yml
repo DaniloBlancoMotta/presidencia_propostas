@@ -21,6 +21,20 @@ jobs:
         working-directory: pipeline
         run: python -m rag_planos avaliar || echo "::warning::avaliação reprovada; ver saída acima"
 
+  ask:
+    # /ask em prévia (plano-final §11): nada daqui vai ao ar; os testes não chamam provedor de LLM.
+    runs-on: ubuntu-24.04
+    container: python:3.11.9-slim
+    env:
+      PYTHONPATH: ${{ github.workspace }}/pipeline:${{ github.workspace }}/ask
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --no-cache-dir -r docker/ask.requirements.txt
+      - run: python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
+      - name: testes do /ask (recuperação no ouro, guardas, injeção, contrato HTTP)
+        working-directory: ask
+        run: python -m pytest -q
+
   web:
     runs-on: ubuntu-24.04
     container:

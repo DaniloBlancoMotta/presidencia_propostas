@@ -1,0 +1,9 @@
+# Só o que o serviço /ask precisa; nada de .git, corpus, web, segredos ou caches.
+*
+!docker/ask.requirements.txt
+!pipeline/rag_planos
+!ask/ask
+!dados/chunks
+!dados/paginas
+!dados/fontes.json
+**/__pycache__

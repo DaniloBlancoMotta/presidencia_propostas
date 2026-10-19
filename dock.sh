@@ -8,7 +8,9 @@ set -euo pipefail
 export MSYS_NO_PATHCONV=1
 svc="$1"; shift
 raiz="$(cd "$(dirname "$0")" && pwd)"
-img="rag-planos-$svc"; nome="rag-planos-$svc-dev"
+img="rag-planos-$svc"; nome="rag-planos-$svc-${DOCK_NOME:-dev}"
+# DOCK_NOME separa contêiner e volume (duas sessões ao mesmo tempo não apagam o /app uma da outra)
+vol="rag-planos-$svc-app"; [ -n "${DOCK_NOME:-}" ] && vol="rag-planos-$svc-$DOCK_NOME-app"
 cd "$raiz"
 if [ -z "$(docker images -q "$img")" ] || [ "${REBUILD:-0}" = 1 ]; then
   docker build -q -t "$img" -f "docker/$svc.Dockerfile" docker >/dev/null
@@ -19,12 +21,12 @@ if [ -z "$(docker ps -q -f "name=^${nome}$")" ] \
   docker rm -f "$nome" >/dev/null 2>&1 || true
   extra=()
   [ "$svc" = web ] && extra=(-v rag-planos-node-modules:/app/web/node_modules --ipc=host)
-  docker run -d --name "$nome" -v "rag-planos-$svc-app:/app" "${extra[@]}" "$img" sleep infinity >/dev/null
+  docker run -d --name "$nome" -v "$vol:/app" "${extra[@]}" "$img" sleep infinity >/dev/null
 fi
 docker exec "$nome" sh -c 'mkdir -p /app/web && find /app -mindepth 1 -maxdepth 1 ! -name web -exec rm -rf {} + && find /app/web -mindepth 1 -maxdepth 1 ! -name node_modules -exec rm -rf {} +'
 tar -cf - --exclude=./.git --exclude=./web/node_modules --exclude=./web/dist . | docker exec -i "$nome" tar -xf - -C /app
 set +e
-docker exec -i -e GEMINI_API_KEY -e GEMINI_MODELO -e LLM_CONCORRENCIA -e LLM_RPM -e APROVADOS -e PREVIA_RESPONSAVEL -w "/app/${WD:-}" "$nome" sh -c "$*"
+docker exec -i -e GEMINI_API_KEY -e GEMINI_MODELO -e LLM_CONCORRENCIA -e LLM_RPM -e GROQ_API_KEY -e GROQ_MODELO -e OPENROUTER_API_KEY -e OPENROUTER_MODELO -e ASK_PROVEDORES -e ASK_URL -e APROVADOS -e PREVIA_RESPONSAVEL -w "/app/${WD:-}" "$nome" sh -c "$*"
 rc=$?
 set -e
 saidas="${SAIDAS:-dados revisao web/dist web/package-lock.json web/test-results web/relatorios}"
