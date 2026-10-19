@@ -127,4 +127,15 @@ describe("npm run build (nível do comando)", () => {
     expect(r.status).toBe(1);
     expect(r.stderr).toContain("saude: hash");
   }, 60_000);
+  it("/ask: o build de produção (dist) recusa ASK_URL", () => {
+    aprovar("saude", sha(join(e.pastaComparacoes, "saude.json")));
+    for (const OUT_DIR of [undefined, "dist"]) {
+      const env: NodeJS.ProcessEnv = { ...process.env, COMPARACOES: e.pastaComparacoes, APROVADOS: e.aprovados, ASK_URL: "https://ask.exemplo/ask" };
+      if (OUT_DIR) env.OUT_DIR = OUT_DIR;
+      else delete env.OUT_DIR;
+      const r = spawnSync("npx", ["tsx", "scripts/build.ts"], { cwd: resolve(RAIZ, "web"), env, encoding: "utf8" });
+      expect(r.status).toBe(1);
+      expect(r.stderr).toContain("ASK_URL só vale com OUT_DIR de prévia");
+    }
+  }, 60_000);
 });

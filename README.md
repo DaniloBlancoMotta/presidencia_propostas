@@ -5,6 +5,24 @@ Lula (PT), registrados no TSE para o 2º turno, propõem, onde convergem, onde d
 um deles trata. Cada ponto traz o trecho literal, o arquivo, a página e o botão "Ver no PDF".
 O plano em vigor é [.specs/plano-final.md](.specs/plano-final.md).
 
+Em `/chat`, a pessoa digita `@tema` e vê o resumo executivo de cada candidato (até 3 pontos-chave
+por plano), compara os dois planos ou busca uma palavra. As respostas são montadas no navegador com
+os mesmos JSONs aprovados, sem LLM em tempo de execução ([.specs/features/chat-temas/plan.md](.specs/features/chat-temas/plan.md)).
+
+A pergunta livre `/ask` (plano-final §11) existe só em prévia, fora do ar: serviço em `ask/` (FastAPI +
+LangGraph, busca híbrida nos chunks, cadeia Groq → Gemini → OpenRouter e checagem literal) e um build do
+site com "Perguntar à IA" no chat ([.specs/features/ask-previa/plan.md](.specs/features/ask-previa/plan.md)).
+
+```
+WD=ask ./dock.sh ask python -m pytest -q                               # testes do /ask
+./dock.sh ask python -m ask avaliar --amostra 16 --pausa 40             # avaliação com provedor real (*)
+# duas sessões ao mesmo tempo: DOCK_NOME=<nome> ./dock.sh ... usa contêiner e volume próprios
+( set -a; . <(tr -d '\r' < ~/.segredos/rag-planos.env); set +a; ./ask/previa.sh )   # prévia local
+```
+
+(*) Com as chaves no ambiente, carregadas num subshell. A pausa respeita o limite de 8 mil tokens por
+minuto do Groq gratuito.
+
 Nada é instalado na máquina: todo comando roda em Docker pelo [dock.sh](dock.sh).
 
 ```

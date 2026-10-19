@@ -3,6 +3,9 @@ import { ItemCitado, ItemDoisLados, nomeCandidato } from "./Citado";
 import { Icone } from "./icones";
 import { dataBR } from "./rotas";
 import {
+  LEAD_DIFERENCAS,
+  LEAD_INICIO,
+  LEAD_SEMELHANCAS,
   NAO_ENCONTRADO,
   TRANSVERSAL_VAZIA,
   type CandidatoId,
@@ -24,15 +27,35 @@ function Titulo({ children }: { children: string }) {
   );
 }
 
+/** Data de geração visível (a mesma do `dateModified` dos dados estruturados) e data de coleta. */
+function Atualizacao({ comps, manifesto, varias }: { comps: Comparacao[]; manifesto: Manifesto; varias?: boolean }) {
+  const gerado = comps.map((c) => c.gerado_em).sort().at(-1);
+  if (!gerado) return null;
+  const coleta = manifesto.fontes.map((f) => f.coletado_em).sort()[0];
+  return (
+    <p className="atualizacao">
+      <time dateTime={gerado}>{varias ? `Comparações geradas até ${dataBR(gerado)}` : `Comparação gerada em ${dataBR(gerado)}`}</time>
+      {" a partir dos planos coletados do TSE em "}
+      <time dateTime={coleta}>{dataBR(coleta)}</time>.
+    </p>
+  );
+}
+
 // ------------------------------------------------------------------ início
 
 export function Inicio({ manifesto }: Base) {
   return (
     <>
       <Titulo>Compare os planos de governo</Titulo>
-      <p className="lead">
-        Toque num tema para ver, lado a lado, o que cada plano de governo registrado no TSE propõe, com o
-        trecho e a página do PDF original.
+      <p className="lead">{LEAD_INICIO}</p>
+      <p className="chamada-chat">
+        <a className="cartao-chat" href="/chat">
+          <Icone nome="chat" />
+          <span>
+            <span className="titulo-chat">Chat por tema</span>
+            <span className="sub">Digite @, escolha um tema e veja o resumo executivo de cada candidato.</span>
+          </span>
+        </a>
       </p>
       <nav aria-label="Temas">
         <ul className="grade">
@@ -121,6 +144,7 @@ export function Tema(props: Base & { tema: TemaPublico; comp: Comparacao }) {
       </p>
       <Titulo>{tema.rotulo}</Titulo>
       <p className="lead">{tema.descricao}</p>
+      <Atualizacao comps={[comp]} manifesto={manifesto} />
       <div className="filtros" role="group" aria-label="Filtrar itens do tema">
         {filtros.map(([f, rotulo]) => (
           <button key={f} type="button" className="botao filtro" aria-pressed={filtro === f} onClick={() => setFiltro(f)}>
@@ -230,11 +254,8 @@ export function Transversal(props: Base & { tipo: "semelhancas" | "diferencas"; 
         <a href="/">← Todos os temas</a>
       </p>
       <Titulo>{tipo === "semelhancas" ? "Semelhanças" : "Diferenças"}</Titulo>
-      <p className="lead">
-        {tipo === "semelhancas"
-          ? "Pontos em que os dois planos propõem a mesma coisa, em todos os temas publicados."
-          : "Pontos que os dois planos tratam de formas diferentes, e pontos tratados por só um deles, em todos os temas publicados."}
-      </p>
+      <p className="lead">{tipo === "semelhancas" ? LEAD_SEMELHANCAS : LEAD_DIFERENCAS}</p>
+      <Atualizacao comps={Object.values(comparacoes)} manifesto={manifesto} varias />
       {grupos.length === 0 ? (
         <p className="vazio">{TRANSVERSAL_VAZIA}</p>
       ) : (
@@ -330,6 +351,12 @@ export function Metodologia(_: Base) {
       <p>
         Quando um plano não trata de um tema, o site mostra “{NAO_ENCONTRADO}”, em vez de completar com outra
         fonte. A ordem dos candidatos é sorteada a cada visita, e você pode trocá-la no botão do topo.
+      </p>
+      <p>
+        Na comparação, o mesmo modelo também condensa o resumo de cada plano em até três pontos-chave, o resumo
+        executivo. Cada ponto-chave só pode citar trechos que já passaram na verificação do resumo daquele plano, e
+        passa pelas mesmas verificações e pela mesma revisão humana. O <a href="/chat">chat por tema</a> não gera texto
+        na hora: ele junta, conforme o que você pede, esses mesmos pontos aprovados, com o trecho e a página do PDF.
       </p>
     </>
   );

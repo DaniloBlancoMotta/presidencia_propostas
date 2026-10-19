@@ -6,7 +6,8 @@
   "scripts": {
     "guardas": "tsx scripts/guardas-cli.ts",
     "build": "tsx scripts/build.ts",
-    "build:teste": "tsx scripts/aprovar-para-teste.ts && APROVADOS=/tmp/aprovados-teste.yaml OUT_DIR=dist-teste tsx scripts/build.ts",
+    "build:teste": "tsx scripts/aprovar-para-teste.ts && APROVADOS=/tmp/aprovados-teste.yaml OUT_DIR=dist-teste tsx scripts/build.ts && npm run build:previa",
+    "build:previa": "tsx scripts/aprovar-para-teste.ts && APROVADOS=/tmp/aprovados-teste.yaml OUT_DIR=dist-previa ASK_URL=${ASK_URL:-http://127.0.0.1:8099/ask} tsx scripts/build.ts",
     "servir": "node scripts/servir.mjs dist 4173",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run",

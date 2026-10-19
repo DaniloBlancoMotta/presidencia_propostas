@@ -8,6 +8,8 @@ export function resolverRota(caminho: string, temas: string[]): Rota {
   if (p === "/diferencas") return { tipo: "diferencas" };
   if (p === "/metodologia") return { tipo: "metodologia" };
   if (p === "/sobre") return { tipo: "sobre" };
+  if (p === "/chat") return { tipo: "chat" };
+  if (p === "/chat/conversa") return { tipo: "conversa" };
   const m = /^\/tema\/([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(p);
   if (m && temas.includes(m[1])) return { tipo: "tema", id: m[1] };
   return { tipo: "nao-encontrada" };
@@ -21,6 +23,8 @@ export function caminhoDaRota(r: Rota): string {
       return `/tema/${r.id}`;
     case "nao-encontrada":
       return "/404";
+    case "conversa":
+      return "/chat/conversa";
     default:
       return `/${r.tipo}`;
   }

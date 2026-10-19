@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, type MouseEvent } from "react";
+import { carregarChat, chatCarregado } from "./chat-carga";
 import { Inicio, Metodologia, NaoEncontrada, Sobre, Tema, Transversal } from "./paginas";
 import { caminhoDaRota, dataBR, resolverRota } from "./rotas";
-import { AVISO_IA, CANDIDATOS_BASE, type CandidatoId, type Comparacao, type DadosPagina, type Rota } from "./tipos";
+import { AVISO_IA, CANDIDATOS_BASE, NOME_SITE, type CandidatoId, type Comparacao, type DadosPagina, type Rota } from "./tipos";
 
 export type Ordem = "ab" | "ba";
 
@@ -10,7 +11,7 @@ export function candidatosNaOrdem(o: Ordem): CandidatoId[] {
 }
 
 export function tituloDaRota(r: Rota, d: DadosPagina): string {
-  const site = "Compare os planos de governo 2026";
+  const site = NOME_SITE;
   switch (r.tipo) {
     case "inicio":
       return site;
@@ -24,12 +25,39 @@ export function tituloDaRota(r: Rota, d: DadosPagina): string {
       return "Como funciona";
     case "sobre":
       return "Sobre os dados";
+    case "chat":
+      return "Chat por tema";
+    case "conversa":
+      return "Conversa";
     default:
       return "Página não encontrada";
   }
 }
 
+/** <title> da página: o rótulo com o contexto da eleição, para quem chega por busca. O título da
+ *  prévia do link (og:title) continua sendo `tituloDaRota` (decisão 15). */
+export function tituloDocumento(r: Rota, d: DadosPagina): string {
+  const base = tituloDaRota(r, d);
+  switch (r.tipo) {
+    case "tema":
+      return `${base}: propostas dos planos de governo do 2º turno de 2026`;
+    case "semelhancas":
+      return "Semelhanças entre os planos de governo do 2º turno de 2026";
+    case "diferencas":
+      return "Diferenças entre os planos de governo do 2º turno de 2026";
+    case "metodologia":
+    case "sobre":
+    case "chat":
+      return `${base} · ${NOME_SITE}`;
+    case "conversa":
+      return `Conversa · Chat por tema · ${NOME_SITE}`;
+    default:
+      return base;
+  }
+}
+
 async function carregarDados(rota: Rota, atual: DadosPagina): Promise<DadosPagina> {
+  if (rota.tipo === "chat" || rota.tipo === "conversa") await carregarChat();
   const precisa =
     rota.tipo === "tema" ? [rota.id] : rota.tipo === "semelhancas" || rota.tipo === "diferencas" ? atual.manifesto.temas.map((t) => t.id) : [];
   const comparacoes: Record<string, Comparacao> = { ...atual.comparacoes };
@@ -74,7 +102,7 @@ export function App({ inicial }: { inicial: DadosPagina }) {
         const novo = await carregarDados(rota, dados);
         if (empilhar) history.pushState(null, "", caminhoDaRota(rota));
         setDados(novo);
-        document.title = tituloDaRota(rota, novo);
+        document.title = tituloDocumento(rota, novo);
         window.scrollTo(0, 0);
         requestAnimationFrame(() => document.getElementById("titulo")?.focus());
       } catch {
@@ -111,11 +139,16 @@ export function App({ inicial }: { inicial: DadosPagina }) {
     conteudo = <Transversal key={r.tipo} {...base} tipo={r.tipo} comparacoes={dados.comparacoes} />;
   else if (r.tipo === "metodologia") conteudo = <Metodologia {...base} />;
   else if (r.tipo === "sobre") conteudo = <Sobre {...base} />;
+  else if (r.tipo === "chat" || r.tipo === "conversa") {
+    const Chat = chatCarregado();
+    const modo = r.tipo === "chat" ? "entrada" : "conversa";
+    conteudo = Chat ? <Chat {...base} comparacoes={dados.comparacoes} modo={modo} navegar={(c) => void ir(c, true)} /> : null;
+  }
   else conteudo = <NaoEncontrada {...base} />;
 
   const coleta = dados.manifesto.fontes.map((f) => f.coletado_em).sort()[0];
   return (
-    <div className="pagina" onClick={aoClicar}>
+    <div className={r.tipo === "conversa" ? "pagina ampla" : "pagina"} onClick={aoClicar}>
       <a className="pular" href="#conteudo">
         Pular para o conteúdo
       </a>
@@ -138,7 +171,7 @@ export function App({ inicial }: { inicial: DadosPagina }) {
       <footer className="rodape">
         <p className="coleta">Documentos coletados do TSE em {dataBR(coleta)}</p>
         <nav aria-label="Rodapé">
-          <a href="/metodologia">Como funciona</a> · <a href="/sobre">Sobre os dados</a>
+          <a href="/chat">Chat por tema</a> · <a href="/metodologia">Como funciona</a> · <a href="/sobre">Sobre os dados</a>
         </nav>
       </footer>
     </div>

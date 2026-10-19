@@ -1,6 +1,7 @@
 // Ícones SVG inline, monocromáticos (currentColor), sem associação a candidato (decisão 22).
 const CAMINHOS: Record<string, string> = {
   semelhancas: "M5 9h14M5 15h14",
+  chat: "M4 5h16v10H11l-5 4v-4H4V5ZM8 9h8M8 12h5",
   diferencas: "M5 9h14M5 15h14M16 5 8 19",
   maos: "M4 14c2 0 3-2 5-2h4a2 2 0 0 1 0 4h-3m-6 2 3 2h7l5-5a2 2 0 0 0-3-3l-3 3M9 7a3 3 0 1 0 6 0 3 3 0 0 0-6 0",
   escudo: "M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z",
