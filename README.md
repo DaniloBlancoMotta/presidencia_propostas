@@ -5,6 +5,53 @@ Lula (PT), registrados no TSE para o 2º turno, propõem, onde convergem, onde d
 um deles trata. Cada ponto traz o trecho literal, o arquivo, a página e o botão "Ver no PDF".
 O plano em vigor é [.specs/plano-final.md](.specs/plano-final.md).
 
+![Chat por tema: digite @ e escolha um tema para ver o resumo de cada candidato](docs/chat-por-tema.png)
+
+## Como funciona
+
+A regra que guia o projeto: nenhuma frase vai ao ar sem o trecho literal, o arquivo e a página do
+PDF oficial. A IA escreve os resumos, mas não tem a última palavra.
+
+**O LLM só trabalha offline.** O site é estático, sem backend e sem chamada a modelo no navegador.
+O pipeline em Python (PyMuPDF + LangGraph + Gemini Flash) roda antes do build:
+
+1. confere o SHA-256 dos PDFs com os publicados pelo TSE;
+2. extrai o texto por página e corta chunks de 400 a 800 tokens que nunca cruzam uma seção;
+3. classifica cada chunk nos 8 temas, somando palavras-chave e a resposta do modelo;
+4. resume cada candidato em separado, só com os chunks dele, e depois compara os dois resumos.
+
+**Três camadas antes de publicar.**
+
+- Checagem literal: o trecho citado precisa existir na página indicada, depois de normalizar
+  espaços, quebras e hifenização. O que o modelo inventa é descartado.
+- Juiz LLM com falha fechada: cada ponto é julgado contra os próprios trechos; na dúvida, sai.
+- Revisão humana: o dono lê o relatório HTML de cada tema e registra o SHA-256 do JSON aprovado em
+  `revisao/aprovados.yaml`. O build falha se algum JSON não bater com o hash, então regerar um tema
+  exige nova aprovação.
+
+**Neutralidade como requisito testável.** A ordem dos candidatos é sorteada 50/50 a cada
+carregamento, e o botão "Trocar ordem dos candidatos" a inverte. A cor de cada candidato vem do
+próprio PDF, com a mesma luminosidade e o mesmo croma para os dois, e só aparece em elementos não
+textuais. O chat por tema monta as respostas no navegador a partir dos mesmos JSONs aprovados.
+
+**Engenharia do site.**
+
+- Um contrato só entre pipeline e site: o JSON Schema de `Comparação`, validado nos dois lados.
+- "Ver no PDF" usa PDF.js no próprio domínio e abre a página citada também no celular.
+- Sem cookie, sem beacon e sem script de terceiro; CSP por hash. Um teste e2e garante que toda
+  requisição sai para a própria origem.
+- CI com pytest, Vitest, Playwright (Chrome desktop, Chrome Android e Safari iOS emulados), axe,
+  orçamento de JS e Lighthouse mobile.
+- Tudo roda em Docker; nada é instalado na máquina.
+
+**O que ficou de fora, e por quê.** A pergunta livre `/ask` (busca híbrida, cadeia Groq → Gemini →
+OpenRouter, checagem literal) zerou os vazamentos nos 22 casos de injeção de prompt, mas ficou
+abaixo das metas no conjunto-ouro: 75% de cobertura (meta de 80%) e 75% de recusa de perguntas fora
+dos planos (meta de 90%). Por isso continua em prévia, fora do ar
+([dados/ask/avaliacao.md](dados/ask/avaliacao.md)).
+
+## Desenvolvimento
+
 Em `/chat`, a pessoa digita `@tema` e vê o resumo executivo de cada candidato (até 3 pontos-chave
 por plano), compara os dois planos ou busca uma palavra. As respostas são montadas no navegador com
 os mesmos JSONs aprovados, sem LLM em tempo de execução ([.specs/features/chat-temas/plan.md](.specs/features/chat-temas/plan.md)).
