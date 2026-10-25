@@ -277,6 +277,8 @@ A tela se lê como um documento de conferência: papel, tinta, fios e citações
 | Lugar do "Trocar ordem dos candidatos" | na tela de tema, ao lado dos filtros, e no topo de `/semelhancas`, `/diferencas` e `/sobre`; some de `/`, `/metodologia`, 404 e do visualizador | o desenho põe o botão na tela de tema; nas outras telas ele não muda nada visível (V04, D14) | y |
 | Texto de abertura com os nomes | lido de `manifesto.candidatos` na ordem vigente; "2º turno de 2026" já aparece em `/sobre` | nenhum dado novo é inventado | y |
 | Fonte das capturas | alias do fontconfig `system-ui`/`sans-serif` para Liberation Sans no `docker/web.Dockerfile` | sem isso, as capturas da verificação `ui` não mostram negrito (D6, V23) | y |
+| gzip no servidor de teste e testes antigos ajustados pelo construtor | ratificados: `servir.mjs` comprime texto como o Cloudflare Pages, e os seis testes antigos seguem o valor novo que outro check fixa. O sétimo, a comparação de `/diferencas` em `navegacao.spec.ts`, volta a ser exata | adotado em 25/10/2026, quando o dono mandou finalizar o que estava em aberto, seguindo a recomendação do verificador (rodada 1). Antes de publicar, um Lighthouse numa prévia do Cloudflare confirma a margem do LCP | n |
+| Elementos do protótipo fora da §6 | sai o sobretítulo "Eleição presidencial 2026 · 2º turno" de `/` (contrariava o critério 16); ficam o `h2` "Temas", o `h2` "O que cada plano propõe" e o rótulo "Aviso", provados pelo C79 | mesma instrução de 25/10/2026; os três que ficam ajudam a navegar por títulos com leitor de tela | n |
 
 **Open questions:** none - all resolved or logged above. O dono aprovou o plano inteiro em 18/10/2026, com todos os padrões desta tabela como estão.
 

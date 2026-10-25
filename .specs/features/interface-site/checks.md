@@ -5,10 +5,12 @@ Plan: `.specs/features/interface-site/plan.md`
 
 ## Intent
 
-77 checks em 8 fatias e nos invariantes · 4 portas de mão única · 0 em aberto
+79 checks em 8 fatias e nos invariantes · 4 portas de mão única · 0 em aberto
 
 Cada check Cn corresponde ao critério n do plano (C1 a C74). C75 a C77 são regressões que o
-`Impact` e o `Surface` do plano exigem. Todas as provas rodam em `web/`, dentro do contêiner
+`Impact` e o `Surface` do plano exigem. C78 e C79 vieram da rodada 1 do verificador (25/10/2026):
+cobrem o lugar do "Trocar ordem" (premissa do plano) e os acréscimos à §6 que o dono manteve.
+Na mesma rodada, C16, C17, C58 e C74 foram reescritos para o tamanho do critério e da §6. Todas as provas rodam em `web/`, dentro do contêiner
 (`DOCK_NOME=<sessão> ./dock.sh web '<comando>'`), depois de `npm run build:teste`. Os testes
 novos levam o id do check no início do título (`"C12: ..."`), para que `-g "C12:"` selecione
 só aquele teste. Os e2e novos rodam no projeto `desktop-chrome` e definem a própria janela; os
@@ -71,10 +73,10 @@ Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrom
 **C15** - Em 1366 px e em 390 px, os cartões de uma mesma linha da grade, destaques e temas, têm a mesma altura (±1 px) (crit. 15)
 Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C15:"`
 
-**C16** - Em todas as rotas do site, o título `h1` vem antes do aviso de IA, e nenhum botão ou lista do `main` fica entre os dois. Não há barra de marca: nenhum `.marca` e nenhum link "Compare os planos de governo 2026" antes do `h1`. Nas rotas que não são `/`, o último link antes do `h1` tem nome acessível exato "Todos os temas" e `href="/"`. Em `/chat/conversa`, esse link é "Chat por tema", com `href="/chat"` (crit. 16)
+**C16** - Em todas as rotas do site, nada vem antes do `h1` além do link de voltar: nenhum sobretítulo. O aviso de IA é o bloco logo depois do `h1`, como na §6; texto de abertura, descrição do tema, linha de atualização, controles e listas vêm depois do aviso. Não há barra de marca: nenhum `.marca` e nenhum link "Compare os planos de governo 2026" antes do `h1`. Nas rotas que não são `/`, o último link antes do `h1` tem nome acessível exato "Todos os temas" e `href="/"`. Em `/chat/conversa`, esse link é "Chat por tema", com `href="/chat"` (crit. 16)
 Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C16:"`
 
-**C17** - Em todas as rotas do site, o rodapé tem os links "Chat por tema", "Metodologia" e "Sobre", nesta ordem, antes do parágrafo "Documentos coletados do TSE em DD/MM/AAAA" (data = a coleta mais antiga de `fontes.json`). `/metodologia` tem `h1` "Metodologia" e `/sobre` tem `h1` "Sobre" (crit. 17)
+**C17** - Em todas as rotas do site, o rodapé tem os links "Chat por tema", "Metodologia" e "Sobre", nesta ordem e separados por "·" (o texto do grupo é "Chat por tema · Metodologia · Sobre"), antes do parágrafo "Documentos coletados do TSE em DD/MM/AAAA" (data = a coleta mais antiga de `fontes.json`). `/metodologia` tem `h1` "Metodologia" e `/sobre` tem `h1` "Sobre" (crit. 17)
 Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C17:"`
 
 ### S3 - Visualizador de PDF legível no celular e com zoom · 5 arquivos · 16 KB · ~4k
@@ -229,7 +231,7 @@ Proof: `npx playwright test e2e/interface-cores.spec.ts --project=desktop-chrome
 **C58** - A concordância fica em verde e a diferença em grafite (crit. 58):
 - Em `/`, o destaque de Semelhanças tem fundo `--tom-semelhanca`, `border-top` de 4 px `#2f7a55` e glifo "=" com `color` `#2f7a55`.
 - Em `/tema/saude`, a seção de Semelhanças tem fundo `--tom-semelhanca`, `border-top` de 6 px `#2f7a55` e glifo "=" verde.
-- Em `/semelhancas`, cada grupo de tema tem fundo `--tom-semelhanca` e `border-top` de 6 px `#2f7a55`.
+- Em `/semelhancas`, cada grupo de tema tem fundo `--tom-semelhanca` e `border-top` de 6 px `#2f7a55`, e o título da página traz o glifo "=" (`svg`) com `color` `#2f7a55`.
 - A seção Diferenças do tema e o título de Omissões usam `--tinta-2` nos fios e glifos, sem fundo de tom.
 
 Proof: `npx playwright test e2e/interface-cores.spec.ts --project=desktop-chrome -g "C58:"`
@@ -311,9 +313,10 @@ Proof: `npm run lighthouse`
 **C73** - Na tela de tema (1024 e 390 px) e em `/sobre`, os elementos equivalentes dos dois candidatos têm o mesmo `tagName`, as mesmas classes e os mesmos estilos calculados: coluna ou painel, aba, `h3`, item, citação, lado e omissão. Só podem diferir as propriedades que leem `--cor-cand`, `--tom-cand` ou `--tom-cand-forte`. No CSS servido, toda regra cujo seletor cita `data-cand` só declara `order`, `--cor-cand`, `--tom-cand` ou `--tom-cand-forte` (crit. 73)
 Proof: `npx playwright test e2e/transparencia.spec.ts --project=desktop-chrome -g "neutro"`
 
-**C74** - Continuam no tema e nas visões transversais a linha `.atualizacao`, com `<time datetime>` igual ao `dateModified` do JSON-LD, o `<title>`, o `canonical` e o JSON-LD (crit. 74)
+**C74** - Continuam no tema e nas visões transversais a linha `.atualizacao`, com `<time datetime>` igual ao `dateModified` do JSON-LD, o `<title>`, o `canonical` e o JSON-LD (crit. 74). Com `url` em `dados/site.yaml`, o build grava `<link rel="canonical">` com o endereço absoluto de cada rota, menos a 404
 Proof: `npx playwright test e2e/geo.spec.ts --project=desktop-chrome`
 Proof: `npx vitest run tests/seo.test.ts`
+Proof: `npx vitest run tests/interface.test.ts -t "C74:"`
 
 **C75** - Em `/chat` e `/chat/conversa`, a direção da S8 vale (coberta por C60 a C63 e C69), e `e2e/chat.spec.ts` (desktop e Android) e `e2e/ask.spec.ts` (prévia) ficam verdes. A entrada do chat continua: o botão "Chat por tema" na tela inicial, com `href="/chat"`, fora da grade de temas (Impact, plano do chat, decisão 11)
 Proof: `npx playwright test e2e/chat.spec.ts e2e/ask.spec.ts`
@@ -324,6 +327,12 @@ Proof: `fc-match "system-ui:bold" | grep -q LiberationSans-Bold && fc-match "san
 
 **C77** - `/tema/tema-inexistente` e `/qualquer/coisa` respondem 404 com link para `/` (Surface)
 Proof: `npx playwright test e2e/navegacao.spec.ts --project=desktop-chrome -g "404: tema inexistente"`
+
+**C78** - O botão "Trocar ordem dos candidatos" aparece em `/tema/<id>`, `/semelhancas`, `/diferencas` e `/sobre`, e não aparece em `/`, `/metodologia`, na 404 nem no visualizador (premissa "Lugar do Trocar ordem" e Impact do plano)
+Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C78:"`
+
+**C79** - Os acréscimos à §6 que o dono manteve em 25/10/2026: em `/`, um `h2` "Temas" antecede a grade de temas; na tela de tema, o `h2` "O que cada plano propõe" antecede abas e colunas; a faixa do aviso traz o rótulo "Aviso" fora do elemento com o texto do aviso, que continua exato (AC 28). Nenhum outro título ou rótulo fora da §6 aparece nessas telas
+Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C79:"`
 
 ## Coverage
 
@@ -347,6 +356,7 @@ Proof: `npx playwright test e2e/navegacao.spec.ts --project=desktop-chrome -g "4
 | lugares da cor plena (4) | faixas de 6 e 4 px C54 · fio de 3 px dos lados C55 · quadradinho C55 · aspas C64 | - |
 | tamanhos de texto (5) | 13 px C63 · 15 px C63 · 17 px C63 · 21 px C63 · `h1` de 36 a 60 px C63 | - |
 | glifos fora da fonte (5) | "≠" C69 · "←" C69 · "→" C69 · "▸" C3 · "▾" C3 | - |
+| lugar do "Trocar ordem" (8) | `/tema/<id>` C78 · `/semelhancas` C78 · `/diferencas` C78 · `/sobre` C78 · `/` C78 · `/metodologia` C78 · 404 C78 · visualizador C78 | - |
 | startup: CSS, tokens e fontes nas saídas do build, todas montadas pelo mesmo `build.ts` (3) | `dist-teste` C60 · `dist` C72 (`guardas.test.ts`, build no nível do comando) · `dist-previa` C75 (`ask.spec.ts`) | - |
 
 - Claims naming a status code, route or response shape: C33, C36, C48, C49, C77 - cada uma com prova que atravessa o servidor de teste (`servir.mjs`)
@@ -373,10 +383,13 @@ Evidence:
 - agrupamento de citações consecutivas: decide por arquivo e página, 3 casos (mesmo grupo, troca de página, troca de arquivo) -> decide, alcançado pelo navegador (C10)
 - contraste dos tokens: cálculo puro sobre 9 + 4 valores -> decide, sem fronteira (C56)
 - montagem do HTML com `$&`, `$'`, `$$`: substituição no build -> decide, sem fronteira, provada no nível do comando como em `tests/guardas.test.ts` (C50)
+- navegação no cliente (`App.tsx`): o último destino tocado vence, a rolagem é guardada e devolvida por entrada do histórico, e a âncora da mesma página não busca dados nem empilha entrada -> decide, alcançado pelo navegador (C28-C31); classificada na rodada 1 do verificador
+- paginação do visualizador: o pedido mais recente vence, o foco passa ao outro botão quando o focado se desabilita, e só uma largura nova redesenha -> decide, alcançado pelo navegador (C19, C20, C26); classificada na rodada 1 do verificador
 - análogo no repositório: `tests/consulta.test.ts` prova a lógica do chat no próprio nível, um caso por intenção, e `e2e/chat.spec.ts` prova o contrato no navegador
 
-Cost: 6 provas unitárias em `tests/interface.test.ts`. Sem estas linhas, a ordem das omissões,
-o agrupamento e o filtro ficariam provados só por um caminho que o e2e por acaso percorre.
+Cost: 8 provas unitárias em `tests/interface.test.ts`, duas delas da rodada 1 (navegação no
+cliente e paginação do visualizador). Sem estas linhas, essas decisões ficariam provadas só por
+um caminho que o e2e por acaso percorre.
 
 ## Swept
 
