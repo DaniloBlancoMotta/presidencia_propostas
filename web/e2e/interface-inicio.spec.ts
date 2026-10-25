@@ -260,3 +260,31 @@ test("C79: em / e no tema, só os acréscimos à §6 que o dono manteve; o aviso
     expect(ordem, rota).toEqual({ texto: "O que cada plano propõe", antesDasAbas: true, antesDasColunas: true });
   }
 });
+
+test("C80: o link de voltar antes do h1 mostra a seta desenhada; o nome acessível continua sem seta", async ({ page }) => {
+  const rotas = ROTAS_SITE.filter((r) => r !== "/");
+  expect(rotas.length).toBeGreaterThan(0);
+  for (const rota of rotas) {
+    await abrir(page, rota);
+    const voltar = page.locator("main a.voltar");
+    await expect(voltar, rota).toHaveCount(1);
+    // o link vem antes do h1
+    expect(
+      await voltar.evaluate((a) => !!(a.compareDocumentPosition(document.querySelector("main h1")!) & Node.DOCUMENT_POSITION_FOLLOWING)),
+      rota,
+    ).toBe(true);
+    const seta = voltar.locator("svg");
+    await expect(seta, rota).toHaveCount(1);
+    await expect(seta, rota).toBeVisible();
+    await expect(seta, rota).toHaveAttribute("aria-hidden", "true");
+    const s = await seta.evaluate((e) => {
+      const r = e.getBoundingClientRect();
+      return { largura: r.width, altura: r.height, cor: getComputedStyle(e).color };
+    });
+    expect(s.largura, rota).toBeGreaterThan(0);
+    expect(s.altura, rota).toBeGreaterThan(0);
+    expect(s.cor, rota).not.toBe("transparent");
+    expect(s.cor, rota).not.toMatch(/^rgba\(.*,\s*0\)$/);
+    await expect(voltar, rota).toHaveAccessibleName(/^[^←→]+$/);
+  }
+});
