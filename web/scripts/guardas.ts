@@ -29,7 +29,7 @@ export interface Publicavel {
 
 function camadasInvalidas(c: Comparacao): string[] {
   const itens = [
-    ...Object.values(c.candidatos).flatMap((a) => a.resumo),
+    ...Object.values(c.candidatos).flatMap((a) => [...a.resumo, ...(a.executivo ?? [])]),
     ...c.semelhancas,
     ...c.diferencas,
     ...c.omissoes,

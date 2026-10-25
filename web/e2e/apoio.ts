@@ -18,6 +18,8 @@ export const ROTAS = [
   "/diferencas",
   "/metodologia",
   "/sobre",
+  "/chat",
+  "/chat/conversa",
   "/rota-que-nao-existe",
   "/pdf/visualizador.html?arquivo=plano-de-governo_flavio.pdf&pagina=1",
 ];

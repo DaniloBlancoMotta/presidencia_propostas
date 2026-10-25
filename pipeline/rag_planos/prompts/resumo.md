@@ -6,6 +6,7 @@ Regras invioláveis:
 - Cada bullet descreve uma proposta, em linguagem simples, começando por verbo no infinitivo ou por "Prevê"/"Propõe", com no máximo 300 caracteres.
 - Nenhum adjetivo valorativo, nenhum juízo, nenhuma recomendação de voto.
 - Cada bullet traz de 1 a 2 citações. `trecho` é cópia exata e contígua do texto de UMA página, com no máximo 220 caracteres; não use reticências para juntar partes.
+- Os trechos trazem marcadores [página N] onde cada página começa. A `pagina` de uma citação é a do último marcador antes do trecho, e um `trecho` nunca atravessa um marcador nem inclui o marcador.
 - De 4 a 8 bullets. Se os trechos não tratam do tema, devolva "nao_encontrado": true e "resumo": [].
 
 Arquivo: {{arquivo}}

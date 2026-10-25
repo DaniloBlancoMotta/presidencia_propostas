@@ -112,7 +112,21 @@
       }
      ]
     }
-   ]
+   ],
+      "executivo": [
+        {"texto": "Zerar o desmatamento ilegal até 2029 e combater crimes ambientais com inteligência artificial, imagens de satélite e dados em tempo real.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 58, "trecho": "Teremos a meta de zerar o desmatamento ilegal até 2029"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 58, "trecho": "combateremos as queimadas ilegais, fortalecendo a prevenção, o monitoramento, a fiscalização e o combate aos crimes ambientais"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 58, "trecho": "com ferramentas aperfeiçoadas por inteligência artificial, bancos de dados em tempo real, imagens de satélite e ação coordenada das agências do Estado"}]},
+        {"texto": "Consolidar o mercado regulado de carbono e ampliar o pagamento por serviços ambientais a quem conserva a vegetação nativa.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 57, "trecho": "E vamos consolidar o mercado regulado de carbono com segurança jurídica, posicionando o Brasil como fornecedor global de ativos ambientais, e impulsionar a bioeconomia"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 57, "trecho": "impulsionar a bioeconomia, com biotecnologia, fármacos, cosméticos e novos materiais a partir da biodiversidade"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 57, "trecho": "Vamos criar mecanismos de incentivo econômico à preservação, ampliando o pagamento por serviços ambientais"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 57, "trecho": "instrumentos capazes de remunerar produtores, comunidades e proprietários rurais que conservam a vegetação nativa, recuperam áreas degradadas e protegem os recursos hídricos"}]},
+        {"texto": "Ampliar a infraestrutura de prevenção a eventos climáticos extremos e executar obras hídricas como o Ramal do Apodi.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 52, "trecho": "vamos ampliar a infraestrutura de prevenção a eventos climáticos extremos, com barragens de usos múltiplos, reservatórios de controle de cheias, diques, canais e obras de drenagem e macrodrenagem"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 52, "trecho": "Iremos concluir, iniciar, executar estruturas como o Ramal do Apodi, o Ramal do Salgado, a Adutora do Seridó, o Canal do Xingó"}]}
+      ]
   },
   "lula": {
    "nao_encontrado": false,
@@ -210,7 +224,19 @@
       }
      ]
     }
-   ]
+   ],
+      "executivo": [
+        {"texto": "Alcançar o desmatamento líquido zero até 2030 e expandir o monitoramento por satélite e o uso de inteligência artificial contra crimes ambientais.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 70, "trecho": "continuaremos trabalhando para alcançar o desmatamento líquido zero até 2030, meta que reafirmamos"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 70, "trecho": "todas as instâncias do governo persistirão atuando de forma integrada na implementação dos planos de controle e prevenção do desmatamento"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 72, "trecho": "Vamos expandir monitoramento satelital e uso de inteligência artificial no combate a crimes ambientais."}]},
+        {"texto": "Ampliar o financiamento climático, com o Fundo Clima e o Eco Invest, e aprimorar o Pagamento por Serviços Ambientais voltado à biodiversidade.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 71, "trecho": "Seguiremos ampliando os instrumentos necessários para o financiamento climático. O Fundo Clima e o Eco Invest continuarão a ser instrumentos fundamentais para o financiar a descarbonização da economia."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 72, "trecho": "Vamos aprimorar a implementação de programas de Pagamento por Serviços Ambientais (PSA) voltados à biodiversidade"}]},
+        {"texto": "Ampliar a infraestrutura de segurança hídrica e acelerar a substituição de combustíveis fósseis por biocombustíveis.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 72, "trecho": "vamos avançar nos investimentos para revitalizar as bacias hidrográficas e ampliar as infraestruturas para Segurança hídrica, garantindo água de qualidade para beber e produzir e proteção contra cheias e enchentes"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 64, "trecho": "acelerar a substituição progressiva de combustíveis fósseis por biocombustíveis e combustíveis de baixa intensidade de carbono, incluindo derivados de hidrogênio"}]}
+      ]
   }
  },
  "semelhancas": [

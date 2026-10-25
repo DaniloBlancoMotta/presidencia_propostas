@@ -20,8 +20,8 @@ const comp: Comparacao = {
   gerado_em: "2026-10-17T20:00:00-03:00",
   fontes: [],
   candidatos: {
-    "flavio-bolsonaro": { nao_encontrado: false, resumo: [{ texto: "item de teste", camada: "plano", citacoes: [{ arquivo: "plano-de-governo_flavio.pdf", pagina: 1, trecho: "teste" }] }] },
-    lula: { nao_encontrado: true, resumo: [] },
+    "flavio-bolsonaro": { nao_encontrado: false, resumo: [{ texto: "item de teste", camada: "plano", citacoes: [{ arquivo: "plano-de-governo_flavio.pdf", pagina: 1, trecho: "teste" }] }], executivo: [] },
+    lula: { nao_encontrado: true, resumo: [], executivo: [] },
   },
   semelhancas: [],
   diferencas: [],

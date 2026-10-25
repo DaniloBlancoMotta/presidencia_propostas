@@ -1,6 +1,6 @@
 {
  "theme_id": "tecnologia-ia",
- "gerado_em": "2026-10-17T23:52:21-03:00",
+ "gerado_em": "2026-10-18T13:12:13-03:00",
  "fontes": [
   {
    "arquivo": "plano-de-governo_flavio.pdf",
@@ -118,6 +118,76 @@
        "arquivo": "plano-de-governo_flavio.pdf",
        "pagina": 57,
        "trecho": "Os dados do cidadão são dele, não do governo, e serão tratados com privacidade e segurança."
+      }
+     ]
+    }
+   ],
+   "executivo": [
+    {
+     "texto": "Digitalizar 100% dos serviços públicos federais passíveis de digitalização e prever a ClarIA, assistente que acompanha cada cidadão em sua jornada.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 25,
+       "trecho": "Vamos digitalizar 100% dos serviços públicos do Governo Federal passíveis de digitalização, sob o princípio do digital by design, e eliminar a exigência de reapresentar documentos que o Estado já possui."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 18,
+       "trecho": "Inspirada nas mais avançadas plataformas de inteligência artificial, com uma experiência simples e acessível,"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 25,
+       "trecho": "A ClarIA, apresentada no Brasil por Elas, acompanhará cada cidadão em sua jornada."
+      }
+     ]
+    },
+    {
+     "texto": "Difundir a IA para micro, pequenas e médias empresas e usar o Estado como indutor da IA por compras públicas, GovTech e pesquisa.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 56,
+       "trecho": "A Estratégia Nacional de Inteligência Artificial vai difundir a IA para as micro, pequenas e médias empresas em larga escala, com prioridade para indústria, agronegócio, saúde e logística."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 56,
+       "trecho": "o Estado atuará como indutor, pelas compras públicas, pelo GovTech e pelo investimento em pesquisa, e vamos elevar a participação brasileira nas patentes de inteligência artificial."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 56,
+       "trecho": "Proporemos uma legislação voltada à liberdade de criar e inovar, inspirada nas melhores práticas internacionais, para que a tecnologia seja desenvolvida aqui sem entraves,"
+      }
+     ]
+    },
+    {
+     "texto": "Atrair data centers com energia barata e levar conectividade a escolas, áreas rurais e regiões de fronteira com baixa cobertura.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 53,
+       "trecho": "torna o país competitivo para atrair data centers e inteligência artificial, que se instalam onde a energia é barata e confiável."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 53,
+       "trecho": "transformar o país em polo global de data centers sustentáveis, aproveitando a matriz elétrica renovável."
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 24,
+       "trecho": "Vamos garantir pacotes de conexão para que nenhum brasileiro deixe de estudar, se capacitar, buscar emprego, empreender ou pedir ajuda por falta de internet,"
+      },
+      {
+       "arquivo": "plano-de-governo_flavio.pdf",
+       "pagina": 24,
+       "trecho": "E vamos levar conectividade às localidades de baixa cobertura, priorizando escolas, áreas rurais e regiões de fronteira,"
       }
      ]
     }
@@ -241,6 +311,81 @@
        "arquivo": "Programa-Governo-LULA-2026.pdf",
        "pagina": 17,
        "trecho": "Vamos continuar investindo na universalização dos serviços públicos digitais de qualidade, e na construção de infraestruturas públicas digitais que deem suporte à personalização dos serviços."
+      }
+     ]
+    }
+   ],
+   "executivo": [
+    {
+     "texto": "Garantir a soberania digital, com um Conselho Nacional pela Soberania Digital e infraestrutura computacional soberana com supercomputadores.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 54,
+       "trecho": "Garantiremos a soberania digital para que o Brasil e os brasileiros tenham capacidade de desenvolver, operar, regular e governar tecnologias estratégicas"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 17,
+       "trecho": "Propomos a criação de um Conselho Nacional pela Soberania Digital, com participação da sociedade."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 54,
+       "trecho": "com destaque para o fortalecimento da inteligência artificial desenvolvida por empresas brasileiras."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 54,
+       "trecho": "Vamos avançar numa infraestrutura computacional soberana, com supercomputadores desenvolvidos e operados por instituições nacionais."
+      }
+     ]
+    },
+    {
+     "texto": "Desenvolver modelos de linguagem em português e trabalhar pela regulamentação da IA e do direito autoral digital, com pagamento a autores e artistas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 55,
+       "trecho": "Vamos desenvolver e sustentar modelos de linguagem em português e outras línguas, voltados aos problemas do País, apoiados numa plataforma nacional de dados para treinamento e avaliação."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 42,
+       "trecho": "Trabalharemos pela aprovação de lei do direito autoral em ambiente digital e a regulamentação da inteligência artificial,"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 42,
+       "trecho": "para que músicos, autores e artistas sejam pagos quando as plataformas usarem conteúdo brasileiro."
+      }
+     ]
+    },
+    {
+     "texto": "Exigir salvaguardas socioambientais e contrapartidas na expansão de data centers e universalizar a internet de qualidade nas escolas.",
+     "camada": "plano",
+     "citacoes": [
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 54,
+       "trecho": "Vamos assegurar que a expansão de data centers e infraestruturas de inteligência artificial seja acompanhada de salvaguardas socioambientais obrigatórias,"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 55,
+       "trecho": "a instalação dos datacenters em solo brasileiro deve prever contrapartidas de conteúdo local e capacidade computacional para o mercado interno."
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 32,
+       "trecho": "estamos levando internet de qualidade às escolas brasileiras, já tendo alcançado 75% delas com conectividade nos parâmetros adequados. Vamos universalizar este serviço no próximo mandato,"
+      },
+      {
+       "arquivo": "Programa-Governo-LULA-2026.pdf",
+       "pagina": 55,
+       "trecho": "Vamos reduzir o déficit de fibra óptica que ainda atinge 11% dos municípios e ampliar o 5G no campo, com prioridade para Norte, Nordeste e periferias."
       }
      ]
     }

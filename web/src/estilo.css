@@ -1,121 +1,509 @@
-/* Tokens neutros (decisão 22): cinzas e um acento azul-petróleo escuro. Nenhum token por candidato. */
+@import "./tokens.css";
+
+/* Direção "cotejo" (S8): caderno de jornal de serviço público. Papel e tinta, fios no lugar de cartões,
+   Newsreader nos títulos e nas citações, Atkinson Hyperlegible Next no texto. A cor só aparece com
+   significado (S7): a de cada PDF marca o que é daquele plano; verde = semelhança; grafite = diferença.
+   Nenhuma cor literal aqui (crit. 51): todas vêm de tokens.css. */
+@font-face {
+  font-family: "Newsreader";
+  src: url(/fontes/newsreader-latin-wght-normal.woff2) format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url(/fontes/newsreader-latin-wght-italic.woff2) format("woff2");
+  font-weight: 200 800;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url(/fontes/atkinson-hyperlegible-next-latin-wght-normal.woff2) format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Escala de cinco tamanhos (crit. 63): 13, 15, 17 e 21 px, e o título de página entre 36 e 60 px. */
 :root {
-  --fundo: #fafaf9;
-  --superficie: #ffffff;
-  --texto: #1f2328;
-  --sutil: #4b5563;
-  --borda: #d0d7de;
-  --acento: #0f4c5c;
-  --acento-fundo: #e7eff1;
-  --foco: #0f4c5c;
-  --raio: 10px;
+  --acento: var(--tinta);
+  --foco: var(--tinta);
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+  --t-xs: 0.8125rem;
+  --t-sm: 0.9375rem;
+  --t-base: 1.0625rem;
+  --t-lg: 1.3125rem;
+  --t-xl: clamp(2.25rem, 1.4rem + 4.2vw, 3.75rem);
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-12: 3rem;
+  --col-num: 2.1rem;
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
   color-scheme: light;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0;
-  background: var(--fundo);
-  color: var(--texto);
-  font: 1rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  overflow-wrap: anywhere;
+  margin: 0; background: var(--papel); color: var(--tinta);
+  font: 400 var(--t-base)/1.55 var(--sans); overflow-wrap: anywhere;
 }
-a { color: var(--acento); }
-:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
-h1 { font-size: 1.6rem; line-height: 1.25; margin: .5rem 0; }
-h1:focus { outline: none; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
+#conteudo:focus, h1:focus { outline: none; }
 h1:focus-visible { outline: 3px solid var(--foco); }
-h2 { font-size: 1.25rem; margin: 1.5rem 0 .5rem; }
-h3, h4 { font-size: 1.05rem; margin: .5rem 0; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+a, button, summary { touch-action: manipulation; -webkit-tap-highlight-color: var(--toque); }
+button, input { font: inherit; color: inherit; }
+svg { flex: none; }
+h1, h2, h3 { text-wrap: balance; }
+p { max-width: 68ch; text-wrap: pretty; }
+h2 { margin: var(--s-8) 0 var(--s-3); font: 600 var(--t-lg)/1.2 var(--serif); }
+h3 { margin: var(--s-4) 0 var(--s-2); font: 700 var(--t-base)/1.3 var(--sans); }
+h4 { margin: var(--s-3) 0 var(--s-2); font: 700 var(--t-sm)/1.3 var(--sans); }
+code, kbd { font: 400 var(--t-xs)/1.5 var(--mono); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.rotulo { margin: 0; font: 700 var(--t-xs)/1.2 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-2); }
 
-.pular { position: absolute; left: -999px; top: 0; background: var(--superficie); padding: .5rem 1rem; z-index: 10; }
-.pular:focus { left: 1rem; }
+/* ---- página: cabeça com o título, aviso de ponta a ponta, conteúdo e rodapé no fim da janela ---- */
+#app > .pagina { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+#conteudo { flex: 1 0 auto; }
+.envelope { max-width: 70rem; margin-inline: auto; padding-inline: var(--s-4); }
+.ampla .envelope { max-width: 110rem; }
+.pular { position: absolute; left: -999px; top: 0; z-index: 10; padding: var(--s-2) var(--s-4); background: var(--papel); color: var(--tinta); }
+.pular:focus { left: var(--s-4); top: var(--s-2); }
 
-.topo { background: var(--superficie); border-bottom: 1px solid var(--borda); }
-.faixa {
-  max-width: 64rem; margin: 0 auto; padding: .75rem 1rem;
-  display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
+.cabeca { padding-top: var(--s-6); }
+.cabeca .envelope > * { max-width: 46rem; }
+.topo { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; column-gap: var(--s-2); }
+.com-voltar .topo { grid-template-columns: 44px minmax(0, 1fr); }
+.com-voltar .envelope > :not(.topo) { padding-left: calc(44px + var(--s-2)); }
+h1 { margin: 0; font: 600 var(--t-xl)/1.02 var(--serif); letter-spacing: -0.015em; hyphens: auto; }
+.voltar { display: grid; place-items: center; width: 44px; height: 44px; margin-left: -10px; color: var(--tinta); }
+.seta-voltar { width: 26px; height: 26px; }
+/* com margem para isso, a seta sai para a esquerda e o título fica alinhado ao aviso e ao conteúdo */
+@media (min-width: 75rem) {
+  .com-voltar .topo { position: relative; grid-template-columns: minmax(0, 1fr); }
+  .com-voltar .voltar { position: absolute; left: calc(-44px - var(--s-2)); top: 50%; margin: -22px 0 0; }
+  .com-voltar .envelope > :not(.topo) { padding-left: 0; }
 }
-.marca { font-weight: 700; color: var(--texto); text-decoration: none; }
-.aviso-ia {
-  max-width: 64rem; margin: 0 auto; padding: .5rem 1rem; font-size: .9rem; color: var(--texto);
-  background: var(--acento-fundo); border-top: 1px solid var(--borda);
+@media (max-width: 339.98px) {
+  .com-voltar .topo { grid-template-columns: minmax(0, 1fr); }
+  .com-voltar .envelope > :not(.topo) { padding-left: 0; }
 }
-.conteudo { max-width: 64rem; margin: 0 auto; padding: 1rem; min-height: 60vh; }
-.rodape { max-width: 64rem; margin: 2rem auto 0; padding: 1rem; border-top: 1px solid var(--borda); color: var(--sutil); font-size: .9rem; }
-.lead { color: var(--sutil); }
-.voltar { margin: 0; }
+h1.com-glifo { display: flex; align-items: center; gap: var(--s-3); }
+h1 .glifo-titulo { width: 0.8em; height: 0.8em; color: var(--semelhanca); }
+/* o que a rota traz no topo vem logo depois do aviso (§6: título, aviso, conteúdo) */
+.envelope.sob-aviso > * { max-width: 46rem; }
+.faixa-aviso:has(+ .sob-aviso) { margin-bottom: var(--s-6); }
+.sob-aviso { margin-bottom: var(--s-8); }
+.sob-aviso > :first-child { margin-top: 0; }
+.sob-aviso > :last-child { margin-bottom: 0; }
+.abertura { margin: var(--s-4) 0 0; font-size: var(--t-lg); line-height: 1.45; max-width: 40ch; }
+html[data-ordem="ab"] .na-ordem-ba, html[data-ordem="ba"] .na-ordem-ab { display: none; }
+.descricao { margin: var(--s-1) 0 0; font-size: var(--t-sm); color: var(--tinta-2); }
+.atualizacao { margin: var(--s-1) 0 0; font-size: var(--t-xs); color: var(--tinta-2); }
+.lead { margin: 0 0 var(--s-4); font-size: var(--t-lg); line-height: 1.45; }
+
+.faixa-aviso { margin: var(--s-6) 0 var(--s-8); border-block: 1px solid var(--fio); }
+.aviso { display: flex; gap: var(--s-3); align-items: baseline; padding-block: var(--s-3); }
+.aviso .rotulo { flex: none; color: var(--tinta); }
+.aviso-ia { margin: 0; font-size: var(--t-sm); color: var(--tinta-2); }
+@media (max-width: 479.98px) {
+  .aviso { flex-direction: column; gap: var(--s-1); }
+}
+
+.rodape { margin-top: var(--s-12); font-size: var(--t-sm); color: var(--tinta-2); }
+.rodape > .envelope { padding-block: var(--s-4) var(--s-8); border-top: 2px solid var(--tinta); }
+.rodape nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s-2); }
+.rodape nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--tinta); font-weight: 700; }
+.rodape p { margin: var(--s-2) 0 0; font-variant-numeric: tabular-nums; }
 
 .botao {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
-  padding: .4rem .9rem; border: 1px solid var(--acento); border-radius: var(--raio);
-  background: var(--superficie); color: var(--acento); font: inherit; font-weight: 600;
-  text-decoration: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0.4rem 0.9rem;
+  border: 1px solid var(--acento); background: transparent; color: var(--acento);
+  font: 700 var(--t-sm)/1.2 var(--sans); text-decoration: none; cursor: pointer;
 }
-.botao[aria-pressed="true"] { background: var(--acento); color: #fff; }
+.botao[aria-pressed="true"] { background: var(--acento); color: var(--papel); }
 
-/* Grade da tela inicial */
-.grade { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); }
-.grade .destaque { grid-column: span 1; }
-.cartao {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem;
-  min-height: 7rem; padding: 1rem; text-align: center; font-weight: 600; color: var(--texto);
-  background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); text-decoration: none;
+/* ---- início: destaques e índice de temas ---- */
+.destaques { list-style: none; margin: 0 0 var(--s-8); padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+.destaque { display: flex; }
+.destaque .cartao {
+  flex: 1; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--s-3);
+  min-height: 6.5rem; padding: var(--s-4); color: var(--tinta); text-decoration: none;
 }
-.destaque .cartao { border: 2px solid var(--acento); background: var(--acento-fundo); }
-.icone { color: var(--acento); flex: none; }
+.destaque .glifo { width: 2.75rem; height: 2.75rem; }
+.destaque .nome { font: 600 var(--t-lg)/1.15 var(--serif); }
+.grade > .rotulo { margin: 0 0 var(--s-3); }
+.indice {
+  list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 2px solid var(--tinta); counter-reset: tema;
+}
+.indice li { display: flex; border-bottom: 1px solid var(--fio); counter-increment: tema; }
+.indice li:not(:nth-child(4n)) { border-right: 1px solid var(--fio); }
+.indice .cartao {
+  flex: 1; display: grid; grid-template-rows: auto auto 1fr; gap: var(--s-2); min-height: 7.25rem;
+  padding: var(--s-3) var(--s-2) var(--s-3) var(--s-3); color: var(--tinta); text-decoration: none;
+}
+/* número do tema só visual: o texto alternativo vazio o tira do leitor de tela */
+.indice .cartao::before {
+  content: counter(tema, decimal-leading-zero) / ""; font: 500 var(--t-xs)/1 var(--serif);
+  font-variant-numeric: tabular-nums lining-nums; color: var(--tinta-2);
+}
+.indice .icone { width: 26px; height: 26px; }
+.indice .nome { align-self: end; font: 700 var(--t-sm)/1.2 var(--sans); }
+@media (max-width: 479.98px) {
+  .destaque .cartao { grid-template-columns: minmax(0, 1fr); row-gap: var(--s-1); align-content: start; }
+  .destaque .glifo { width: 2.25rem; height: 2.25rem; }
+  .indice { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .indice li:not(:nth-child(4n)) { border-right: 0; }
+  .indice li:nth-child(odd) { border-right: 1px solid var(--fio); }
+  .indice .cartao {
+    position: relative; grid-template-columns: 22px minmax(0, 1fr); grid-template-rows: 1fr; align-items: center;
+    gap: var(--s-3); min-height: 4.25rem; padding: var(--s-3) var(--s-6) var(--s-3) var(--s-3);
+  }
+  .indice .cartao::before { position: absolute; top: var(--s-2); right: var(--s-2); }
+  .indice .icone { width: 22px; height: 22px; }
+  .indice .nome { align-self: center; }
+}
+@media (max-width: 339.98px) {
+  .destaques, .indice { grid-template-columns: minmax(0, 1fr); }
+  .indice li:nth-child(odd) { border-right: 0; }
+  .indice .cartao { padding: var(--s-2); }
+  .indice .cartao::before { position: static; grid-column: 1 / -1; }
+  .destaque .cartao { padding: var(--s-3); }
+  .destaque .nome, .indice .nome { hyphens: auto; }
+}
+.chamada-chat { max-width: none; margin: var(--s-8) 0 0; }
+.cartao-chat {
+  display: flex; align-items: center; gap: var(--s-3); min-height: 44px; padding: var(--s-3) var(--s-4);
+  color: var(--tinta); text-decoration: none; border: 1px solid var(--tinta);
+}
+.cartao-chat .icone { width: 28px; height: 28px; }
+.titulo-chat { display: block; font: 600 var(--t-lg)/1.2 var(--serif); }
+.cartao-chat .sub { display: block; font-size: var(--t-sm); color: var(--tinta-2); }
 
-/* Tela de tema */
-.filtros { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
-.bloco { margin: 1.25rem 0; }
-.itens { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
-.item details { background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); }
-.item summary { cursor: pointer; padding: .75rem 1rem; min-height: 44px; list-style-position: outside; margin-left: 1rem; }
-.item[open] summary, .item details[open] > summary { border-bottom: 1px solid var(--borda); }
-.selo { display: block; font-size: .8rem; font-weight: 700; color: var(--sutil); text-transform: uppercase; letter-spacing: .02em; }
-.citacoes { list-style: none; margin: 0; padding: .5rem 1rem 1rem; display: grid; gap: .75rem; }
-.trecho { margin: 0; padding: .5rem .75rem; border-left: 3px solid var(--borda); background: var(--fundo); font-style: italic; }
-.origem { margin: .25rem 0; color: var(--sutil); font-size: .9rem; }
-.nome-candidato { margin-top: 0; }
-.nao-encontrado, .vazio { padding: .75rem 1rem; background: var(--superficie); border: 1px dashed var(--borda); border-radius: var(--raio); color: var(--sutil); }
+/* ---- controles: "Trocar ordem" como botão de texto com ícone e filtros como controle segmentado ---- */
+.controles { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-4); align-items: center; margin-bottom: var(--s-8); }
+.trocar {
+  display: inline-flex; align-items: center; gap: var(--s-2); min-height: 44px; margin-left: calc(var(--s-2) * -1);
+  padding: 0 var(--s-2); border: 0; background: transparent; color: var(--acento);
+  font: 700 var(--t-sm)/1.2 var(--sans); text-decoration: underline; text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em; cursor: pointer;
+}
+.icone-trocar { width: 18px; height: 18px; }
+.filtros { display: inline-flex; border: 1px solid var(--acento); }
+.filtro {
+  min-height: 44px; padding: 0 0.7rem; border: 0; background: transparent; color: var(--acento);
+  font: 700 var(--t-sm)/1.15 var(--sans); cursor: pointer;
+}
+.filtro + .filtro { border-left: 1px solid var(--acento); }
+.filtro[aria-pressed="true"] { background: var(--acento); color: var(--papel); }
+@media (max-width: 479.98px) {
+  .filtros { display: flex; width: 100%; }
+  .filtro { flex: 1 1 0; min-width: 0; padding: 0.35rem 0.4rem; font-size: var(--t-xs); text-wrap: balance; }
+}
 
-.abas { display: flex; gap: .25rem; border-bottom: 1px solid var(--borda); margin-bottom: .75rem; }
+/* ---- seções: títulos com fio de 2 px; itens separados por fio de 1 px ---- */
+.bloco { margin: 0 0 var(--s-12); }
+.bloco > h2, .titulo-secao {
+  display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--s-2); margin: 0 0 var(--s-2);
+  padding-bottom: var(--s-2); border-bottom: 2px solid var(--cor-lista, var(--tinta));
+}
+.bloco > h2 a { display: inline-flex; align-items: center; min-height: 44px; }
+.titulo-secao { margin-top: var(--s-12); }
+.n { font: 500 var(--t-sm)/1 var(--sans); color: var(--tinta-2); font-variant-numeric: tabular-nums; }
+.glifo { width: 1.5rem; height: 1.5rem; color: var(--cor-lista, var(--tinta)); }
+.bloco[data-lista="semelhancas"], .grupo-sem { --cor-lista: var(--semelhanca); }
+.bloco[data-lista="diferencas"], .bloco[data-lista="omissoes"], .grupo-dif { --cor-lista: var(--diferenca); }
+.subtitulo { display: flex; align-items: center; gap: var(--s-2); margin: var(--s-6) 0 var(--s-1); font: 700 var(--t-sm)/1.3 var(--sans); }
+.subtitulo .glifo { width: 1.25rem; height: 1.25rem; }
+.vazio, .nao-encontrado { margin: 0; padding: var(--s-3) 0; border-bottom: 1px solid var(--fio); color: var(--tinta-2); }
+
+/* índice das visões transversais (crit. 36): âncoras #g-<tema>, com o título logo abaixo do topo */
+.indice-temas ul { list-style: none; margin: 0 0 var(--s-8); padding: 0; display: flex; flex-wrap: wrap; gap: 0 var(--s-4); border-block: 1px solid var(--fio); }
+.indice-temas a { display: inline-flex; align-items: center; gap: var(--s-1); min-height: 44px; font-weight: 700; font-size: var(--t-sm); }
+.bloco > h2[id] { scroll-margin-top: var(--s-4); }
+/* o último grupo ocupa ao menos a altura da janela: a âncora dele também leva o título ao topo */
+section[data-tema]:last-of-type { min-height: calc(100vh - 10rem); }
+
+/* ---- abas (celular) e colunas (desktop) ---- */
+.abas { display: flex; background: var(--papel); }
+@media (max-width: 767.98px) and (min-height: 500px) {
+  .abas { position: sticky; top: 0; z-index: 2; }
+  html { scroll-padding-top: calc(52px + var(--s-2)); }
+}
 .aba {
-  flex: 1 1 0; min-height: 44px; padding: .5rem; font: inherit; font-weight: 600; cursor: pointer;
-  background: transparent; color: var(--sutil); border: 0; border-bottom: 3px solid transparent;
+  flex: 1 1 0; min-width: 0; min-height: 48px; padding: var(--s-2); border: 0; border-top: 4px solid transparent;
+  background: transparent; color: var(--tinta-2); font: 700 var(--t-sm)/1.2 var(--sans); cursor: pointer;
 }
-.aba[aria-selected="true"] { color: var(--texto); border-bottom-color: var(--acento); }
-.colunas { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
-.painel { min-width: 0; }
-.painel:not(.ativo) { display: none; }
-.par { display: grid; gap: .5rem 1rem; padding: .5rem 0 0; grid-template-columns: minmax(0, 1fr); }
-.lado { min-width: 0; padding: 0 1rem; }
-.lado .citacoes { padding: 0 0 .75rem; }
-
+/* Aba ativa: depois da hidratação, a do aria-selected; antes, a do candidato que a ordem sorteada pôs
+   primeiro (crit. 1). O HTML pré-renderizado vem sempre na ordem "ab"; :first-child e :last-child são
+   posições nessa ordem, iguais para os dois candidatos. */
+.abas:not([data-pre]) > .aba[aria-selected="true"],
+html[data-ordem="ab"] .abas[data-pre] > .aba:first-child,
+html[data-ordem="ba"] .abas[data-pre] > .aba:last-child {
+  background: var(--tom-cand); border-top-color: var(--cor-cand); color: var(--tinta);
+}
+.colunas { display: flex; flex-wrap: wrap; }
+.painel { flex: 1 1 100%; min-width: 0; padding: var(--s-2) var(--s-4) var(--s-4); }
+@media (max-width: 767.98px) {
+  .colunas:not([data-pre]) > .painel:not(.ativo),
+  html[data-ordem="ab"] .colunas[data-pre] > .painel:last-child,
+  html[data-ordem="ba"] .colunas[data-pre] > .painel:first-child { display: none; }
+  /* o nome fica só na aba (crit. 4); o h3 continua para o leitor de tela */
+  .cabeca-col h3 { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .cabeca-col .conta { display: none; }
+}
 @media (min-width: 768px) {
   .abas { display: none; }
-  .colunas, .par { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .painel:not(.ativo) { display: block; }
-  h1 { font-size: 2rem; }
+  .colunas { flex-wrap: nowrap; gap: var(--s-6); }
+  .painel { flex-basis: 0; padding-top: var(--s-3); }
+  .cabeca-col { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 var(--s-2); margin-bottom: var(--s-1); }
+  .cabeca-col h3 { margin: 0; font: 700 var(--t-sm)/1.3 var(--sans); }
+  .conta { margin: 0; font-size: var(--t-sm); color: var(--tinta-2); font-variant-numeric: tabular-nums; }
 }
 
 /* Ordem visual dos candidatos antes da hidratação (decisão 12); depois o DOM já vem na ordem. */
 html[data-ordem="ab"] [data-cand="flavio-bolsonaro"], html[data-ordem="ba"] [data-cand="lula"] { order: 1; }
 html[data-ordem="ab"] [data-cand="lula"], html[data-ordem="ba"] [data-cand="flavio-bolsonaro"] { order: 2; }
-.abas, .colunas, .par { display: flex; flex-wrap: wrap; }
-.abas > *, .colunas > *, .par > * { flex: 1 1 0; }
-.colunas > *, .par > * { flex-basis: 100%; }
-@media (min-width: 768px) {
-  .colunas > *, .par > * { flex-basis: 0; }
-  .abas { display: none; }
+
+/* ---- itens expansíveis: número, texto e o indicador ▸/▾ em SVG (crit. 3) ---- */
+.itens { list-style: none; margin: 0; padding: 0; }
+.itens > li { border-bottom: 1px solid var(--fio); }
+.item summary {
+  display: grid; grid-template-columns: var(--col-num) minmax(0, 1fr) 1.25rem; gap: var(--s-2); align-items: baseline;
+  min-height: 44px; margin-inline: calc(var(--s-2) * -1); padding: var(--s-3) var(--s-2); list-style: none; cursor: pointer;
+}
+.item summary::-webkit-details-marker { display: none; }
+.num { grid-column: 1; font: 500 var(--t-sm)/1 var(--serif); font-variant-numeric: tabular-nums lining-nums; color: var(--tinta-2); }
+.resumo-item { grid-column: 2; min-width: 0; }
+.texto-item { display: block; max-width: 68ch; text-wrap: pretty; }
+.selo { display: block; margin-bottom: var(--s-1); font-size: var(--t-xs); color: var(--tinta-2); }
+.seta { grid-column: 3; justify-self: end; align-self: center; width: 12px; height: 12px; color: var(--acento); }
+.item details[open] > summary .seta { transform: rotate(90deg); }
+.corpo { padding: 0 0 var(--s-4) calc(var(--col-num) + var(--s-2)); }
+@media (max-width: 339.98px) {
+  :root { --col-num: 1.6rem; }
+  .texto-item { hyphens: auto; }
+  .corpo { padding-left: 0; }
+  .cand { white-space: normal; }
 }
 
-/* Sobre */
-.fontes { list-style: none; padding: 0; display: grid; gap: 1rem; }
-.fonte { background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); padding: 1rem; }
-.fonte dt { font-weight: 700; margin-top: .5rem; }
+/* citação: as palavras do plano, abertas pelas aspas na cor do plano (crit. 64); nunca hifenizadas (crit. 70) */
+.citacoes { list-style: none; margin: 0; padding: 0; }
+.citacao { margin: var(--s-3) 0 0; }
+.trecho { position: relative; margin: 0 0 var(--s-1); padding-left: 1.6rem; font: italic 400 var(--t-base)/1.5 var(--serif); text-wrap: pretty; hyphens: manual; }
+.aspas { position: absolute; left: -0.1rem; top: -0.55rem; font: italic 600 2.6rem/1 var(--serif); color: var(--cor-cand); }
+.origem { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s-3); max-width: none; margin: 0 0 0 1.6rem; font-size: var(--t-xs); color: var(--tinta-2); }
+.onde { min-width: 0; }
+.ver-pdf { display: inline-flex; align-items: center; gap: var(--s-1); min-height: 44px; color: var(--acento); font-weight: 700; font-size: var(--t-sm); }
+.seta-direita { width: 14px; height: 14px; }
+.par { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-8); }
+.lado { flex: 1 1 100%; min-width: 0; padding-top: var(--s-2); }
+.lado .nome-candidato { margin: 0; font: 700 var(--t-xs)/1.3 var(--sans); }
+@media (min-width: 768px) {
+  .lado { flex-basis: 0; }
+  .par { flex-wrap: nowrap; margin-left: calc((var(--col-num) + var(--s-2)) * -1); }
+}
+@media (max-width: 339.98px) {
+  .trecho { padding-left: 1.2rem; }
+  .origem { margin-left: 0; }
+}
+/* nome do candidato: o quadradinho na cor dele, preso à primeira palavra */
+.cand { white-space: nowrap; }
+.cand-resto { white-space: normal; }
+
+/* ---- sobre e metodologia ---- */
+.fontes { list-style: none; margin: var(--s-6) 0 0; padding: 0; display: grid; gap: var(--s-6); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) {
+  .fontes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.fonte { padding: var(--s-3) var(--s-4) var(--s-4); }
+.fonte h2 { margin: 0 0 var(--s-1); }
+.fonte dt { margin-top: var(--s-3); font-size: var(--t-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tinta-2); }
 .fonte dd { margin: 0; }
-.hash { font-size: .85rem; word-break: break-all; }
-.etapas li { margin: .5rem 0; }
+.fonte dd a { display: inline-flex; align-items: center; min-height: 44px; }
+.hash { word-break: break-all; }
+.etapas { padding-left: 1.4rem; }
+.etapas li { max-width: 68ch; margin: var(--s-2) 0; }
+
+/* ---- chat por tema e conversa (AC 38-43), na mesma direção ---- */
+.chat { display: grid; gap: var(--s-3); }
+.chat > .controles { margin-bottom: 0; }
+.fala { margin: 0; }
+.fala-site { min-width: 0; padding: var(--s-3) 0; border-top: 1px solid var(--fio); }
+.boas-vindas { padding: var(--s-3) var(--s-4); background: var(--papel-2); border-top: 0; }
+.boas-vindas p { margin: 0; }
+.falas { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); }
+.troca { display: grid; gap: var(--s-2); scroll-margin-top: var(--s-2); }
+.fala-pessoa { justify-self: end; max-width: min(100%, 40rem); padding: var(--s-2) var(--s-3); background: var(--tinta); color: var(--papel); }
+.mencao { font-weight: 700; }
+.bloco-resposta + .bloco-resposta { margin-top: var(--s-6); }
+.bloco-resposta h2 { margin: var(--s-1) 0 var(--s-2); padding-bottom: var(--s-2); border-bottom: 2px solid var(--tinta); }
+.bloco-resposta h3 { margin: var(--s-4) 0 var(--s-2); }
+.bloco-resposta h4 { margin: var(--s-3) 0 var(--s-1); color: var(--tinta-2); }
+.meta, .nota, .carregando { margin: var(--s-1) 0 var(--s-3); font-size: var(--t-sm); color: var(--tinta-2); }
+.lado-a-lado { display: grid; gap: var(--s-4); grid-template-columns: minmax(0, 1fr); }
+.candidato-resposta { min-width: 0; padding: var(--s-2) var(--s-3) var(--s-3); background: var(--tom-cand); border-top: 4px solid var(--cor-cand); }
+.candidato-resposta h3 { margin-top: var(--s-1); }
+@media (min-width: 768px) {
+  .lado-a-lado { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+.todas { margin-top: var(--s-3); }
+.todas > summary, .contexto-inline > summary {
+  display: flex; align-items: center; min-height: 44px; color: var(--acento); font-weight: 700; cursor: pointer;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em;
+}
+.acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-4); margin-top: var(--s-4); }
+.acoes a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; font-size: var(--t-sm); }
+.atalhos { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3); }
+.botao.pequeno { padding: 0.3rem 0.75rem; }
+.como-usar { margin: var(--s-1) 0; padding-left: 1.25rem; }
+.como-usar li { margin: var(--s-1) 0; }
+kbd { padding: 0 0.3rem; border: 1px solid var(--fio); background: var(--papel); font: inherit; font-weight: 700; }
+.panorama { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
+.cartao-panorama { min-width: 0; padding: var(--s-3) 0; border-top: 2px solid var(--tinta); }
+.cartao-panorama h3 { margin: 0 0 var(--s-2); }
+.cartao-panorama dl { margin: 0; display: grid; gap: var(--s-1); }
+.cartao-panorama dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 var(--s-2); border-bottom: 1px solid var(--fio); }
+.cartao-panorama dt { color: var(--tinta-2); }
+.cartao-panorama dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cartao-panorama .acoes { margin-top: var(--s-3); }
+/* Fixos no rodapé da janela só o rótulo e a linha do campo; o foco do teclado não fica atrás deles. */
+.compositor { position: sticky; bottom: 0; z-index: 4; padding: var(--s-2) 0; background: var(--papel); border-top: 1px solid var(--fio); }
+html:has(.compositor) { scroll-padding-bottom: 7rem; }
+@media (max-height: 499px) {
+  .compositor { position: static; }
+}
+.rotulo-campo { display: block; margin-bottom: var(--s-1); font-size: var(--t-sm); font-weight: 700; }
+.linha-campo { display: flex; flex-wrap: wrap; align-items: stretch; gap: var(--s-2); }
+.campo-combo { position: relative; flex: 1 1 8rem; min-width: 0; }
+.campo-combo input { width: 100%; min-height: 44px; padding: var(--s-2) var(--s-3); background: var(--papel); border: 1px solid var(--tinta-2); }
+.campo-combo input::placeholder { color: var(--tinta-2); }
+/* a lista de temas é role="listbox": as opções são flex, sem marcador, e a lista não precisa de list-style */
+.lista-temas {
+  position: absolute; left: 0; right: 0; bottom: calc(100% + var(--s-1)); z-index: 5; max-height: min(50vh, 22rem); overflow-y: auto;
+  margin: 0; padding: var(--s-1); background: var(--papel); border: 1px solid var(--tinta);
+}
+.lista-temas[hidden] { display: none; }
+.lista-temas [role="option"] {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0 var(--s-2);
+  min-height: 44px; padding: var(--s-2) var(--s-3); cursor: pointer;
+}
+.lista-temas [aria-selected="true"] { background: var(--papel-2); outline: 2px solid var(--tinta); outline-offset: -2px; }
+.rotulo-tema { font-weight: 700; }
+.id-tema { font-size: var(--t-sm); color: var(--tinta-2); }
+.dica { margin: 0; font-size: var(--t-xs); color: var(--tinta-2); }
+.limpar { justify-self: start; min-height: 44px; padding: 0; background: transparent; border: 0; color: var(--acento); text-decoration: underline; cursor: pointer; }
+.aviso-previa { margin: var(--s-1) 0 var(--s-3); padding: var(--s-2) var(--s-3); font-size: var(--t-sm); background: var(--papel-2); border-left: 3px solid var(--tinta); }
+.ia-acao .meta { margin: 0; }
+
+/* Conversa em página ampla (/chat/conversa): a conversa e, ao lado, o contexto da resposta escolhida.
+   Abaixo de 1100 px, o contexto vai dentro de cada resposta, num <details>. */
+.conversa-ampla { display: grid; gap: var(--s-6); grid-template-columns: minmax(0, 1fr); align-items: start; }
+.coluna-conversa { display: grid; gap: var(--s-3); min-width: 0; }
+.painel-contexto, .ver-contexto { display: none; }
+@media (min-width: 1100px) {
+  .conversa-ampla { grid-template-columns: minmax(0, 3fr) minmax(22rem, 2fr); }
+  .painel-contexto {
+    display: block; position: sticky; top: var(--s-4); max-height: calc(100vh - 2rem); overflow-y: auto;
+    padding: var(--s-4); background: var(--papel); border: 1px solid var(--fio); border-top: 2px solid var(--tinta);
+  }
+  .ver-contexto { display: flex; margin-top: var(--s-3); }
+  .contexto-inline { display: none; }
+  .troca[data-selecionada="sim"] > .fala-site { border-top: 2px solid var(--tinta); }
+}
+.painel-contexto h2 { margin: 0 0 var(--s-2); }
+.contexto h3 { margin: var(--s-4) 0 var(--s-1); }
+.contexto h4 { margin: var(--s-3) 0 var(--s-1); }
+.contexto-dados { margin: 0; display: grid; gap: var(--s-1); }
+.contexto-dados > div { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: var(--s-2); }
+.contexto-dados dt { color: var(--tinta-2); }
+.contexto-dados dd { margin: 0; min-width: 0; }
+@media (max-width: 480px) {
+  .contexto-dados > div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
+.fontes-contexto { margin: var(--s-1) 0; padding-left: 1.25rem; }
+.recortes { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+.recorte { min-width: 0; padding: var(--s-2) var(--s-3); background: var(--papel-2); border: 1px solid var(--fio); }
+.recorte[data-citado="sim"] { border-color: var(--tinta); }
+.recorte a { display: inline-flex; align-items: center; min-height: 44px; }
+.texto-recorte { margin: var(--s-1) 0; font-size: var(--t-sm); }
+.marca-pagina { font-size: var(--t-xs); font-weight: 700; color: var(--tinta-2); }
+.selo-citado { font-weight: 700; }
+.contexto-inline { margin-top: var(--s-3); }
+.continuar { margin: var(--s-1) 0; }
+.continuar a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
+
+/* ---- cor e tom por candidato (S7): a área de cada candidato no tom claro do próprio PDF; a cor plena só
+   em fios, no quadradinho antes do nome e nas aspas, nunca no texto. Verde = semelhanças; grafite =
+   diferenças. Os componentes leem só --cor-cand, --tom-cand e --tom-cand-forte (tokens.css). ---- */
+.cand::before {
+  content: ""; display: inline-block; width: 0.62em; height: 0.62em; margin-right: 0.32em;
+  background: var(--cor-cand); vertical-align: 0.06em;
+}
+.painel { background: var(--tom-cand); }
+@media (min-width: 768px) {
+  .painel { border-top: 6px solid var(--cor-cand); }
+}
+.lado { border-top: 3px solid var(--cor-cand); }
+.item.omissao { background: var(--tom-cand); padding-inline: var(--s-2); }
+.fonte { background: var(--tom-cand); border-top: 6px solid var(--cor-cand); }
+.painel .itens > li, .item.omissao, .bloco[data-lista="semelhancas"] .itens > li, .grupo-sem .itens > li { border-bottom-color: var(--fio-area); }
+.bloco[data-lista="semelhancas"], .grupo-sem {
+  padding: var(--s-3) var(--s-4) var(--s-4); background: var(--tom-semelhanca); border-top: 6px solid var(--semelhanca);
+}
+.bloco[data-lista="diferencas"] { padding-top: var(--s-3); border-top: 6px solid var(--diferenca); }
+.destaque.sem .cartao { background: var(--tom-semelhanca); border-top: 4px solid var(--semelhanca); }
+.destaque.dif .cartao { background: var(--papel-2); border-top: 4px solid var(--diferenca); }
+.destaque.sem .glifo { color: var(--semelhanca); }
+.destaque.dif .glifo { color: var(--diferenca); }
+
+/* ---- hover e toque (crit. 40 e 41): fora das áreas de cor, tons neutros; dentro delas, o tom forte ---- */
+@media (hover: hover) {
+  .item summary:hover, .indice .cartao:hover, .trocar:hover, .voltar:hover, .filtro:not([aria-pressed="true"]):hover,
+  .botao:not([aria-pressed="true"]):hover, .cartao-chat:hover, .abas:not([data-pre]) > .aba:not([aria-selected="true"]):hover {
+    background: var(--papel-2);
+  }
+  .filtro[aria-pressed="true"]:hover, .botao[aria-pressed="true"]:hover { background: var(--tinta-hover); }
+  .destaque.dif .cartao:hover { background: var(--papel-3); }
+  .destaque.sem .cartao:hover, .bloco[data-lista="semelhancas"] .item summary:hover, .grupo-sem .item summary:hover {
+    background: var(--tom-semelhanca-forte);
+  }
+  .painel .item summary:hover, .item.omissao summary:hover { background: var(--tom-cand-forte); }
+  .abas:not([data-pre]) > .aba:not([aria-selected="true"]):hover { color: var(--tinta); }
+  .destaque .cartao:hover .nome, .indice .cartao:hover .nome, .rodape nav a:hover, .ver-pdf:hover { text-decoration-thickness: 2px; }
+  .destaque .cartao:hover .nome, .indice .cartao:hover .nome { text-decoration-line: underline; text-underline-offset: 0.2em; }
+}
+.item summary:active, .indice .cartao:active, .trocar:active, .voltar:active, .filtro:not([aria-pressed="true"]):active,
+.botao:not([aria-pressed="true"]):active, .cartao-chat:active, .abas:not([data-pre]) > .aba:not([aria-selected="true"]):active {
+  background: var(--papel-2);
+}
+.filtro[aria-pressed="true"]:active, .botao[aria-pressed="true"]:active { background: var(--tinta-hover); }
+.destaque.dif .cartao:active { background: var(--papel-3); }
+.destaque.sem .cartao:active, .bloco[data-lista="semelhancas"] .item summary:active, .grupo-sem .item summary:active {
+  background: var(--tom-semelhanca-forte);
+}
+.painel .item summary:active, .item.omissao summary:active { background: var(--tom-cand-forte); }
+
+/* ---- movimento (crit. 66 e 67): o conteúdo do item surge só quando a pessoa o abre; com movimento
+   reduzido, nada anima ---- */
+@keyframes surge {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .item details[open] > .corpo.surgindo { animation: surge 260ms var(--ease); }
+  .seta { transition: transform 150ms var(--ease); }
+}

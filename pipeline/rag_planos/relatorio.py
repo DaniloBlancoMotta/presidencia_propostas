@@ -11,8 +11,8 @@ from pathlib import Path
 
 from . import config
 
-ROTULO_LISTA = {"resumo": "Resumo", "semelhancas": "Semelhança", "diferencas": "Diferença",
-                "omissoes": "Omissão"}
+ROTULO_LISTA = {"resumo": "Resumo", "executivo": "Ponto-chave", "semelhancas": "Semelhança",
+                "diferencas": "Diferença", "omissoes": "Omissão"}
 
 
 def _cits(item: dict) -> list[tuple[str, dict]]:
@@ -23,7 +23,9 @@ def _cits(item: dict) -> list[tuple[str, dict]]:
 
 
 def _link(c: dict) -> str:
-    return f"../../corpus/{html.escape(c.get('arquivo', ''))}#page={int(c.get('pagina', 0))}"
+    p = c.get("pagina")
+    pagina = p if isinstance(p, int) and not isinstance(p, bool) else 0  # descarte pode ter página inválida
+    return f"../../corpus/{html.escape(str(c.get('arquivo', '')))}#page={pagina}"
 
 
 def _bloco_item(m: dict, extra: str) -> str:
@@ -34,7 +36,7 @@ def _bloco_item(m: dict, extra: str) -> str:
     for cand, c in _cits(item):
         nome = config.CANDIDATOS.get(cand, {}).get("nome", cand)
         linhas.append(f"<li><q>{html.escape(c.get('trecho', ''))}</q> — {html.escape(nome)}, "
-                      f"{html.escape(c.get('arquivo', ''))}, pág. {c.get('pagina')} "
+                      f"{html.escape(str(c.get('arquivo', '')))}, pág. {html.escape(str(c.get('pagina')))} "
                       f"<a href='{_link(c)}'>abrir página</a></li>")
     linhas.append("</ul></li>")
     return "".join(linhas)
@@ -53,8 +55,22 @@ def contagem_por_candidato(comparacao: dict) -> dict[str, int]:
     return n
 
 
+def _secao_correcoes(correcoes: list) -> list[str]:
+    """Páginas que o filtro literal da geração trocou (trecho idêntico, página verdadeira)."""
+    partes = [f"<h2>Páginas corrigidas automaticamente ({len(correcoes)})</h2>",
+              "<p>O trecho estava literalmente em uma só página da faixa enviada ao modelo, "
+              "diferente da que ele citou; a citação passou a apontar essa página.</p><ul>"]
+    for c in correcoes:
+        nome = config.CANDIDATOS.get(c.get("candidato"), {}).get("nome", str(c.get("candidato")))
+        partes.append(f"<li><q>{html.escape(str(c.get('trecho', '')))}</q> — {html.escape(nome)}, "
+                      f"pág. {html.escape(str(c.get('pagina_citada')))} → {html.escape(str(c.get('pagina')))}"
+                      f"<br><small>{html.escape(str(c.get('texto', '')))}</small></li>")
+    partes.append("</ul>")
+    return partes
+
+
 def gerar(tema: dict, comparacao: dict, sha256_json: str, origem: str, mantidos: list, descartes: list,
-          destino: Path) -> Path:
+          destino: Path, correcoes: list | None = None) -> Path:
     contagem = contagem_por_candidato(comparacao)
     juiz_pend = sum(1 for m in mantidos if m["juiz"] == "nao_executado")
     partes = [
@@ -68,18 +84,28 @@ def gerar(tema: dict, comparacao: dict, sha256_json: str, origem: str, mantidos:
         f"<h1>Revisão do tema: {html.escape(tema['rotulo'])} (<code>{tema['id']}</code>)</h1>",
         f"<p>Gerado em {html.escape(comparacao['gerado_em'])} · origem da geração: <b>{html.escape(origem)}</b> · "
         f"SHA-256 do JSON: <code>{sha256_json}</code></p>",
-        "<h2>Citações por candidato</h2><table><tr><th>Candidato</th><th>Citações</th><th>Bullets no resumo</th></tr>",
+        "<h2>Citações por candidato</h2><table><tr><th>Candidato</th><th>Citações</th><th>Bullets no resumo</th>"
+        "<th>Pontos-chave</th></tr>",
     ]
+    sem_executivo = []
     for cid, meta in config.CANDIDATOS.items():
         area = comparacao["candidatos"][cid]
         nb = "não encontrado" if area["nao_encontrado"] else str(len(area["resumo"]))
-        partes.append(f"<tr><td>{html.escape(meta['nome'])}</td><td>{contagem[cid]}</td><td>{nb}</td></tr>")
+        partes.append(f"<tr><td>{html.escape(meta['nome'])}</td><td>{contagem[cid]}</td><td>{nb}</td>"
+                      f"<td>{len(area['executivo'])}</td></tr>")
+        if not area["nao_encontrado"] and len(area["executivo"]) < 3:
+            sem_executivo.append(f"{meta['nome']} ({len(area['executivo'])})")
     partes.append("</table>")
+    if sem_executivo:
+        partes.append("<p><b>Atenção:</b> resumo executivo com menos de 3 pontos-chave: "
+                      f"{html.escape(', '.join(sem_executivo))}.</p>")
     partes.append(f"<p>Semelhanças: {len(comparacao['semelhancas'])} · Diferenças: {len(comparacao['diferencas'])}"
                   f" · Omissões: {len(comparacao['omissoes'])}</p>")
     if juiz_pend:
         partes.append(f"<p><b>Atenção:</b> {juiz_pend} item(ns) sem veredito do juiz LLM "
                       "(<code>nao_executado</code>): conferir o sentido manualmente.</p>")
+    if correcoes:
+        partes += _secao_correcoes(correcoes)
     partes.append(f"<h2>Itens publicados ({len(mantidos)})</h2><ul>")
     for m in mantidos:
         extra = f" · juiz: <b>{html.escape(m['juiz'])}</b>"

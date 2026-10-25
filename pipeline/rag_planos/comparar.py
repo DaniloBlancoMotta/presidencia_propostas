@@ -1,7 +1,9 @@
 """Geração da comparação bruta de um tema (AC 5), antes da verificação.
 
 Duas origens, registradas em dados/geracao/<tema>.json junto com `gerado_em`:
-- `gemini`: prompts resumo.md (um por candidato) e comparar.md sobre os chunks do tema;
+- `gemini`: grafo `comparar` de grafos.py (LangGraph) - resumo.md por candidato em paralelo,
+  filtro literal (com correção da página quando o trecho está em uma só página da faixa) e
+  comparar.md sobre os chunks do tema; as trocas de página ficam em `correcoes_pagina`;
 - `rascunho`: dados/rascunhos/<tema>.json, produzido fora do pipeline quando não há chave de API.
 `gerado_em` só muda quando o conteúdo muda, para que rodar de novo seja idempotente.
 """
@@ -11,10 +13,8 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from . import config, extrair, llm
-from .literal import trecho_na_pagina
+from . import chunk, config, llm
 
-LISTAS = ("semelhancas", "diferencas", "omissoes")
 BRT = timezone(timedelta(hours=-3))
 CONFIANCA_MINIMA = 0.25
 MAX_CHUNKS = 12
@@ -44,40 +44,52 @@ def _chunks_do_tema(chunks: list[dict], theme_id: str, candidato: str) -> list[d
     return [c for _, c in sel[:MAX_CHUNKS]]
 
 
-def com_llm(tema: dict, chunks: list[dict], paginas: dict, provedor) -> dict:
-    candidatos = {}
+def pedidos_de_resumo(tema: dict, chunks: list[dict]) -> dict[str, dict]:
+    """Por candidato com trechos no tema: o prompt resumo.md (com `[página N]` em cada virada) e o
+    texto e as viradas dos chunks enviados, que o filtro usa para achar a página que o modelo viu.
+    Quem não tem trecho fica de fora (sem chamada)."""
+    pedidos = {}
     for cid, meta in config.CANDIDATOS.items():
-        trechos = "\n\n".join(
-            f"[página {c['pagina']}{'-' + str(c['paginas'][-1]) if len(c['paginas']) > 1 else ''}] {c['texto']}"
-            for c in _chunks_do_tema(chunks, tema["id"], cid))
-        if not trechos:
-            candidatos[cid] = {"nao_encontrado": True, "resumo": []}
-            continue
-        resposta = json.loads(provedor.gerar(llm.prompt(
-            "resumo", rotulo=tema["rotulo"], descricao=tema["descricao"],
-            arquivo=meta["arquivo"], trechos=trechos)))
-        resumo = [b for b in resposta.get("resumo", []) if all(
-            trecho_na_pagina(ci["trecho"], extrair.texto_da_pagina(paginas, ci["arquivo"], ci["pagina"]) or "")
-            for ci in b.get("citacoes", []))]
-        candidatos[cid] = {"nao_encontrado": not resumo, "resumo": resumo}
-    resposta = json.loads(provedor.gerar(llm.prompt(
-        "comparar", rotulo=tema["rotulo"], resumos=json.dumps(candidatos, ensure_ascii=False))))
-    return _conteudo({"candidatos": candidatos, **{k: resposta.get(k, []) for k in LISTAS}})
+        sel = _chunks_do_tema(chunks, tema["id"], cid)
+        if sel:
+            trechos = "\n\n".join(chunk.texto_marcado(c) for c in sel)
+            pedidos[cid] = {"prompt": llm.prompt("resumo", rotulo=tema["rotulo"], descricao=tema["descricao"],
+                                                 arquivo=meta["arquivo"], trechos=trechos),
+                            "chunks": [{"texto": c["texto"], "viradas": c.get("viradas"), "pagina": c["pagina"]}
+                                       for c in sel]}
+    return pedidos
+
+
+def com_llm_e_correcoes(tema: dict, chunks: list[dict], paginas: dict, gerador: llm.Gerador) -> tuple[dict, list]:
+    """Conteúdo gerado pelo grafo e as páginas que o filtro literal corrigiu (`correcoes_pagina`)."""
+    from . import grafos
+    r = grafos.comparar(gerador, tema, pedidos_de_resumo(tema, chunks), paginas)
+    return _conteudo(r), r["correcoes_pagina"]
+
+
+def com_llm(tema: dict, chunks: list[dict], paginas: dict, gerador: llm.Gerador) -> dict:
+    return com_llm_e_correcoes(tema, chunks, paginas, gerador)[0]
 
 
 def registrar(theme_id: str, conteudo: dict, origem: str, pasta: Path = config.DADOS / "geracao",
-              agora: datetime | None = None) -> dict:
+              agora: datetime | None = None, correcoes: list | None = None) -> dict:
+    """`correcoes_pagina` só entra no arquivo quando houve troca: sem troca, o arquivo é o de sempre.
+    Mesmo conteúdo e mesma origem mantêm `gerado_em` (e o hash publicado), mesmo que as trocas mudem."""
     pasta.mkdir(parents=True, exist_ok=True)
     arq = pasta / f"{theme_id}.json"
-    if arq.exists():
-        antigo = json.loads(arq.read_text(encoding="utf-8"))
-        if antigo["conteudo"] == conteudo and antigo["origem"] == origem:
+    antigo = json.loads(arq.read_text(encoding="utf-8")) if arq.exists() else None
+    if antigo and antigo["conteudo"] == conteudo and antigo["origem"] == origem:
+        if antigo.get("correcoes_pagina", []) == (correcoes or []):
             return antigo
-    registro = {
-        "theme_id": theme_id,
-        "origem": origem,
-        "gerado_em": (agora or datetime.now(BRT)).replace(microsecond=0).isoformat(),
-        "conteudo": conteudo,
-    }
+        registro = {k: v for k, v in antigo.items() if k != "correcoes_pagina"}
+    else:
+        registro = {
+            "theme_id": theme_id,
+            "origem": origem,
+            "gerado_em": (agora or datetime.now(BRT)).replace(microsecond=0).isoformat(),
+            "conteudo": conteudo,
+        }
+    if correcoes:
+        registro["correcoes_pagina"] = correcoes
     arq.write_text(json.dumps(registro, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return registro

@@ -37,7 +37,7 @@ embeddings, cadeia de provedores, Cloud Run); aba "Na imprensa" e as camadas `de
 | 7 | Portão de publicação | `revisao/aprovados.yaml`: mapa `theme_id: sha256`. O build do site **só inclui** temas cujo JSON tem hash igual ao registrado; um JSON presente sem hash, ou com hash divergente, **falha o build** e nomeia o tema. Nada regerado vai ao ar sem nova aprovação. |
 | 8 | Recorte do MVP | 8 temas. Se em D4 algum tema não estiver aprovado, ele fica fora da grade e o site publica com os aprovados. Não há recorte menor planejado. |
 | 9 | Chunking | 400–800 tokens, sobreposição de **15%**, nunca cruza fronteira de `secao`; seção com menos de 400 tokens vira um chunk só. |
-| 10 | LLM da pré-computação | **Gemini Flash (free tier)**, chamado só offline, por um adaptador com retry/backoff e **cache em disco por hash do prompt**. Regerar um tema não gasta cota com o que já passou. |
+| 10 | LLM da pré-computação | **Gemini Flash (free tier)**, modelo padrão `gemini-3.8-flash` (o `gemini-2.5-flash` deixou de atender contas novas em out/2026), chamado só offline. O prompt de resumo marca `[página N]` onde cada página começa dentro do chunk; se o modelo citar a página errada de um trecho literal que está em uma só página da faixa enviada, a geração corrige o número e o relatório de revisão lista a troca. Orquestração por **LangGraph** (decidido pelo dono em 18/10): grafos `comparar`, `juiz` e `classificar` em `grafos.py`, com fan-out paralelo e `RetryPolicy` (429/500/503 e rede, 5 tentativas) por nó; modelo por langchain-google-genai; **cache em disco próprio por hash do prompt**, que guarda só o texto da resposta. Versões fixadas em `docker/pipeline.requirements.txt`. Regerar um tema não gasta cota com o que já passou. |
 | 11 | "Ver no PDF" | **PDF.js (`pdfjs-dist`) hospedado no próprio domínio** em `/pdf/visualizador.html`, carregado só nessa rota, abrindo `/pdf/<arquivo>.pdf` na página citada. O PDF servido é o mesmo arquivo cujo SHA-256 está em `fontes.json`. |
 | 12 | Ordem dos candidatos | Sorteada 50/50 por um script inline no `<head>` que grava `data-ordem="ab"` ou `"ba"` no `<html>` antes da primeira pintura; o CSS inverte colunas e abas por esse atributo. Vale em todas as telas até recarregar. O botão "Trocar ordem dos candidatos" inverte o atributo. Não vai no link e não é guardada. |
 | 13 | Celular | Duas **abas**, uma por candidato, abaixo de 768 px; duas colunas de mesma largura a partir de 768 px. |
@@ -49,7 +49,7 @@ embeddings, cadeia de provedores, Cloud Run); aba "Na imprensa" e as camadas `de
 | 19 | Estados de tela | Sem estado de carregamento (tudo pré-renderizado). Rota inexistente responde `404` com link para `/`. |
 | 20 | Numeração dos critérios | A da §7 deste documento (AC 1–37) é a única. Qualquer referência a critério, inclusive na §11, usa essa numeração. |
 | 21 | Revisão humana | O **dono do projeto** revisa o relatório HTML de cada tema, confere as páginas do conjunto-ouro e registra os hashes em `revisao/aprovados.yaml`. Ele é também o responsável identificado em `/sobre`. |
-| 22 | Cores e identidade | Um único conjunto de tokens neutros (cinzas e um acento azul-petróleo escuro, longe de vermelho, azul-royal e verde-amarelo). Nenhum token, ícone ou estilo por candidato. Fontes do sistema; ícones SVG inline. |
+| 22 | Cores e identidade | **Alterada pelo dono em 18/10/2026.** Cada candidato tem uma cor de identidade, a cor tipográfica mais usada no próprio PDF: Lula `#ee481a` (laranja-avermelhado), Flávio Bolsonaro `#004f9f` (azul). A área de cada candidato (a coluna ou o painel dele e os itens de Omissões que só o plano dele trata) fica num tom claro dessa cor. A cor plena só aparece em elementos não textuais (faixas, fios, marcadores, aspas), com o mesmo componente, a mesma forma e a mesma espessura para os dois. Os tons têm a mesma luminosidade e o mesmo croma, para nenhum lado pesar mais, e o texto fica sempre nos tokens neutros. A concordância (Semelhanças) fica em verde neutro `#2f7a55`, que não aparece em nenhum dos PDFs, com a seção num tom claro de verde. Diferenças fica em grafite neutro, sem tom. Botões, links e foco ficam em tinta neutra, porque o azul passou a indicar um dos candidatos. Fontes do sistema; ícones SVG inline. |
 
 ## 3. Arquitetura
 
@@ -103,7 +103,8 @@ Rag_planos_presidencia/
 │   │   ├── verificar.py            # literal + juiz LLM, motivos de descarte
 │   │   ├── relatorio.py            # HTML de revisão
 │   │   ├── avaliar.py              # recall do ouro + convergências
-│   │   ├── llm.py                  # adaptador Gemini Flash, retry, cache em disco
+│   │   ├── llm.py                  # Gemini Flash (langchain-google-genai), cache em disco, deve_repetir
+│   │   ├── grafos.py               # LangGraph: comparar, juiz, classificar; RetryPolicy por nó
 │   │   └── prompts/                # classificar.md, resumo.md, comparar.md, juiz.md
 │   └── tests/
 ├── dados/
@@ -293,7 +294,7 @@ inglês porque o validador as procura.
 28. The site SHALL mostrar em toda tela o aviso "Resumos gerados por IA a partir dos planos de governo registrados no TSE. Podem conter erros — o PDF original é a fonte definitiva."
 29. WHEN a pessoa abre `/sobre` THEN o site SHALL mostrar, para cada plano, o nome do arquivo, o SHA-256, a data de coleta e o link para a página do TSE, e o responsável pelo site
 30. WHEN a pessoa abre `/metodologia` THEN o site SHALL mostrar as etapas ingestão → classificação → comparação → verificação automática → revisão humana e a regra "só documentos oficiais"
-31. The site SHALL exibir os dois candidatos com o mesmo componente e os mesmos tokens de cor, sem nenhuma cor, ícone ou estilo atribuído a um candidato específico
+31. The site SHALL exibir os dois candidatos com o mesmo componente, as mesmas classes e os mesmos estilos, e a única diferença SHALL ser a cor de identidade de cada um e o tom claro de área derivado dela (decisão 22, alterada pelo dono em 18/10/2026), com a cor plena só em elementos não textuais, o texto sempre nos tokens neutros e nenhum ícone ou estilo exclusivo de um candidato
 32. The site SHALL responder sem nenhum cabeçalho `Set-Cookie` e sem carregar script de outro domínio
 
 ### S5: Rápido e acessível no 4G

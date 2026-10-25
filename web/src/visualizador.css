@@ -1,15 +1,62 @@
-:root { --fundo: #e5e7eb; --texto: #1f2328; --acento: #0f4c5c; }
+@import "./tokens.css";
+/* Visualizador "Ver no PDF" na direção do site: papel, tinta e fios; nenhuma cor literal (crit. 51). */
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url(/fontes/atkinson-hyperlegible-next-latin-wght-normal.woff2) format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+:root { --acento: var(--tinta); color-scheme: light; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 1rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-.barra { position: sticky; top: 0; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .5rem; background: #fff; border-bottom: 1px solid #d0d7de; }
-.titulo-pdf { flex: 1 1 12rem; margin: 0; font-weight: 600; overflow-wrap: anywhere; }
-.paginacao { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; min-width: 0; }
-.barra > * { min-width: 0; }
-.botao { display: inline-flex; align-items: center; min-height: 44px; padding: .4rem .8rem; border: 1px solid var(--acento); border-radius: 10px; background: #fff; color: var(--acento); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
-.botao:disabled { opacity: .5; cursor: default; }
+body { margin: 0; background: var(--cinza-pdf); color: var(--tinta); font: 400 1.0625rem/1.5 "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif; }
+a, button { touch-action: manipulation; -webkit-tap-highlight-color: var(--toque); }
 :focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
-main { display: flex; flex-direction: column; align-items: center; padding: .5rem; }
-canvas { max-width: 100%; height: auto; background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .2); }
-.erro { background: #fff; padding: 1rem; border-radius: 10px; }
-.aviso-ia { margin: 0; padding: .5rem; font-size: .9rem; background: #e7eff1; }
-.rodape { padding: .5rem 1rem 1rem; font-size: .9rem; text-align: center; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[hidden] { display: none !important; }
+
+/* Barra: fixa no topo só quando sobra tela (crit. 18); no celular e com zoom, rola com a página. */
+.barra {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; align-items: center; padding: 0.5rem;
+  background: var(--papel); border-bottom: 1px solid var(--fio);
+}
+@media (min-width: 768px) and (min-height: 576px) {
+  .barra { position: sticky; top: 0; z-index: 2; }
+}
+.barra > * { min-width: 0; }
+.titulo-pdf { flex: 1 1 12rem; margin: 0; font-size: 1.0625rem; font-weight: 700; overflow-wrap: anywhere; }
+.paginacao { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; min-width: 0; }
+/* algarismos tabulares e largura mínima: ir de 9 para 10 não move os botões (crit. 27) */
+.indicador { min-width: 9.5rem; text-align: center; font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+.botao {
+  display: inline-flex; align-items: center; gap: 0.35rem; min-height: 44px; padding: 0.4rem 0.8rem;
+  border: 1px solid var(--acento); background: transparent; color: var(--acento);
+  font-family: inherit; font-size: 0.9375rem; font-weight: 700; line-height: 1.2; text-decoration: none; cursor: pointer;
+}
+.botao svg { width: 18px; height: 18px; }
+.botao:disabled { opacity: 0.45; cursor: default; }
+@media (hover: hover) {
+  .botao:not(:disabled):hover { background: var(--papel-2); }
+}
+.botao:not(:disabled):active { background: var(--papel-2); }
+.aviso-ia { margin: 0; padding: 0.5rem; font-size: 0.9375rem; color: var(--tinta-2); background: var(--papel-2); border-bottom: 1px solid var(--fio); }
+
+main { display: flex; flex-direction: column; align-items: center; padding: 0.5rem; }
+/* A página reserva a proporção A4 antes de o PDF chegar (crit. 25); a largura acompanha a janela já no
+   redimensionamento, e o desenho na nova escala vem logo depois (crit. 26). */
+.folha { position: relative; width: 100%; max-width: 900px; }
+canvas { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1.414; background: var(--papel); outline: 1px solid var(--fio); }
+.folha.desenhada canvas { aspect-ratio: auto; }
+/* Camada de texto do pdf.js (crit. 52): invisível, sobre o desenho, para selecionar e buscar o trecho. */
+.textLayer { position: absolute; inset: 0; overflow: clip; line-height: 1; text-align: initial; transform-origin: 0 0; z-index: 1; -webkit-text-size-adjust: none; text-size-adjust: none; }
+.textLayer :is(span, br) { position: absolute; color: transparent; white-space: pre; cursor: text; transform-origin: 0 0; }
+.textLayer span.markedContent { top: 0; height: 0; }
+.textLayer .endOfContent { display: block; position: absolute; inset: 100% 0 0; user-select: none; }
+/* o pdf.js mede o texto num canvas que ele mesmo põe no <body>; ele nunca aparece */
+.hiddenCanvasElement { position: absolute; top: 0; left: 0; width: 0; height: 0; display: none; }
+.erro { width: 100%; max-width: 40rem; padding: 1rem; background: var(--papel); border-top: 4px solid var(--tinta); }
+.erro p { margin: 0 0 0.5rem; }
+.erro a { display: inline-flex; align-items: center; min-height: 44px; color: var(--tinta); font-weight: 700; }
+.rodape { padding: 0.5rem 1rem 1rem; font-size: 0.9375rem; text-align: center; }
+/* Faixa na cor do candidato do PDF aberto (S7); sem candidato conhecido, nenhuma faixa. */
+.barra { border-top: 4px solid var(--cor-cand, transparent); }

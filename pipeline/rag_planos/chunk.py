@@ -2,6 +2,7 @@
 
 Token = `\\w+` ou um caractere de pontuação (Landing). O texto do chunk é normalizado por
 `literal.normalizar`; as citações são conferidas contra a página, nunca contra o chunk.
+`viradas` guarda onde cada página começa no texto do chunk (`texto_marcado` vai no prompt).
 """
 from __future__ import annotations
 
@@ -45,15 +46,35 @@ def cortar_secao(paginas: list[dict]) -> list[dict]:
         if not idx:
             continue
         sel = palavras[idx[0]: idx[-1] + 1]
+        viradas, posicao = [], 0
+        for j, (w, _, pag) in enumerate(sel):
+            if j == 0 or pag != sel[j - 1][2]:
+                viradas.append([posicao, pag])
+            posicao += len(w) + 1
         chunks.append({
             "texto": " ".join(w for w, _, _ in sel),
             "tokens": sum(t for _, t, _ in sel),
             "pagina": sel[0][2],
             "paginas": sorted({p for _, _, p in sel}),
+            "viradas": viradas,
             "inicio_token": inicio[idx[0]],
             "fim_token": inicio[idx[-1]] + sel[-1][1],
         })
     return chunks
+
+
+def texto_marcado(c: dict) -> str:
+    """Texto do chunk com `[página N]` onde cada página começa (`viradas`), para o LLM citar a
+    página certa de cada trecho. Chunk sem `viradas` leva um cabeçalho só, como antes."""
+    viradas = c.get("viradas")
+    if not viradas:
+        faixa = f"{c['paginas'][0]}-{c['paginas'][-1]}" if len(c.get("paginas", [])) > 1 else str(c["pagina"])
+        return f"[página {faixa}] {c['texto']}"
+    partes = []
+    for i, (inicio, pag) in enumerate(viradas):
+        fim = viradas[i + 1][0] if i + 1 < len(viradas) else len(c["texto"])
+        partes.append(f"[página {pag}] {c['texto'][inicio:fim].strip()}")
+    return " ".join(partes)
 
 
 def agrupar_secoes(paginas: list[dict]) -> list[list[dict]]:
@@ -81,6 +102,7 @@ def cortar(paginas: list[dict], candidato: str, partido: str, arquivo: str) -> l
                 "arquivo": arquivo,
                 "pagina": c["pagina"],
                 "paginas": c["paginas"],
+                "viradas": c["viradas"],
                 "secao": g[0]["secao"],
                 "subsecao": subs[0] if subs else None,
                 "tokens": c["tokens"],

@@ -21,6 +21,19 @@
           {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 38, "trecho": "E um sistema de entrega de remédio em domicílio vai garantir que o idoso, a pessoa com deficiência e o doente crônico não precisem escolher entre buscar o tratamento e pagar o transporte."}]},
         {"texto": "Ampliar o acesso a exames preventivos e manter a imunização e o incentivo à produção nacional de vacinas.", "camada": "plano", "citacoes": [
           {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 37, "trecho": "Vamos ainda ampliar o acesso a exames preventivos e manter a imunização e o incentivo à produção nacional de vacinas"}]}
+      ],
+      "executivo": [
+        {"texto": "Corrigir a tabela SUS, com remuneração que cubra o custo real do atendimento, e contratar exames na rede privada nos horários ociosos.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 37, "trecho": "Vamos garantir as condições para que seja possível a correção efetiva da tabela SUS."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 37, "trecho": "Vamos assegurar uma remuneração que cubra o custo real do atendimento"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 37, "trecho": "Para usar bem o que já existe, vamos contratar serviços e exames na rede privada nos horários ociosos"}]},
+        {"texto": "Implantar o prontuário eletrônico único vinculado ao CPF e completar a digitalização do SUS, com IA no agendamento de consultas e exames.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 26, "trecho": "Vamos implantar o prontuário eletrônico único, vinculado ao CPF e integrado ao Gov.br, interoperável entre as redes pública e privada"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 26, "trecho": "vamos completar a digitalização do SUS e usar inteligência artificial para agilizar o agendamento de consultas e exames"}]},
+        {"texto": "Ampliar a Estratégia Saúde da Família e prever telessaúde e entrega de remédio em domicílio para idosos, pessoas com deficiência e doentes crônicos.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 37, "trecho": "Vamos ampliar a Estratégia Saúde da Família, levando o cuidado para perto de casa, e criar o Programa de Atendimento aos Idosos"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 38, "trecho": "Com a telessaúde e o teleatendimento por aplicativo, médicos de regiões com baixa demanda poderão atender pacientes onde as filas são longas"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 38, "trecho": "E um sistema de entrega de remédio em domicílio vai garantir que o idoso, a pessoa com deficiência e o doente crônico não precisem escolher entre buscar o tratamento e pagar o transporte."}]}
       ]
     },
     "lula": {
@@ -44,6 +57,20 @@
         {"texto": "Dar continuidade à parceria com hospitais privados para ofertar exames e cirurgias ao SUS em troca de créditos financeiros ou de dívidas.", "camada": "plano", "citacoes": [
           {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 37, "trecho": "Daremos continuidade à parceria com hospitais privados para assegurar, em troca de créditos financeiros ou de dívidas, a oferta de exames e cirurgias para o SUS."}]},
         {"texto": "Continuar ampliando o acesso e a adesão à vacinação, com a vacinação nas escolas como eixo prioritário.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 36, "trecho": "Vamos manter todos os esforços para continuar ampliando o acesso e a adesão da população à vacinação em todo o território nacional"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 36, "trecho": "A vacinação nas escolas seguirá como eixo prioritário para recuperar coberturas vacinais"}]}
+      ],
+      "executivo": [
+        {"texto": "Impulsionar o Agora Tem Especialistas para ampliar consultas, exames e cirurgias, e regular o acesso com fila única digital ordenada pelo risco clínico.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 37, "trecho": "As ações do Agora Tem Especialistas serão ainda mais impulsionadas."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 37, "trecho": "A expansão do terceiro turno nos serviços de saúde, o reforço das Carretas da Saúde e dos mutirões de atendimento seguirão como estratégias centrais"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 38, "trecho": "Aprimoraremos ainda mais a regulação do acesso à atenção especializada, garantindo maior transparência das filas e utilizando inteligência artificial, com fila única digital e ordenada pelo risco clínico"}]},
+        {"texto": "Acelerar o prontuário único do cidadão pela RNDS e intensificar teleconsultas e outras ferramentas de saúde digital na rede básica.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 35, "trecho": "Vamos acelerar os esforços na consolidação do prontuário único do cidadão, que já avança por meio da Rede Nacional de Dados em Saúde (RNDS)."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 35, "trecho": "Vamos intensificar o apoio ao uso de ferramentas de saúde digital, como teleconsultas, teleorientação e teleacolhimento na rede básica de saúde."}]},
+        {"texto": "Manter o Farmácia Popular 100% gratuito e seguir ampliando a vacinação, com a vacinação nas escolas como eixo prioritário.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 36, "trecho": "Retomamos o Farmácia Popular, ampliando para 41 o número de medicamentos gratuitos distribuídos."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 36, "trecho": "O programa será mantido, 100% gratuito, assegurando contínua revisão dos medicamentos ofertados"},
           {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 36, "trecho": "Vamos manter todos os esforços para continuar ampliando o acesso e a adesão da população à vacinação em todo o território nacional"},
           {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 36, "trecho": "A vacinação nas escolas seguirá como eixo prioritário para recuperar coberturas vacinais"}]}
       ]

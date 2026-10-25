@@ -3,25 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#faf7f1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>Ver no PDF</title>
     <meta name="robots" content="noindex" />
     <script type="module" src="/src/visualizador.ts"></script>
   </head>
   <body class="visualizador">
     <header class="barra">
-      <a class="botao" href="/">← Início</a>
-      <p id="titulo-pdf" class="titulo-pdf" aria-live="polite">Carregando o PDF…</p>
+      <a class="botao voltar" href="/"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M20 12H5m0 0 6-6m-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>Início</a>
+      <h1 id="titulo-pdf" class="titulo-pdf">Ver no PDF</h1>
       <nav class="paginacao" aria-label="Páginas">
-        <button type="button" class="botao" id="anterior">Página anterior</button>
-        <span id="indicador" aria-live="polite"></span>
-        <button type="button" class="botao" id="proxima">Próxima página</button>
+        <button type="button" class="botao" id="anterior" disabled>Página anterior</button>
+        <span id="indicador" class="indicador" aria-live="polite"></span>
+        <button type="button" class="botao" id="proxima" disabled>Próxima página</button>
       </nav>
-      <a class="botao" id="baixar" href="#">Baixar o PDF original</a>
+      <a class="botao" id="baixar" href="#" hidden>Baixar o PDF original</a>
     </header>
     <p class="aviso-ia" role="note">Resumos gerados por IA a partir dos planos de governo registrados no TSE. Podem conter erros — o PDF original é a fonte definitiva.</p>
     <main>
-      <canvas id="tela" role="img" aria-label="Página do PDF"></canvas>
-      <p id="erro" class="erro" hidden></p>
+      <div id="folha" class="folha">
+        <canvas id="tela" role="img" aria-label="Página do PDF"></canvas>
+        <div id="texto" class="textLayer"></div>
+      </div>
+      <div id="erro" class="erro" role="alert" hidden></div>
     </main>
     <footer class="rodape"><p class="coleta"><!--coleta--></p></footer>
   </body>

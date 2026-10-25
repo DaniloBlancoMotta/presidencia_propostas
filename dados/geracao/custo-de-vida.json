@@ -1,7 +1,7 @@
 {
  "theme_id": "custo-de-vida",
  "origem": "rascunho (dados/rascunhos)",
- "gerado_em": "2026-10-17T23:52:21-03:00",
+ "gerado_em": "2026-10-18T13:12:13-03:00",
  "conteudo": {
   "candidatos": {
    "flavio-bolsonaro": {
@@ -96,6 +96,61 @@
      },
      {
       "texto": "Prevê estabilizar e reduzir a dívida pública para que os juros básicos fiquem em linha com a média internacional e a inflação volte ao centro da meta.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 33,
+        "trecho": "Ao estabilizar e reduzir a dívida pública, nosso governo vai criar as condições para que os juros básicos fiquem em linha com a média internacional e para que a inflação volte ao centro da meta."
+       }
+      ]
+     }
+    ],
+    "executivo": [
+     {
+      "texto": "Revisar a reforma tributária para reduzir o IVA e reduzir impostos sobre energia elétrica e combustíveis.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 30,
+        "trecho": "Vamos promover a revisão e o redimensionamento da reforma tributária em curso e da majoração de impostos efetuada pelo atual governo"
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 30,
+        "trecho": "Vamos corrigir suas distorções, reduzir o IVA, hoje projetado num dos patamares mais altos do mundo, e assegurar a não cumulatividade, para que não se cobre imposto sobre imposto."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 31,
+        "trecho": "Vamos reduzir impostos sobre energia elétrica e combustíveis, buscar segurança energética ao menor preço possível para o consumidor"
+       }
+      ]
+     },
+     {
+      "texto": "Ampliar o Seguro Rural e a armazenagem das safras, para dar estabilidade de preço e alimento disponível o ano inteiro.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 31,
+        "trecho": "ampliar o Seguro Rural, dando previsibilidade a quem planta: safra protegida é oferta garantida, e oferta garantida é preço estável."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 31,
+        "trecho": "Vamos também ampliar a capacidade de armazenamento das safras, hoje insuficiente para o que o país produz."
+       },
+       {
+        "arquivo": "plano-de-governo_flavio.pdf",
+        "pagina": 32,
+        "trecho": "Com armazenagem, o alimento fica disponível o ano inteiro"
+       }
+      ]
+     },
+     {
+      "texto": "Estabilizar e reduzir a dívida pública para que os juros básicos fiquem na média internacional e a inflação volte ao centro da meta.",
       "camada": "plano",
       "citacoes": [
        {
@@ -215,6 +270,61 @@
         "arquivo": "Programa-Governo-LULA-2026.pdf",
         "pagina": 66,
         "trecho": "Continuaremos a atuar para mitigar a volatilidade dos preços internacionais, garantindo que os brasileiros não fiquem expostos a choques externos."
+       }
+      ]
+     }
+    ],
+    "executivo": [
+     {
+      "texto": "Manter a inflação sob controle, com a renda real crescendo acima do custo de vida, e criar condições para a redução sustentada dos juros.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 49,
+        "trecho": "Manteremos a inflação sob controle de forma duradoura e sustentável, garantindo que a renda real da população cresça acima do custo de vida."
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 49,
+        "trecho": "vamos criar as condições para uma redução sustentada das taxas de juros, com inflação controlada e assegurando uma política fiscal responsável."
+       }
+      ]
+     },
+     {
+      "texto": "Monitorar o endividamento das famílias, manter os fundos garantidores e aprimorar as regras de crédito, com mais proteção ao consumidor.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 49,
+        "trecho": "seguiremos monitorando a evolução do endividamento das famílias e das empresas, assegurando a continuidade dos fundos garantidores"
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 49,
+        "trecho": "aprimorando as regras de oferta e responsabilidade na concessão de crédito, conferindo maior proteção aos consumidores."
+       }
+      ]
+     },
+     {
+      "texto": "Expandir o Plano Safra da Agricultura Familiar e o PAA, priorizando alimentos da cesta básica e alimentos frescos.",
+      "camada": "plano",
+      "citacoes": [
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 59,
+        "trecho": "Vamos continuar expandindo o Plano Safra da Agricultura Familiar, com juros compatíveis com o perfil do agricultor e tipo de produto, com prioridade para produção de alimentos da cesta básica."
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 59,
+        "trecho": "A ampliação do PAA será mantida, priorizando a compra de alimentos frescos e"
+       },
+       {
+        "arquivo": "Programa-Governo-LULA-2026.pdf",
+        "pagina": 60,
+        "trecho": "diversificados da agricultura familiar e da sociobiodiversidade para equipamentos públicos e famílias vulneráveis."
        }
       ]
      }

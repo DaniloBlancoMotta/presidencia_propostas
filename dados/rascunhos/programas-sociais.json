@@ -97,7 +97,20 @@
       }
      ]
     }
-   ]
+   ],
+      "executivo": [
+        {"texto": "Manter os programas sociais com correção de distorções e combate às fraudes, e proibir o uso dos recursos em apostas.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 42, "trecho": "vamos manter os programas sociais existentes, com aperfeiçoamento da gestão, correção de distorções e combate às fraudes."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 33, "trecho": "Vamos proibir o uso dos recursos dos programas sociais para apostas"}]},
+        {"texto": "Ligar o benefício ao trabalho: prioridade em emprego e qualificação, trilha própria e retorno sem fila ao benefício após o seguro-desemprego.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 43, "trecho": "o beneficiário de programa social terá prioridade em todas as ações do Estado voltadas ao trabalho: prioridade nos programas de primeiro emprego, nas ações de qualificação profissional e na intermediação de mão de obra."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 43, "trecho": "Criaremos uma trilha de qualificação e intermediação desenhada especialmente para quem recebe o benefício"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 43, "trecho": "garantiremos o retorno imediato e sem fila ao benefício após o seguro-desemprego, mantidas as condições de elegibilidade"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 54, "trecho": "quem consegue um emprego, ainda que temporário, poderá voltar ao benefício se precisar"}]},
+        {"texto": "Retomar o Casa Verde e Amarela, com meta de 2,5 milhões de residências, e ampliar o apoio a idosos e pessoas com deficiência.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 47, "trecho": "Vamos retomar o Casa Verde e Amarela, com meta de 2,5 milhões de residências e a menor taxa de juros possível no financiamento."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 21, "trecho": "Também estruturaremos uma Rede Nacional de Cuidado, ampliando o apoio a idosos e pessoas com deficiência, com centros-dia e atendimento domiciliar"}]}
+      ]
   },
   "lula": {
    "nao_encontrado": false,
@@ -200,7 +213,18 @@
       }
      ]
     }
-   ]
+   ],
+      "executivo": [
+        {"texto": "Manter, aperfeiçoar e ampliar a proteção social, com transferência de renda, e seguir valorizando o salário mínimo.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 18, "trecho": "programas eficientes de transferência de renda. Por isso, devemos manter, aperfeiçoar e ampliar as políticas de proteção social para quem mais necessita."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 74, "trecho": "o novo mandato de Lula dará continuidade à política de valorização do salário mínimo como meio estratégico de distribuição de renda, combate à pobreza e promoção do desenvolvimento econômico e social."}]},
+        {"texto": "Dar escala à Política Nacional de Cuidados, com Cuidotecas para crianças e cozinhas solidárias e restaurantes populares.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 25, "trecho": "o governo Lula instituiu a Política Nacional de Cuidados"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 26, "trecho": "Começamos a implementar as ações no âmbito desta política, que, no novo mandato, serão fortalecidas, e ganharão escala e sustentabilidade. Apoiaremos as Cuidotecas, espaços de acolhida de crianças de 3 a 12 anos"},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 26, "trecho": "Fomentaremos a construção de infraestruturas que ampliam os cuidados indiretos e comunitários, como as lavanderias públicas, as cozinhas solidárias e os restaurantes populares."}]},
+        {"texto": "Manter e ampliar o Minha Casa Minha Vida para todas as faixas de renda, com foco nas famílias de mais baixa renda.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 45, "trecho": "O MCMV será mantido e ampliado no próximo mandato, para todas as faixas de renda e preservando seu foco nas famílias de mais baixa renda."}]}
+      ]
   }
  },
  "semelhancas": [

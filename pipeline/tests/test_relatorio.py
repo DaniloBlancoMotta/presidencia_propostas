@@ -34,6 +34,8 @@ def test_relatorio_completo(tmp_path, conteudo_valido, paginas_falsas):
     assert f"../../corpus/{LULA}#page=2" in html  # link para a página
     assert "Inventado." in html and "trecho_nao_encontrado" in html  # descarte com motivo
     assert "Citações por candidato" in html
+    assert "<th>Pontos-chave</th>" in html
+    assert "resumo executivo com menos de 3 pontos-chave: Flávio Bolsonaro (0), Lula (0)." in html
     contagem = relatorio.contagem_por_candidato(comp)
     assert contagem == {"flavio-bolsonaro": 3, "lula": 2}
     assert f"<td>Lula</td><td>{contagem['lula']}</td>" in html

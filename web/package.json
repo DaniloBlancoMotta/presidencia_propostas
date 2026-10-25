@@ -6,7 +6,8 @@
   "scripts": {
     "guardas": "tsx scripts/guardas-cli.ts",
     "build": "tsx scripts/build.ts",
-    "build:teste": "tsx scripts/aprovar-para-teste.ts && APROVADOS=/tmp/aprovados-teste.yaml OUT_DIR=dist-teste tsx scripts/build.ts",
+    "build:teste": "tsx scripts/aprovar-para-teste.ts && APROVADOS=/tmp/aprovados-teste.yaml OUT_DIR=dist-teste tsx scripts/build.ts && npm run build:previa",
+    "build:previa": "tsx scripts/aprovar-para-teste.ts && APROVADOS=/tmp/aprovados-teste.yaml OUT_DIR=dist-previa ASK_URL=${ASK_URL:-http://127.0.0.1:8099/ask} tsx scripts/build.ts",
     "servir": "node scripts/servir.mjs dist 4173",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run",
@@ -15,23 +16,25 @@
     "lighthouse": "node scripts/lighthouse.mjs dist-teste"
   },
   "dependencies": {
+    "@fontsource-variable/atkinson-hyperlegible-next": "5.3.0",
+    "@fontsource-variable/newsreader": "5.3.0",
     "pdfjs-dist": "4.10.38",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.1",
-    "@playwright/test": "1.49.1",
+    "@playwright/test": "1.64.1",
     "@types/node": "22.10.1",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
     "@vitejs/plugin-react": "4.3.4",
-    "ajv": "8.17.1",
-    "lighthouse": "12.2.1",
-    "tsx": "4.19.2",
+    "ajv": "8.20.0",
+    "lighthouse": "12.8.2",
+    "tsx": "4.23.15",
     "typescript": "5.6.3",
-    "vite": "5.4.11",
-    "vitest": "2.1.8",
-    "yaml": "2.6.1"
+    "vite": "5.4.21",
+    "vitest": "2.1.9",
+    "yaml": "2.9.1"
   }
 }

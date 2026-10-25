@@ -1,3 +1,6 @@
 # Responsável identificado em /sobre (plano-final §9, item 1). Fica null até o dono informar;
 # enquanto null, /sobre mostra "Responsável ainda não informado." e o site não vai a domínio público.
 responsavel: null
+# Domínio final do site (plano-final §9, item 3), com https. Fica null até o dono informar; enquanto
+# null, o build não gera canonical nem sitemap.xml (exigem endereço absoluto).
+url: null

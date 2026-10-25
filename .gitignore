@@ -10,3 +10,8 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .env
+
+# /ask (prévia): índice embutido e respostas da avaliação guardadas por prompt
+dados/indice-ask/
+dados/ask/cache-avaliacao/
+web/dist-previa/

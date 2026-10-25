@@ -112,7 +112,22 @@
       }
      ]
     }
-   ]
+   ],
+      "executivo": [
+        {"texto": "Ampliar o Seguro Rural, reorganizar as dívidas do setor e ampliar a armazenagem das safras.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 54, "trecho": "Vamos ampliar o Seguro Rural e trazer ferramentas de securitização e reorganização das dívidas do setor, dando ao produtor o horizonte de mais de um ano que ele precisa para planejar."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 31, "trecho": "ampliar o Seguro Rural, dando previsibilidade a quem planta"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 54, "trecho": "Vamos ampliar a capacidade de armazenamento das safras, para garantir melhores preços ao produtor e oferta contínua à população"}]},
+        {"texto": "Apoiar a produção nacional de fertilizantes com potássio, fosfato e gás e promover a regularização fundiária do pequeno produtor.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 54, "trecho": "Vamos apoiar a produção nacional de fertilizantes, aproveitando as reservas de minerais que o país possui, como o potássio e o fosfato"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 53, "trecho": "favorecer a produção nacional de fertilizantes a partir do gás, para reduzir a dependência externa que fragiliza o agronegócio e a nossa segurança alimentar."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 54, "trecho": "Vamos retomar esse ritmo e promover ampla regularização e titulação do pequeno proprietário rural, para que quem trabalha a terra tenha o documento que prova que ela é sua, possa acessar crédito e investir com segurança."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 27, "trecho": "acelerar a regularização fundiária e a titulação do pequeno proprietário rural, retomando o ritmo de titulação que o governo Bolsonaro já havia acelerado"}]},
+        {"texto": "Simplificar as outorgas de irrigação, desenvolver polos no Matopiba e no semiárido e instituir a rastreabilidade das cadeias produtivas.", "camada": "plano", "citacoes": [
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 27, "trecho": "Vamos simplificar as outorgas de irrigação"},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 55, "trecho": "outorgas, cujo prazo médio hoje é de 24 meses, desenvolver polos de irrigação no Matopiba e no semiárido nordestino e expandir a água de reuso para os períodos de estiagem."},
+          {"arquivo": "plano-de-governo_flavio.pdf", "pagina": 28, "trecho": "Vamos instituir a rastreabilidade completa das cadeias produtivas, integrando em um só sistema os cadastros fundiários e ambientais, as guias de trânsito animal"}]}
+      ]
   },
   "lula": {
    "nao_encontrado": false,
@@ -220,7 +235,22 @@
       }
      ]
     }
-   ]
+   ],
+      "executivo": [
+        {"texto": "Expandir o Plano Safra, com juros compatíveis para a agricultura familiar e a atividade agropecuária, e fortalecer o seguro rural.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 59, "trecho": "Vamos continuar expandindo o Plano Safra da Agricultura Familiar, com juros compatíveis com o perfil do agricultor e tipo de produto, com prioridade para produção de alimentos da cesta básica."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 61, "trecho": "Continuaremos fortalecendo o crédito rural, ampliando os recursos do Plano Safra e assegurando juros compatíveis com a rentabilidade da atividade agropecuária."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 60, "trecho": "daremos especial atenção ao fortalecimento do Programa Garantia-Safra e à ampliação do acesso ao seguro rural da agricultura familiar."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 62, "trecho": "Estabeleceremos diálogo com o setor produtivo para viabilizar um instrumento de mitigação dos efeitos das catástrofes para cobrir perdas sistêmicas decorrentes de quebras severas de safra"}]},
+        {"texto": "Acelerar a produção nacional de fertilizantes e de bioinsumos e ampliar as áreas irrigadas num programa de resiliência climática.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 63, "trecho": "a Petrobras retomou a produção com 3 unidades em Sergipe, Bahia, Paraná e as obras da unidade do Mato Grosso do Sul foram reiniciadas. No próximo governo, seguiremos acelerando a produção nacional de fertilizantes."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 60, "trecho": "Vamos ampliar o fomento à produção nacional de bioinsumos para reduzir a dependência de fertilizantes químicos importados."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 61, "trecho": "buscaremos implementar um programa nacional de resiliência climática no campo, ampliando as áreas irrigadas, promovendo a conservação dos solos"}]},
+        {"texto": "Avançar na reforma agrária e na regularização fundiária, especialmente no Norte, e acelerar a titulação de territórios quilombolas.", "camada": "plano", "citacoes": [
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 60, "trecho": "Continuaremos a avançar na política de reforma agrária, assentando as famílias acampadas, estruturando os assentamentos e ampliando o acesso ao crédito fundiário."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 60, "trecho": "ampliando o acesso ao crédito fundiário. A regularização fundiária, especialmente na região Norte, também é essencial para a segurança jurídica dos produtores rurais e incentivo aos investimentos."},
+          {"arquivo": "Programa-Governo-LULA-2026.pdf", "pagina": 60, "trecho": "é crítico acelerar a titulação dos territórios quilombola e a regularização fundiária dos povos e comunidades tradicionais"}]}
+      ]
   }
  },
  "semelhancas": [

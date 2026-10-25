@@ -1,0 +1,11 @@
+[project]
+name = "rag-planos-ask"
+version = "0.1.0"
+requires-python = ">=3.11"
+# /ask em prévia (plano-final §11). Usa o pacote do pipeline (rag_planos) pelo PYTHONPATH da imagem.
+# Diretas além das do pipeline; o lock completo é docker/ask.requirements.txt.
+dependencies = ["fastapi==0.146.0", "uvicorn==0.54.0", "fastembed==0.9.0", "rank-bm25==0.2.2",
+                "langchain-openai==1.7.2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

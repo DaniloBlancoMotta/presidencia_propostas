@@ -8,13 +8,19 @@ import { build } from "vite";
 import { parse } from "yaml";
 import type { DadosPagina, Fonte, Manifesto, Rota } from "../src/tipos";
 import { DESCRICAO_PREVIA } from "../src/tipos";
-import { dataBR } from "../src/rotas";
+import { caminhoDaRota, dataBR } from "../src/rotas";
 import { RAIZ, WEB, entradasPadrao } from "./caminhos";
 import { ErroGuarda, verificarGuardas } from "./guardas";
+import { absoluta, geradoEm, jsonLd, llms, robots, sitemap } from "./seo";
 
 const SAIDA = resolve(WEB, process.env.OUT_DIR ?? "dist");
 const SSR = resolve(WEB, ".ssr");
 export const SCRIPT_ORDEM = `document.documentElement.dataset.ordem=Math.random()<0.5?"ab":"ba"`;
+const FONTES = [
+  ["newsreader", "newsreader-latin-wght-normal.woff2"],
+  ["newsreader", "newsreader-latin-wght-italic.woff2"],
+  ["atkinson-hyperlegible-next", "atkinson-hyperlegible-next-latin-wght-normal.woff2"],
+];
 
 function escrever(caminho: string, conteudo: string | Buffer) {
   mkdirSync(dirname(caminho), { recursive: true });
@@ -43,9 +49,33 @@ async function principal() {
     process.exit(1);
   }
   const fontes = JSON.parse(readFileSync(arqFontes, "utf8")) as Fonte[];
-  const site = existsSync(resolve(RAIZ, "dados", "site.yaml"))
-    ? (parse(readFileSync(resolve(RAIZ, "dados", "site.yaml"), "utf8")) as { responsavel: string | null })
-    : { responsavel: null };
+  // SITE_YAML: outro site.yaml, para os testes de build no nível do comando (como COMPARACOES e APROVADOS)
+  const arqSite = process.env.SITE_YAML ? resolve(process.env.SITE_YAML) : resolve(RAIZ, "dados", "site.yaml");
+  const site = existsSync(arqSite)
+    ? (parse(readFileSync(arqSite, "utf8")) as { responsavel: string | null; url?: string | null })
+    : { responsavel: null, url: null };
+  // Domínio final (plano-final §9, item 3): sem ele, nada de canonical nem sitemap (exigem endereço absoluto).
+  const base = site.url ? new URL(site.url).origin + "/" : null;
+  if (base && !base.startsWith("https://")) {
+    console.error(`Build bloqueado: dados/site.yaml url precisa de https (${site.url}).`);
+    process.exit(1);
+  }
+
+  // Pergunta livre /ask (plano-final §11) só na prévia: ASK_URL nunca entra no build de produção (dist).
+  const askUrl = process.env.ASK_URL?.trim() || null;
+  let askOrigem: string | null = null;
+  if (askUrl) {
+    if (!process.env.OUT_DIR || process.env.OUT_DIR === "dist") {
+      console.error("Build bloqueado: ASK_URL só vale com OUT_DIR de prévia (o build de produção não fala com o /ask).");
+      process.exit(1);
+    }
+    const u = new URL(askUrl);
+    if (u.protocol !== "https:" && u.hostname !== "localhost" && u.hostname !== "127.0.0.1") {
+      console.error(`Build bloqueado: ASK_URL precisa de https fora da máquina local (${askUrl}).`);
+      process.exit(1);
+    }
+    askOrigem = u.origin;
+  }
 
   const manifesto: Manifesto = {
     temas: pub.temas,
@@ -55,6 +85,7 @@ async function principal() {
       lula: { nome: "Lula", partido: "PT" },
     },
     responsavel: site.responsavel ?? null,
+    ask: askUrl,
   };
 
   await build({ root: WEB, logLevel: "warn", build: { outDir: SAIDA, emptyOutDir: true } });
@@ -66,7 +97,7 @@ async function principal() {
     build: { ssr: resolve(WEB, "src/entry-server.tsx"), outDir: SSR, emptyOutDir: true },
   });
   const { renderizar } = (await import(pathToFileURL(resolve(SSR, "entry-server.js")).href)) as {
-    renderizar: (d: DadosPagina) => { html: string; titulo: string };
+    renderizar: (d: DadosPagina) => { html: string; titulo: string; tituloDoc: string };
   };
 
   // CSS do site inline (evita uma requisição que bloqueia a 1ª pintura), liberado pelo hash na CSP.
@@ -84,6 +115,8 @@ async function principal() {
     { rota: { tipo: "diferencas" }, arquivo: "diferencas/index.html", ids: pub.temas.map((t) => t.id) },
     { rota: { tipo: "metodologia" }, arquivo: "metodologia/index.html", ids: [] },
     { rota: { tipo: "sobre" }, arquivo: "sobre/index.html", ids: [] },
+    { rota: { tipo: "chat" }, arquivo: "chat/index.html", ids: [] },
+    { rota: { tipo: "conversa" }, arquivo: "chat/conversa/index.html", ids: [] },
     { rota: { tipo: "nao-encontrada" }, arquivo: "404.html", ids: [] },
   ];
   for (const p of paginas) {
@@ -92,13 +125,23 @@ async function principal() {
       manifesto,
       comparacoes: Object.fromEntries(p.ids.map((id) => [id, pub.comparacoes[id]])),
     };
-    const { html, titulo } = renderizar(dados);
+    const { html, titulo, tituloDoc } = renderizar(dados);
+    const canonico = p.rota.tipo === "nao-encontrada" ? null : absoluta(base, caminhoDaRota(p.rota));
+    const ld = jsonLd(dados, tituloDoc, base);
+    // Funções de substituição: o 2º argumento de .replace/.replaceAll é interpretado como padrão
+    // especial ($&, $', $`, $$) quando é uma string. titulo e html vêm do conteúdo aprovado dos
+    // planos (pode conter "R$"), e um texto com "$'" ou "$$" corromperia a página sem aviso.
     const pagina = modelo
       .replace("<!--ordem-->", `<script>${SCRIPT_ORDEM}</script>`)
-      .replaceAll("<!--titulo-->", escaparAttr(titulo))
-      .replaceAll("<!--descricao-->", escaparAttr(DESCRICAO_PREVIA))
-      .replace("<!--app-->", html)
-      .replace("<!--dados-->", `<script id="dados" type="application/json">${escaparJson(dados)}</script>`);
+      .replace("<!--titulo-doc-->", () => escaparAttr(tituloDoc))
+      .replace("<!--canonical-->", () =>
+        canonico ? `<link rel="canonical" href="${escaparAttr(canonico)}" /><meta property="og:url" content="${escaparAttr(canonico)}" />` : "",
+      )
+      .replace("<!--jsonld-->", () => (ld ? `<script type="application/ld+json">${escaparJson(ld)}</script>` : ""))
+      .replaceAll("<!--titulo-->", () => escaparAttr(titulo))
+      .replaceAll("<!--descricao-->", () => escaparAttr(DESCRICAO_PREVIA))
+      .replace("<!--app-->", () => html)
+      .replace("<!--dados-->", () => `<script id="dados" type="application/json">${escaparJson(dados)}</script>`);
     escrever(resolve(SAIDA, p.arquivo), pagina);
   }
   const coleta = fontes.map((f) => f.coletado_em).sort()[0];
@@ -108,6 +151,28 @@ async function principal() {
     readFileSync(visualizador, "utf8").replace("<!--coleta-->", `Documentos coletados do TSE em ${dataBR(coleta)}`),
   );
   for (const [id, buf] of Object.entries(pub.bytes)) escrever(resolve(SAIDA, "comparacoes", `${id}.json`), buf);
+  // Buscadores e motores de resposta com IA (GEO): robots.txt, llms.txt e, com domínio, sitemap.xml.
+  escrever(resolve(SAIDA, "robots.txt"), robots(base));
+  escrever(resolve(SAIDA, "llms.txt"), llms(manifesto, base, pub.comparacoes));
+  if (base) {
+    const todas = geradoEm(Object.values(pub.comparacoes));
+    escrever(
+      resolve(SAIDA, "sitemap.xml"),
+      sitemap(base, [
+        { caminho: "/", modificado: todas },
+        ...pub.temas.map((t) => ({ caminho: `/tema/${t.id}`, modificado: pub.comparacoes[t.id].gerado_em })),
+        { caminho: "/semelhancas", modificado: todas },
+        { caminho: "/diferencas", modificado: todas },
+        { caminho: "/metodologia" },
+        { caminho: "/sobre" },
+        { caminho: "/chat" },
+      ]),
+    );
+  }
+  // Fontes próprias (porta 4): só o subconjunto latino em woff2, servido de /fontes/ do próprio domínio.
+  for (const [pacote, arquivo] of FONTES) {
+    escrever(resolve(SAIDA, "fontes", arquivo), readFileSync(resolve(WEB, "node_modules", "@fontsource-variable", pacote, "files", arquivo)));
+  }
   for (const f of fontes) {
     mkdirSync(resolve(SAIDA, "pdf"), { recursive: true });
     copyFileSync(resolve(RAIZ, "corpus", f.arquivo), resolve(SAIDA, "pdf", f.arquivo));
@@ -118,7 +183,7 @@ async function principal() {
     `style-src 'self' 'sha256-${hashCss}'`,
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    "connect-src 'self'",
+    askOrigem ? `connect-src 'self' ${askOrigem}` : "connect-src 'self'",
     "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
@@ -132,7 +197,7 @@ async function principal() {
       `  Content-Security-Policy: ${csp}`,
       "  X-Content-Type-Options: nosniff",
       "  Referrer-Policy: no-referrer",
-      "  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()",
+      "  Permissions-Policy: camera=(), microphone=(), geolocation=()",
       "/assets/*",
       "  Cache-Control: public, max-age=31536000, immutable",
       "",
@@ -140,6 +205,7 @@ async function principal() {
   );
   rmSync(SSR, { recursive: true, force: true });
   console.log(`build ok em ${SAIDA}: ${pub.temas.length} temas publicados (${pub.temas.map((t) => t.id).join(", ")})`);
+  if (askUrl) console.log(`PRÉVIA: o chat pergunta ao /ask em ${askUrl} (nunca publicar esta pasta)`);
 }
 
 void principal();

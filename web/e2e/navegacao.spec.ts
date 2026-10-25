@@ -14,13 +14,15 @@ test("grade: Semelhanças e Diferenças primeiro, depois os temas na ordem de th
 
 test("colunas e abas: ≥ 768 px duas colunas iguais, < 768 px duas abas", async ({ page, isMobile }) => {
   await page.goto("/tema/saude");
-  const paineis = page.locator('[role="tabpanel"]');
+  const paineis = page.locator(".painel");
   await expect(paineis).toHaveCount(2);
   if (!isMobile) {
     await page.setViewportSize({ width: 1024, height: 900 });
     await expect(page.locator('[role="tablist"]')).toBeHidden();
     await expect(paineis.nth(0)).toBeVisible();
     await expect(paineis.nth(1)).toBeVisible();
+    // sem abas visíveis, os painéis não são tabpanel (C39)
+    await expect(page.locator('[role="tabpanel"]')).toHaveCount(0);
     const [a, b] = [await paineis.nth(0).boundingBox(), await paineis.nth(1).boundingBox()];
     expect(Math.abs(a!.width - b!.width)).toBeLessThanOrEqual(1);
     expect(Math.abs(a!.y - b!.y)).toBeLessThanOrEqual(1);
@@ -38,13 +40,14 @@ test("colunas e abas: ≥ 768 px duas colunas iguais, < 768 px duas abas", async
 
 test("expandir: bullet mostra trecho, arquivo, página e Ver no PDF", async ({ page }) => {
   await page.goto("/tema/saude");
-  const painel = page.locator('[role="tabpanel"]:visible').first();
+  const painel = page.locator(".painel:visible").first();
   const item = painel.locator(".item").first();
   await expect(item.locator(".trecho").first()).toBeHidden();
   await item.locator("summary").click();
   await expect(item.locator(".trecho").first()).toBeVisible();
   await expect(item.locator(".arquivo").first()).toHaveText(/\.pdf$/);
-  await expect(item.locator(".pagina").first()).toHaveText(/^pág\. \d+$/);
+  // "pág. N" com espaço não separável (C46)
+  await expect(item.locator(".pagina").first()).toHaveText(/^pág\.\xa0\d+$/);
   await expect(item.getByRole("link", { name: /Ver no PDF/ }).first()).toBeVisible();
 });
 
@@ -75,12 +78,15 @@ test("transversal: itens de todos os temas, agrupados na ordem de themes.yaml", 
     await expect(page.locator("section[data-tema]")).toHaveCount(esperado.length);
     const ids = await page.locator("section[data-tema]").evaluateAll((els) => els.map((e) => e.getAttribute("data-tema")));
     expect(ids).toEqual(esperado.map((t) => t.id));
+    // as omissões vêm primeiro do candidato que a ordem sorteada pôs primeiro (C6)
+    const primeiro = (await page.evaluate(() => document.documentElement.dataset.ordem)) === "ba" ? "lula" : "flavio-bolsonaro";
     for (const t of esperado) {
       const c = comparacao(t.id);
       const sec = page.locator(`section[data-tema="${t.id}"]`);
-      const textos = await sec.locator(".texto-item").allTextContents();
-      const esperados = [...c[tipo].map((i) => i.texto), ...(tipo === "diferencas" ? c.omissoes.map((o) => o.texto) : [])];
-      expect(textos).toEqual(esperados);
+      const omissoes = [...c.omissoes.filter((o) => o.tratado_por === primeiro), ...c.omissoes.filter((o) => o.tratado_por !== primeiro)];
+      const esperados = [...c[tipo].map((i) => i.texto), ...(tipo === "diferencas" ? omissoes.map((o) => o.texto) : [])];
+      // comparação exata do texto (sem normalizar espaços); o poll espera a hidratação aplicar a ordem sorteada
+      await expect.poll(() => sec.locator(".texto-item").allTextContents()).toEqual(esperados);
       if (tipo === "diferencas") {
         await expect(sec.locator(".selo", { hasText: "Omissão" })).toHaveCount(c.omissoes.length);
       }

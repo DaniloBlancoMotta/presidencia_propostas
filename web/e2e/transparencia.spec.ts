@@ -44,35 +44,82 @@ test("metodologia: as 5 etapas em ordem e a regra só documentos oficiais", asyn
   await expect(page.locator("main")).toContainText("Regra: só documentos oficiais.");
 });
 
+/** tagName, classes e todos os estilos calculados de um elemento, com --cor-cand, --tom-cand e --tom-cand-forte
+ *  trocadas pelo mesmo valor: o que ainda diferir entre os dois candidatos não vem da cor de identidade (C73).
+ *  Ficam de fora só `order` (a ordem sorteada, decisão 12) e as medidas, que dependem do texto de cada plano. */
+async function retrato(page: import("@playwright/test").Page, seletor: string) {
+  await page.mouse.move(0, 0);
+  return page.locator(seletor).first().evaluate((el) => {
+    const FORA = new Set(["order", "width", "height", "block-size", "inline-size", "perspective-origin", "transform-origin"]);
+    const h = el as HTMLElement;
+    const original = h.getAttribute("style");
+    for (const v of ["--cor-cand", "--tom-cand", "--tom-cand-forte"]) h.style.setProperty(v, "rgb(1, 2, 3)");
+    const s = getComputedStyle(h);
+    const estilos: Record<string, string> = {};
+    for (let i = 0; i < s.length; i++) if (!s[i].startsWith("--") && !FORA.has(s[i])) estilos[s[i]] = s.getPropertyValue(s[i]);
+    if (original === null) h.removeAttribute("style");
+    else h.setAttribute("style", original);
+    return { tag: h.tagName, classes: h.className.replace(/\bativo\b/, "").trim(), estilos };
+  });
+}
+
 test("neutro: os dois candidatos usam o mesmo componente, classes e estilos", async ({ page }) => {
+  const iguais = async (rotulo: string, a: string, b: string) => expect(await retrato(page, a), rotulo).toEqual(await retrato(page, b));
+  const hidratado = () => page.waitForFunction(() => !document.querySelector("[data-pre]"));
   await page.setViewportSize({ width: 1024, height: 900 });
   await page.goto("/tema/saude");
-  const paineis = page.locator('[role="tabpanel"]');
-  const estilos = await paineis.evaluateAll((els) =>
-    els.map((el) => {
-      const h = el.querySelector("h3")!;
-      const s = getComputedStyle(h);
-      const p = getComputedStyle(el);
-      return {
-        classe: el.className.replace(" ativo", ""),
-        tag: el.tagName,
-        h: [s.color, s.fontWeight, s.fontSize, s.backgroundColor].join("|"),
-        p: [p.color, p.backgroundColor, p.borderColor].join("|"),
-        item: el.querySelector(".item")?.className,
-      };
-    }),
-  );
-  expect(estilos[0]).toEqual(estilos[1]);
-  const abas = await page.getByRole("tab").evaluateAll((els) => els.map((e) => e.className));
-  expect(abas[0]).toBe(abas[1]);
+  await hidratado();
+  await page.locator('.painel[data-cand="lula"] .item summary').first().click();
+  await page.locator('.painel[data-cand="flavio-bolsonaro"] .item summary').first().click();
+  await page.locator('[data-lista="semelhancas"] .item summary').first().click();
+  const L = '[data-cand="lula"]';
+  const F = '[data-cand="flavio-bolsonaro"]';
+  await iguais("coluna", `.painel${L}`, `.painel${F}`);
+  await iguais("h3", `.painel${L} h3`, `.painel${F} h3`);
+  await iguais("item", `.painel${L} .item`, `.painel${F} .item`);
+  await iguais("citação", `.painel${L} .citacao`, `.painel${F} .citacao`);
+  await iguais("lado", `[data-lista="semelhancas"] .lado${L}`, `[data-lista="semelhancas"] .lado${F}`);
+  await iguais("omissão", `li.omissao${L}`, `li.omissao${F}`);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/tema/saude");
+  await hidratado();
+  const visto: Record<string, Awaited<ReturnType<typeof retrato>>[]> = {};
+  for (const c of [L, F]) {
+    await page.locator(`.aba${c}`).click();
+    await page.locator(`.painel${c} .item summary`).first().click();
+    for (const [nome, seletor] of [
+      ["aba", `.aba${c}`],
+      ["painel", `.painel${c}`],
+      ["h3", `.painel${c} h3`],
+      ["item", `.painel${c} .item`],
+      ["citação", `.painel${c} .citacao`],
+    ]) (visto[nome] ??= []).push(await retrato(page, seletor));
+  }
+  for (const [nome, [a, b]] of Object.entries(visto)) expect(a, `390 px: ${nome}`).toEqual(b);
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto("/sobre");
+  await hidratado();
+  await iguais("cartão de /sobre", `.fonte${L}`, `.fonte${F}`);
+  await iguais("título do cartão", `.fonte${L} h2`, `.fonte${F} h2`);
+
+  await page.goto("/tema/saude");
   const css = await page.evaluate(() => [...document.querySelectorAll("style")].map((s) => s.textContent).join("\n"));
-  // nenhuma regra de cor ou fundo amarrada a um candidato: data-cand só aparece com `order`
+  // regras amarradas a um candidato só definem `order` ou as três variáveis do candidato (C73)
   const regras = css.match(/[^{}]*data-cand[^{}]*\{[^}]*\}/g) ?? [];
   expect(regras.length).toBeGreaterThan(0);
-  for (const r of regras) expect(r.replace(/^[^{]*\{/, "").replace(/\}$/, "").trim()).toMatch(/^order:\s*[12];?$/);
+  for (const r of regras) {
+    const decl = r.replace(/^[^{]*\{/, "").replace(/\}$/, "").split(";").map((d) => d.trim()).filter(Boolean);
+    expect(decl.length, r).toBeGreaterThan(0);
+    for (const d of decl) expect(d, r).toMatch(/^(order:\s*[12]|--cor-cand:|--tom-cand:|--tom-cand-forte:)/);
+  }
 });
 
 test("mesma origem: só requisições ao próprio domínio, em todas as rotas e controles", async ({ page, baseURL }) => {
+  // com "Mostrar tudo" por último entre os filtros (C5), cada tema termina com todos os itens à mostra e o
+  // teste abre todos eles: mais cliques que antes, e não cabe mais em 60 s com a bateria em paralelo
+  test.setTimeout(150_000);
   const origem = new URL(baseURL!).origin;
   const fora: string[] = [];
   page.on("request", (req) => {
@@ -91,7 +138,7 @@ test("mesma origem: só requisições ao próprio domínio, em todas as rotas e 
   await page.goto("/");
   await page.getByRole("link", { name: "Saúde" }).click();
   await expect(page.locator("h1")).toHaveText("Saúde");
-  await page.getByRole("link", { name: "← Todos os temas" }).click();
+  await page.getByRole("link", { name: "Todos os temas", exact: true }).click();
   await page.getByRole("link", { name: "Diferenças" }).first().click();
   await expect(page.locator("h1")).toHaveText("Diferenças");
   await page.waitForLoadState("networkidle");
