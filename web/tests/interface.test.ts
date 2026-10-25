@@ -292,4 +292,45 @@ describe("S5: a montagem do HTML (nível do comando)", () => {
       rmSync(pasta, { recursive: true, force: true });
     }
   }, 240_000);
+
+  it("C74: com url em site.yaml, cada rota grava o canonical com o endereço absoluto, menos a 404", () => {
+    const pasta = mkdtempSync(join(tmpdir(), "c74-"));
+    const arq = join(pasta, "saude.json");
+    writeFileSync(arq, readFileSync(resolve(RAIZ, "dados", "comparacoes", "saude.json")));
+    writeFileSync(join(pasta, "aprovados.yaml"), `saude: ${createHash("sha256").update(readFileSync(arq)).digest("hex")}\n`);
+    // um site.yaml temporário: o dados/site.yaml real não é tocado
+    writeFileSync(join(pasta, "site.yaml"), "responsavel: null\nurl: https://comparador.exemplo\n");
+    const saida = resolve(RAIZ, "web", "dist-c74");
+    try {
+      const r = spawnSync("npx", ["tsx", "scripts/build.ts"], {
+        cwd: resolve(RAIZ, "web"),
+        env: {
+          ...process.env,
+          COMPARACOES: pasta,
+          APROVADOS: join(pasta, "aprovados.yaml"),
+          SITE_YAML: join(pasta, "site.yaml"),
+          OUT_DIR: "dist-c74",
+        },
+        encoding: "utf8",
+      });
+      expect(r.status, r.stderr).toBe(0);
+      const canonicos = (arquivo: string) =>
+        [...readFileSync(join(saida, arquivo), "utf8").matchAll(/<link rel="canonical"[^>]*?href="([^"]*)"/g)].map((m) => m[1]);
+      for (const [arquivo, url] of [
+        ["index.html", "https://comparador.exemplo/"],
+        ["tema/saude/index.html", "https://comparador.exemplo/tema/saude"],
+        ["semelhancas/index.html", "https://comparador.exemplo/semelhancas"],
+        ["diferencas/index.html", "https://comparador.exemplo/diferencas"],
+        ["metodologia/index.html", "https://comparador.exemplo/metodologia"],
+        ["sobre/index.html", "https://comparador.exemplo/sobre"],
+        ["chat/index.html", "https://comparador.exemplo/chat"],
+        ["chat/conversa/index.html", "https://comparador.exemplo/chat/conversa"],
+      ])
+        expect(canonicos(arquivo), arquivo).toEqual([url]);
+      expect(canonicos("404.html")).toEqual([]);
+    } finally {
+      rmSync(saida, { recursive: true, force: true });
+      rmSync(pasta, { recursive: true, force: true });
+    }
+  }, 240_000);
 });

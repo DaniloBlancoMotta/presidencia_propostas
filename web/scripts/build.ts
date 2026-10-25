@@ -49,8 +49,10 @@ async function principal() {
     process.exit(1);
   }
   const fontes = JSON.parse(readFileSync(arqFontes, "utf8")) as Fonte[];
-  const site = existsSync(resolve(RAIZ, "dados", "site.yaml"))
-    ? (parse(readFileSync(resolve(RAIZ, "dados", "site.yaml"), "utf8")) as { responsavel: string | null; url?: string | null })
+  // SITE_YAML: outro site.yaml, para os testes de build no nível do comando (como COMPARACOES e APROVADOS)
+  const arqSite = process.env.SITE_YAML ? resolve(process.env.SITE_YAML) : resolve(RAIZ, "dados", "site.yaml");
+  const site = existsSync(arqSite)
+    ? (parse(readFileSync(arqSite, "utf8")) as { responsavel: string | null; url?: string | null })
     : { responsavel: null, url: null };
   // Domínio final (plano-final §9, item 3): sem ele, nada de canonical nem sitemap (exigem endereço absoluto).
   const base = site.url ? new URL(site.url).origin + "/" : null;
