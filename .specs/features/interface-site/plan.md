@@ -47,7 +47,7 @@ Reusa o pré-render de `web/scripts/build.ts`, os componentes `Tema`, `Transvers
 1. a comparação aprovada -> `web/scripts/build.ts` (exists) - pré-renderiza cada rota com `App` (exists), recalcula os hashes do CSP do CSS e do script inline e copia as fontes para `/fontes/` (door 4)
 2. o navegador carrega a página -> script inline do head em `index.html` (exists) grava `data-ordem`, e `estilo.css` (exists) escolhe aba, painel e ordem antes da hidratação
 3. `entry-client.tsx` (exists) hidrata `App` (exists), que anuncia mudanças numa região `role="status"`; a tela `Tema` (`paginas.tsx`, exists) lê `?filtro` (door 1)
-4. navegação no cliente -> `App.tsx` (exists), função `ir` - mostra "Carregando…", busca `/comparacoes/<id>.json`, guarda e restaura a rolagem; as âncoras da mesma página levam o foco ao destino sem entrada nova no histórico. As três decisões (o último destino vence, a rolagem por entrada do histórico, a âncora da mesma página) ficam puras em `navegacao.ts` (new)
+4. navegação no cliente -> `App.tsx` (exists), função `ir` - mostra "Carregando…", busca `/comparacoes/<id>.json`, guarda e restaura a rolagem; as âncoras da mesma página levam o foco ao destino sem entrada nova no histórico. As decisões (o último destino vence, a rolagem por entrada do histórico, o destino da rolagem depois de trocar de rota, a âncora da mesma página, se a rota tem o que baixar) ficam puras em `navegacao.ts` (new)
 5. "Ver no PDF" -> `pdf/visualizador.html` (exists) e `visualizador.ts` (exists) - desenha com paginação serializada, foco preservado e, no item 6, camada de texto. A fila de desenho, o foco dos botões e o redesenho por largura ficam puros em `paginacao.ts` (new), que só o visualizador importa
 
 ## Impact

@@ -7,10 +7,10 @@ import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { RAIZ } from "../scripts/caminhos";
 import { agruparCitacoes, ordenarOmissoes } from "../src/Citado";
-import { ancoraDaPagina, criarVez, estadosAoEmpilhar, rolagemDoEstado } from "../src/navegacao";
+import { ancoraDaPagina, criarVez, destinoDaRolagem, estadosAoEmpilhar, faltaBaixar, rolagemDoEstado } from "../src/navegacao";
 import { botoesDaPagina, filaDeDesenho, redesenharNaLargura } from "../src/paginacao";
 import { filtroDaUrl, urlComFiltro } from "../src/rotas";
-import type { CandidatoId, Citacao, Comparacao } from "../src/tipos";
+import type { CandidatoId, Citacao, Comparacao, DadosPagina } from "../src/tipos";
 
 const TOKENS = readFileSync(resolve(import.meta.dirname, "..", "src", "tokens.css"), "utf8");
 const raiz = /:root\s*\{([^}]*)\}/.exec(TOKENS)?.[1] ?? "";
@@ -152,6 +152,47 @@ describe("S4: decisões da navegação no cliente (App.tsx)", () => {
     // entrada sem rolagem guardada (aberta direto pelo endereço): o topo
     expect(rolagemDoEstado(null)).toBe(0);
     expect(rolagemDoEstado({})).toBe(0);
+  });
+
+  it("C29: depois de trocar de rota, a âncora do endereço com posição 0 é o destino; uma posição guardada vale sobre a âncora", () => {
+    const ancora = { id: "g-agronegocio" };
+    // âncora no endereço e posição 0 (link do índice, entrada nova): rola até a âncora
+    expect(destinoDaRolagem(0, ancora)).toEqual({ alvo: ancora });
+    // Voltar a uma entrada com âncora e rolagem guardada: a posição guardada vence
+    expect(destinoDaRolagem(6025, ancora)).toEqual({ y: 6025 });
+    // sem âncora (ou âncora que não existe na página): a posição, guardada ou o topo
+    expect(destinoDaRolagem(6025, null)).toEqual({ y: 6025 });
+    expect(destinoDaRolagem(0, null)).toEqual({ y: 0 });
+  });
+
+  it("C30: \"Carregando…\" só quando a rota tem o que baixar", () => {
+    const temas = ["saude", "educacao"].map((id) => ({ id }));
+    const dados = (comparacoes: string[]) =>
+      ({
+        rota: { tipo: "inicio" },
+        manifesto: { temas },
+        comparacoes: Object.fromEntries(comparacoes.map((id) => [id, {}])),
+      }) as unknown as DadosPagina;
+    const vazio = dados([]);
+    const ambos = dados(["saude", "educacao"]);
+    // chat ainda não carregado
+    expect(faltaBaixar({ tipo: "chat" }, ambos, false)).toBe(true);
+    expect(faltaBaixar({ tipo: "conversa" }, ambos, false)).toBe(true);
+    // chat já carregado
+    expect(faltaBaixar({ tipo: "chat" }, ambos, true)).toBe(false);
+    expect(faltaBaixar({ tipo: "conversa" }, vazio, true)).toBe(false);
+    // tema sem JSON em memória / com JSON em memória
+    expect(faltaBaixar({ tipo: "tema", id: "saude" }, vazio, true)).toBe(true);
+    expect(faltaBaixar({ tipo: "tema", id: "saude" }, dados(["saude"]), false)).toBe(false);
+    // semelhanças e diferenças precisam de todos os temas: falta um
+    expect(faltaBaixar({ tipo: "semelhancas" }, dados(["saude"]), true)).toBe(true);
+    expect(faltaBaixar({ tipo: "diferencas" }, dados(["educacao"]), true)).toBe(true);
+    expect(faltaBaixar({ tipo: "semelhancas" }, ambos, false)).toBe(false);
+    expect(faltaBaixar({ tipo: "diferencas" }, ambos, false)).toBe(false);
+    // nada a baixar
+    for (const tipo of ["inicio", "metodologia", "sobre"] as const) {
+      expect(faltaBaixar({ tipo }, vazio, false), tipo).toBe(false);
+    }
   });
 
   it("C28: só a âncora da mesma página (mesmo caminho e mesma busca) fica fora da navegação", () => {

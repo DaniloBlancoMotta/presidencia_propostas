@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { carregarChat, chatCarregado } from "./chat-carga";
 import { nomeCandidato } from "./Citado";
-import { ancoraDaPagina, criarVez, estadosAoEmpilhar, rolagemDoEstado } from "./navegacao";
+import { ancoraDaPagina, criarVez, destinoDaRolagem, estadosAoEmpilhar, faltaBaixar, rolagemDoEstado, temasDaRota } from "./navegacao";
 import { Inicio, Metodologia, NaoEncontrada, Sobre, Tema, Transversal } from "./paginas";
 import { caminhoDaRota, dataBR, resolverRota } from "./rotas";
 import { CANDIDATOS_BASE, NOME_SITE, type CandidatoId, type Comparacao, type DadosPagina, type Rota } from "./tipos";
@@ -58,18 +58,6 @@ export function tituloDocumento(r: Rota, d: DadosPagina): string {
   }
 }
 
-function temasDaRota(rota: Rota, atual: DadosPagina): string[] {
-  if (rota.tipo === "tema") return [rota.id];
-  if (rota.tipo === "semelhancas" || rota.tipo === "diferencas") return atual.manifesto.temas.map((t) => t.id);
-  return [];
-}
-
-/** Se a rota precisa baixar algo (o JSON de um tema ou o arquivo do chat) antes de aparecer. */
-function faltaBaixar(rota: Rota, atual: DadosPagina): boolean {
-  if ((rota.tipo === "chat" || rota.tipo === "conversa") && !chatCarregado()) return true;
-  return temasDaRota(rota, atual).some((id) => !atual.comparacoes[id]);
-}
-
 async function carregarDados(rota: Rota, atual: DadosPagina): Promise<DadosPagina> {
   if (rota.tipo === "chat" || rota.tipo === "conversa") await carregarChat();
   const comparacoes: Record<string, Comparacao> = { ...atual.comparacoes };
@@ -122,7 +110,7 @@ export function App({ inicial }: { inicial: DadosPagina }) {
       return;
     }
     const n = vez.nova();
-    if (faltaBaixar(rota, d)) {
+    if (faltaBaixar(rota, d, chatCarregado() !== null)) {
       setCarregando(true);
       setAnuncio("Carregando…");
     }
@@ -154,8 +142,9 @@ export function App({ inicial }: { inicial: DadosPagina }) {
     const y = rolar.current;
     rolar.current = null;
     const alvo = window.location.hash ? document.getElementById(decodeURIComponent(window.location.hash.slice(1))) : null;
-    if (alvo && y === 0) alvo.scrollIntoView({ block: "start" });
-    else window.scrollTo(0, y);
+    const destino = destinoDaRolagem(y, alvo);
+    if ("alvo" in destino) destino.alvo.scrollIntoView({ block: "start" });
+    else window.scrollTo(0, destino.y);
   }, [dados]);
 
   useEffect(() => {
