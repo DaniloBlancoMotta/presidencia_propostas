@@ -5,7 +5,7 @@ Plan: `.specs/features/interface-site/plan.md`
 
 ## Intent
 
-79 checks em 8 fatias e nos invariantes · 4 portas de mão única · 0 em aberto
+80 checks em 8 fatias e nos invariantes · 4 portas de mão única · 0 em aberto
 
 Cada check Cn corresponde ao critério n do plano (C1 a C74). C75 a C77 são regressões que o
 `Impact` e o `Surface` do plano exigem. C78 e C79 vieram da rodada 1 do verificador (25/10/2026):
@@ -86,9 +86,11 @@ Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop
 
 **C19** - Em `?arquivo=Programa-Governo-LULA-2026.pdf&pagina=26`, com a CPU desacelerada, dois cliques em "Próxima página" antes de a página 26 terminar de desenhar terminam com `body[data-pagina="28"]` e o indicador lendo "Página 28 de M" (M = páginas do arquivo) (crit. 19)
 Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop-chrome -g "C19:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C19:"`
 
 **C20** - Na página 2, com o foco em "Página anterior", ir à página 1 desabilita esse botão e põe o foco em "Próxima página". Na penúltima página, com o foco em "Próxima página", ir à última desabilita esse botão e põe o foco em "Página anterior" (crit. 20)
 Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop-chrome -g "C20:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C20:"`
 
 **C21** - Com o download do PDF atrasado em 2 s, enquanto ele não termina, "Página anterior" e "Próxima página" estão `disabled` e "Baixar o PDF original" não está visível (crit. 21)
 Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop-chrome -g "C21:"`
@@ -107,6 +109,7 @@ Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop
 
 **C26** - Até 300 ms depois de a janela passar de 1366 para 600 px de largura, a largura CSS do canvas é a mesma (±1 px) que ele tem quando a página é aberta direto em 600 px (crit. 26)
 Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop-chrome -g "C26:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C26:"`
 
 **C27** - O indicador tem `font-variant-numeric` com `tabular-nums` e `min-width` > 0, e os `x` de "Página anterior" e "Próxima página" são os mesmos (±0,5 px) nas páginas 9 e 10 (crit. 27)
 Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop-chrome -g "C27:"`
@@ -115,15 +118,19 @@ Proof: `npx playwright test e2e/interface-visualizador.spec.ts --project=desktop
 
 **C28** - Ativar "Pular para o conteúdo" pelo teclado, ou um link `#g-<theme_id>` do índice de `/diferencas`, põe o foco no destino, não muda `history.length` e não faz requisição a `/comparacoes/` (crit. 28)
 Proof: `npx playwright test e2e/interface-historico.spec.ts --project=desktop-chrome -g "C28:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C28:"`
 
 **C29** - Em `/diferencas`, rolar até o grupo de Agronegócio, abrir o tema pelo link do título e voltar pelo Voltar do navegador devolve o mesmo `scrollY` de antes (±2 px) (crit. 29)
 Proof: `npx playwright test e2e/interface-historico.spec.ts --project=desktop-chrome -g "C29:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C29:"` - inclui a decisão de destino depois de trocar de rota: âncora no endereço com posição 0 rola até a âncora; posição guardada vale sobre a âncora
 
 **C30** - Com `/comparacoes/*.json` atrasado em 1 s, depois de tocar "Saúde" em `/`, e até a tela do tema aparecer, o `main` tem `aria-busy="true"` e uma região `role="status"` diz "Carregando…". Depois, `aria-busy` não é mais `"true"` e o status fica vazio (crit. 30)
 Proof: `npx playwright test e2e/interface-historico.spec.ts --project=desktop-chrome -g "C30:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C30:"` - quando há o que baixar: chat ainda não carregado, tema sem JSON em memória, e nada a baixar (rota sem tema ou JSON já em memória)
 
 **C31** - Com `/comparacoes/*.json` atrasado, tocar "Saúde" e logo "Educação" termina em `/tema/educacao`, com `h1` "Educação", e `history.length` cresce exatamente 1 (crit. 31)
 Proof: `npx playwright test e2e/interface-historico.spec.ts --project=desktop-chrome -g "C31:"`
+Proof: `npx vitest run tests/interface.test.ts -t "C31:"`
 
 **C32** - Em `/tema/saude`, "Só semelhanças" leva a URL a `/tema/saude?filtro=semelhancas`, "Só diferenças" a `?filtro=diferencas` e "Mostrar tudo" a `/tema/saude`, e `history.length` não muda (crit. 32)
 Proof: `npx playwright test e2e/interface-historico.spec.ts --project=desktop-chrome -g "C32:"`
@@ -334,6 +341,9 @@ Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrom
 **C79** - Os acréscimos à §6 que o dono manteve em 25/10/2026: em `/`, um `h2` "Temas" antecede a grade de temas; na tela de tema, o `h2` "O que cada plano propõe" antecede abas e colunas; a faixa do aviso traz o rótulo "Aviso" fora do elemento com o texto do aviso, que continua exato (AC 28). Nenhum outro título ou rótulo fora da §6 aparece nessas telas
 Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C79:"`
 
+**C80** - Em toda rota do site exceto `/`, o link de voltar antes do `h1` mostra a seta "←" desenhada na §6 ("← Saúde"): um `svg` visível, com `aria-hidden="true"`, largura e altura maiores que 0, e `color` diferente de transparente; o nome acessível do link continua sem seta (C69) (rodada 2 do verificador)
+Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrome -g "C80:"`
+
 ## Coverage
 
 | Set (size) | Member -> proof | Unproven |
@@ -355,7 +365,7 @@ Proof: `npx playwright test e2e/interface-inicio.spec.ts --project=desktop-chrom
 | lugares do tom do candidato (3) | coluna C54 · aba C54 · omissão C54 | - |
 | lugares da cor plena (4) | faixas de 6 e 4 px C54 · fio de 3 px dos lados C55 · quadradinho C55 · aspas C64 | - |
 | tamanhos de texto (5) | 13 px C63 · 15 px C63 · 17 px C63 · 21 px C63 · `h1` de 36 a 60 px C63 | - |
-| glifos fora da fonte (5) | "≠" C69 · "←" C69 · "→" C69 · "▸" C3 · "▾" C3 | - |
+| glifos fora da fonte (5) | "≠" C69 · "←" C69, C80 · "→" C69 · "▸" C3 · "▾" C3 | - |
 | lugar do "Trocar ordem" (8) | `/tema/<id>` C78 · `/semelhancas` C78 · `/diferencas` C78 · `/sobre` C78 · `/` C78 · `/metodologia` C78 · 404 C78 · visualizador C78 | - |
 | startup: CSS, tokens e fontes nas saídas do build, todas montadas pelo mesmo `build.ts` (3) | `dist-teste` C60 · `dist` C72 (`guardas.test.ts`, build no nível do comando) · `dist-previa` C75 (`ask.spec.ts`) | - |
 
