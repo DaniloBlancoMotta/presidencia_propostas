@@ -105,13 +105,15 @@ test("C55: cor plena nunca em texto; fio de 3 px de cada lado; quadradinho sem t
       expect(q.fundo, rota).toBe(await token(page, `cand-${q.cand}`));
     }
   }
-  await abrir(page, "/tema/saude");
-  await abrirTudo(page);
-  const lados = await estilo(page, ".lado[data-cand]");
-  expect(lados.length).toBeGreaterThan(0);
-  for (const l of lados) {
-    expect(l.topo).toBe("3px");
-    expect(l.corTopo).toBe(await token(page, `cand-${l.cand}`));
+  for (const rota of ["/tema/saude", "/semelhancas", "/diferencas"]) {
+    await abrir(page, rota);
+    await abrirTudo(page);
+    const lados = await estilo(page, ".lado[data-cand]");
+    expect(lados.length, rota).toBeGreaterThan(0);
+    for (const l of lados) {
+      expect(l.topo, rota).toBe("3px");
+      expect(l.corTopo, rota).toBe(await token(page, `cand-${l.cand}`));
+    }
   }
 });
 
@@ -178,4 +180,10 @@ test("C58: Semelhanças em verde; Diferenças e Omissões em grafite, sem tom", 
     expect(g.topo).toBe("6px");
     expect(g.corTopo).toBe(verde);
   }
+  // o título da página traz o glifo "=" em SVG, no verde #2f7a55
+  const glifo = page.locator("h1 svg");
+  await expect(glifo).toHaveCount(1);
+  expect(await glifo.evaluate((s) => s.querySelector("path")!.getAttribute("d"))).toBe("M5 9h14M5 15h14");
+  expect(await glifo.evaluate((s) => getComputedStyle(s).color)).toBe(verde);
+  expect(verde).toBe("rgb(47, 122, 85)");
 });

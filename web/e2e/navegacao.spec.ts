@@ -85,7 +85,8 @@ test("transversal: itens de todos os temas, agrupados na ordem de themes.yaml", 
       const sec = page.locator(`section[data-tema="${t.id}"]`);
       const omissoes = [...c.omissoes.filter((o) => o.tratado_por === primeiro), ...c.omissoes.filter((o) => o.tratado_por !== primeiro)];
       const esperados = [...c[tipo].map((i) => i.texto), ...(tipo === "diferencas" ? omissoes.map((o) => o.texto) : [])];
-      await expect(sec.locator(".texto-item")).toHaveText(esperados);
+      // comparação exata do texto (sem normalizar espaços); o poll espera a hidratação aplicar a ordem sorteada
+      await expect.poll(() => sec.locator(".texto-item").allTextContents()).toEqual(esperados);
       if (tipo === "diferencas") {
         await expect(sec.locator(".selo", { hasText: "Omissão" })).toHaveCount(c.omissoes.length);
       }

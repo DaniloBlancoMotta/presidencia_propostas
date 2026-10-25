@@ -101,7 +101,14 @@ h1 { margin: 0; font: 600 var(--t-xl)/1.02 var(--serif); letter-spacing: -0.015e
   .com-voltar .topo { grid-template-columns: minmax(0, 1fr); }
   .com-voltar .envelope > :not(.topo) { padding-left: 0; }
 }
-.chapeu { margin-bottom: var(--s-2); }
+h1.com-glifo { display: flex; align-items: center; gap: var(--s-3); }
+h1 .glifo-titulo { width: 0.8em; height: 0.8em; color: var(--semelhanca); }
+/* o que a rota traz no topo vem logo depois do aviso (§6: título, aviso, conteúdo) */
+.envelope.sob-aviso > * { max-width: 46rem; }
+.faixa-aviso:has(+ .sob-aviso) { margin-bottom: var(--s-6); }
+.sob-aviso { margin-bottom: var(--s-8); }
+.sob-aviso > :first-child { margin-top: 0; }
+.sob-aviso > :last-child { margin-bottom: 0; }
 .abertura { margin: var(--s-4) 0 0; font-size: var(--t-lg); line-height: 1.45; max-width: 40ch; }
 html[data-ordem="ab"] .na-ordem-ba, html[data-ordem="ba"] .na-ordem-ab { display: none; }
 .descricao { margin: var(--s-1) 0 0; font-size: var(--t-sm); color: var(--tinta-2); }
@@ -118,7 +125,7 @@ html[data-ordem="ab"] .na-ordem-ba, html[data-ordem="ba"] .na-ordem-ab { display
 
 .rodape { margin-top: var(--s-12); font-size: var(--t-sm); color: var(--tinta-2); }
 .rodape > .envelope { padding-block: var(--s-4) var(--s-8); border-top: 2px solid var(--tinta); }
-.rodape nav { display: flex; flex-wrap: wrap; gap: 0 var(--s-6); }
+.rodape nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--s-2); }
 .rodape nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--tinta); font-weight: 700; }
 .rodape p { margin: var(--s-2) 0 0; font-variant-numeric: tabular-nums; }
 

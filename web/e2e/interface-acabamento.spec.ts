@@ -180,6 +180,22 @@ test("C46: títulos com text-wrap balance, parágrafos com pretty, e espaço nã
   for (const n of nomes) expect(n).toMatch(/^(Lula|Flávio Bolsonaro)\xa0\((PT|PL)\)$/);
   await abrir(page, "/");
   expect(await page.locator(".abertura").textContent()).toContain("2º\xa0turno");
+  // o texto corrido do crit. 43 também quebra com pretty: a abertura de / e os parágrafos de /metodologia e /sobre
+  for (const [rota, seletor] of [
+    ["/", ".abertura"],
+    ["/metodologia", "main p"],
+    ["/sobre", "main p"],
+  ]) {
+    await abrir(page, rota);
+    const estilos = await page.locator(seletor).evaluateAll((els) =>
+      els.map((e) => {
+        const s = getComputedStyle(e) as CSSStyleDeclaration & { textWrapStyle?: string };
+        return s.textWrapStyle || s.getPropertyValue("text-wrap");
+      }),
+    );
+    expect(estilos.length, rota).toBeGreaterThan(0);
+    for (const p of estilos) expect(p, rota).toContain("pretty");
+  }
 });
 
 test("C47: o selo de cada omissão diz de qual plano ela é, igual para os dois candidatos", async ({ page }) => {

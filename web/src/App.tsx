@@ -222,8 +222,11 @@ export function App({ inicial }: { inicial: DadosPagina }) {
       <footer className="rodape">
         <div className="envelope">
           <nav aria-label="Rodapé">
+            {/* "Chat por tema · Metodologia · Sobre", como no desenho da §6 (crit. 17) */}
             <a href="/chat">Chat por tema</a>
+            <span className="sep" aria-hidden="true"> · </span>
             <a href="/metodologia">Metodologia</a>
+            <span className="sep" aria-hidden="true"> · </span>
             <a href="/sobre">Sobre</a>
           </nav>
           <p className="coleta">Documentos coletados do TSE em {dataBR(coleta)}</p>

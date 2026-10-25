@@ -28,20 +28,20 @@ export interface Base {
 
 const NBSP = "\xa0";
 
-/** Abertura de cada rota (crit. 16): o link de volta, o título e, logo abaixo, o aviso de IA de ponta a ponta. */
-export function Cabeca(props: { voltar?: ReactNode; antes?: ReactNode; titulo: string; children?: ReactNode }) {
+/** Abertura de cada rota (crit. 16 e §6): só o link de volta antes do título; logo abaixo do título, o aviso de
+ *  IA de ponta a ponta; o que a rota traz no topo (abertura, descrição, data de geração) vem depois do aviso. */
+export function Cabeca(props: { voltar?: ReactNode; glifo?: ReactNode; titulo: string; children?: ReactNode }) {
   return (
     <>
       <header className={props.voltar ? "cabeca com-voltar" : "cabeca"}>
         <div className="envelope">
-          {props.antes}
           <div className="topo">
             {props.voltar}
-            <h1 id="titulo" tabIndex={-1}>
+            <h1 id="titulo" tabIndex={-1} className={props.glifo ? "com-glifo" : undefined}>
+              {props.glifo}
               {props.titulo}
             </h1>
           </div>
-          {props.children}
         </div>
       </header>
       <div className="faixa-aviso">
@@ -52,6 +52,7 @@ export function Cabeca(props: { voltar?: ReactNode; antes?: ReactNode; titulo: s
           </p>
         </div>
       </div>
+      {props.children && <div className="envelope sob-aviso">{props.children}</div>}
     </>
   );
 }
@@ -100,7 +101,7 @@ export function Inicio({ manifesto }: Base) {
   );
   return (
     <>
-      <Cabeca titulo="Compare os planos de governo" antes={<p className="rotulo chapeu">{`Eleição presidencial 2026 · 2º${NBSP}turno`}</p>}>
+      <Cabeca titulo="Compare os planos de governo">
         {/* Os dois pares estão no HTML; o CSS mostra o da ordem sorteada desde a 1ª pintura (decisão 12). */}
         <p className="abertura">
           {"Planos de governo de "}
@@ -361,7 +362,11 @@ export function Transversal(props: Base & { tipo: "semelhancas" | "diferencas"; 
   const itens = (c: Comparacao) => c[tipo].length + (tipo === "diferencas" ? c.omissoes.length : 0);
   return (
     <>
-      <Cabeca voltar={<Voltar />} titulo={tipo === "semelhancas" ? "Semelhanças" : "Diferenças"}>
+      <Cabeca
+        voltar={<Voltar />}
+        glifo={tipo === "semelhancas" ? <Icone nome="semelhancas" classe="glifo glifo-titulo" /> : undefined}
+        titulo={tipo === "semelhancas" ? "Semelhanças" : "Diferenças"}
+      >
         <Atualizacao comps={Object.values(comparacoes)} manifesto={manifesto} varias />
       </Cabeca>
       <div className="envelope">
