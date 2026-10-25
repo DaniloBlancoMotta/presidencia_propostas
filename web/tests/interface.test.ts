@@ -7,6 +7,8 @@ import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { RAIZ } from "../scripts/caminhos";
 import { agruparCitacoes, ordenarOmissoes } from "../src/Citado";
+import { ancoraDaPagina, criarVez, estadosAoEmpilhar, rolagemDoEstado } from "../src/navegacao";
+import { botoesDaPagina, filaDeDesenho, redesenharNaLargura } from "../src/paginacao";
 import { filtroDaUrl, urlComFiltro } from "../src/rotas";
 import type { CandidatoId, Citacao, Comparacao } from "../src/tipos";
 
@@ -120,6 +122,94 @@ describe("S4: o filtro na URL (porta 1)", () => {
     expect(filtroDaUrl("?filtro=xyz")).toBe("tudo");
     expect(filtroDaUrl("?filtro=")).toBe("tudo");
     expect(filtroDaUrl("?filtro=Semelhancas")).toBe("tudo");
+  });
+});
+
+describe("S4: decisões da navegação no cliente (App.tsx)", () => {
+  it("C31: entre dois destinos tocados, só o último chega à tela", () => {
+    const vez = criarVez();
+    const saude = vez.nova();
+    const educacao = vez.nova();
+    // a resposta de Saúde chega depois da de Educação e não vale
+    expect(vez.vale(saude)).toBe(false);
+    expect(vez.vale(educacao)).toBe(true);
+    // um único destino vale
+    const outra = criarVez();
+    expect(outra.vale(outra.nova())).toBe(true);
+  });
+
+  it("C29: a rolagem fica guardada na entrada que se deixa e volta com ela; a entrada nova começa no topo", () => {
+    // histórico simulado: só a entrada /diferencas, sem estado, rolada até 6025 px
+    const pilha: unknown[] = [null];
+    const { saida, nova } = estadosAoEmpilhar(pilha[0], 6025);
+    pilha[0] = saida;
+    pilha.push(nova);
+    expect(rolagemDoEstado(pilha[1])).toBe(0);
+    // Voltar: o navegador devolve o estado da entrada anterior
+    expect(rolagemDoEstado(pilha[0])).toBe(6025);
+    // o resto do estado da entrada é mantido
+    expect(estadosAoEmpilhar({ outro: 1, y: 5 }, 40).saida).toEqual({ outro: 1, y: 40 });
+    // entrada sem rolagem guardada (aberta direto pelo endereço): o topo
+    expect(rolagemDoEstado(null)).toBe(0);
+    expect(rolagemDoEstado({})).toBe(0);
+  });
+
+  it("C28: só a âncora da mesma página (mesmo caminho e mesma busca) fica fora da navegação", () => {
+    const l = (pathname: string, hash = "", search = "") => ({ pathname, search, hash });
+    expect(ancoraDaPagina(l("/", "#conteudo"), l("/"))).toBe(true);
+    expect(ancoraDaPagina(l("/diferencas", "#g-saude"), l("/diferencas"))).toBe(true);
+    expect(ancoraDaPagina(l("/diferencas", "#g-saude"), l("/semelhancas"))).toBe(false);
+    expect(ancoraDaPagina(l("/tema/saude", "#x", "?filtro=semelhancas"), l("/tema/saude"))).toBe(false);
+    expect(ancoraDaPagina(l("/tema/saude"), l("/"))).toBe(false);
+    expect(ancoraDaPagina(l("/"), l("/"))).toBe(false);
+  });
+});
+
+describe("S3: decisões da paginação do visualizador", () => {
+  it("C19: dois pedidos durante um desenho: o desenho em curso é cancelado e só a página mais recente termina", async () => {
+    let alvo = 26;
+    const comecados: number[] = [];
+    const terminados: number[] = [];
+    let soltar: () => void = () => {};
+    let cancelados = 0;
+    const fila = filaDeDesenho(async (meu) => {
+      const n = alvo;
+      comecados.push(n);
+      if (n === 26) await new Promise<void>((ok) => (soltar = ok));
+      if (!fila.vigente(meu)) return false;
+      terminados.push(n);
+      return true;
+    }, () => cancelados++);
+    const primeiro = fila.pedir();
+    alvo = 27;
+    const segundo = fila.pedir();
+    alvo = 28;
+    const terceiro = fila.pedir();
+    await Promise.all([segundo, terceiro]);
+    soltar();
+    await primeiro;
+    expect(comecados).toEqual([26, 28]);
+    expect(terminados).toEqual([28]);
+    expect(cancelados).toBe(3);
+    // um pedido sozinho desenha uma vez
+    alvo = 5;
+    await fila.pedir();
+    expect(terminados).toEqual([28, 5]);
+  });
+
+  it("C20: na primeira ou na última página, o foco passa do botão desabilitado para o outro", () => {
+    expect(botoesDaPagina(1, 60, "anterior")).toEqual({ desabilitado: { anterior: true, proxima: false }, foco: "proxima" });
+    expect(botoesDaPagina(60, 60, "proxima")).toEqual({ desabilitado: { anterior: false, proxima: true }, foco: "anterior" });
+    // o foco fica onde está quando o botão focado continua habilitado, ou quando nenhum deles está focado
+    expect(botoesDaPagina(1, 60, "proxima").foco).toBeNull();
+    expect(botoesDaPagina(30, 60, "anterior")).toEqual({ desabilitado: { anterior: false, proxima: false }, foco: null });
+    expect(botoesDaPagina(1, 60, null).foco).toBeNull();
+  });
+
+  it("C26: só uma largura nova redesenha a página", () => {
+    expect(redesenharNaLargura(600, 1366)).toBe(true);
+    expect(redesenharNaLargura(1366, 600)).toBe(true);
+    expect(redesenharNaLargura(600, 600)).toBe(false);
   });
 });
 

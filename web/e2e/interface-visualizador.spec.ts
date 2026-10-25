@@ -163,13 +163,18 @@ test("C26: ao estreitar a janela, a largura do canvas fica igual à de quem abre
   await direto.goto(ver(LULA, 4));
   await desenhada(direto, 4);
   const esperada = (await direto.locator("#tela").boundingBox())!.width;
+  // a largura da imagem desenhada (canvas.width), e não só a da caixa CSS, que segue a janela sem redesenho
+  const bitmap = await direto.locator("#tela").evaluate((c) => (c as HTMLCanvasElement).width);
   await direto.close();
   await page.setViewportSize({ width: 1366, height: 900 });
   await page.goto(ver(LULA, 4));
   await desenhada(page, 4);
+  const largo = await page.locator("#tela").evaluate((c) => (c as HTMLCanvasElement).width);
+  expect(largo).not.toBe(bitmap);
   await page.setViewportSize({ width: 600, height: 900 });
   await page.waitForTimeout(300);
   expect(Math.abs((await page.locator("#tela").boundingBox())!.width - esperada)).toBeLessThanOrEqual(1);
+  expect(await page.locator("#tela").evaluate((c) => (c as HTMLCanvasElement).width)).toBe(bitmap);
 });
 
 test("C27: indicador com algarismos tabulares e largura mínima; os botões não se movem de 9 para 10", async ({ page }) => {

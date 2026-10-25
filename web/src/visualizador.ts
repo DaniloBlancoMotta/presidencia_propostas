@@ -1,6 +1,7 @@
 // "Ver no PDF" (decisão 11): PDF.js no próprio domínio, abrindo /pdf/<arquivo> na página pedida.
 import * as pdfjs from "pdfjs-dist";
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import { botoesDaPagina, filaDeDesenho, redesenharNaLargura } from "./paginacao";
 import "./visualizador.css";
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
@@ -52,8 +53,6 @@ async function iniciar() {
   const doc = await pdfjs.getDocument({ url, isEvalSupported: false, useSystemFonts: true }).promise;
   const total = doc.numPages;
   let alvo = Math.min(pedida, total); // a página pedida por último
-  let pedido = 0; // cada pedido (página ou largura nova) invalida o desenho em curso
-  let ocupado = false;
   let largura = 0;
   let tarefa: { cancel(): void } | null = null;
   let texto: pdfjs.TextLayer | null = null;
@@ -62,7 +61,7 @@ async function iniciar() {
   async function desenhar(meu: number): Promise<boolean> {
     const n = alvo;
     const pagina = await doc.getPage(n);
-    if (meu !== pedido) return false;
+    if (!fila.vigente(meu)) return false;
     const escala = folha.clientWidth / pagina.getViewport({ scale: 1 }).width;
     const vp = pagina.getViewport({ scale: escala * (window.devicePixelRatio || 1) });
     tela.width = Math.floor(vp.width);
@@ -72,10 +71,10 @@ async function iniciar() {
     try {
       await t.promise;
     } catch (e) {
-      if (meu !== pedido) return false;
+      if (!fila.vigente(meu)) return false;
       throw e;
     }
-    if (meu !== pedido) return false;
+    if (!fila.vigente(meu)) return false;
     folha.classList.add("desenhada");
     largura = folha.clientWidth;
     // camada de texto do pdf.js na escala CSS, sobre o desenho: o trecho pode ser selecionado e achado com a
@@ -86,10 +85,10 @@ async function iniciar() {
     try {
       await texto.render();
     } catch (e) {
-      if (meu !== pedido) return false;
+      if (!fila.vigente(meu)) return false;
       throw e;
     }
-    if (meu !== pedido) return false;
+    if (!fila.vigente(meu)) return false;
     document.body.dataset.pagina = String(n);
     const onde = document.createElement("span");
     onde.className = "sr";
@@ -104,29 +103,21 @@ async function iniciar() {
     return true;
   }
 
-  // Um desenho por vez: um pedido no meio cancela o desenho em curso, e o laço desenha o mais recente.
-  async function pedir() {
-    pedido++;
+  // Um desenho por vez: cada pedido (página ou largura nova) cancela o desenho em curso, e o laço desenha o
+  // mais recente.
+  const fila = filaDeDesenho(desenhar, () => {
     tarefa?.cancel();
     texto?.cancel();
-    if (ocupado) return;
-    ocupado = true;
-    try {
-      while (!(await desenhar(pedido))) {
-        // um pedido mais novo chegou: desenha de novo
-      }
-    } finally {
-      ocupado = false;
-    }
-  }
+  });
+  const pedir = () => fila.pedir();
 
   function botoes() {
-    const foco = document.activeElement;
-    anterior.disabled = alvo <= 1;
-    proxima.disabled = alvo >= total;
+    const focado = document.activeElement === anterior ? "anterior" : document.activeElement === proxima ? "proxima" : null;
+    const { desabilitado, foco } = botoesDaPagina(alvo, total, focado);
+    anterior.disabled = desabilitado.anterior;
+    proxima.disabled = desabilitado.proxima;
     // o botão focado ficou desabilitado: o foco passa para o outro, e não para o <body> (crit. 20)
-    if (foco === anterior && anterior.disabled) proxima.focus();
-    if (foco === proxima && proxima.disabled) anterior.focus();
+    if (foco) (foco === "anterior" ? anterior : proxima).focus();
   }
 
   function irPara(n: number) {
@@ -141,7 +132,7 @@ async function iniciar() {
   window.addEventListener("resize", () => {
     clearTimeout(espera);
     espera = window.setTimeout(() => {
-      if (folha.clientWidth !== largura) void pedir().catch(() => falhar("Não foi possível desenhar a página do PDF."));
+      if (redesenharNaLargura(folha.clientWidth, largura)) void pedir().catch(() => falhar("Não foi possível desenhar a página do PDF."));
     }, 120);
   });
   baixar.hidden = false;

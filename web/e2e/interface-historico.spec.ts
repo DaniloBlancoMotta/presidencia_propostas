@@ -25,6 +25,8 @@ test("C28: Pular para o conteúdo e o índice de /diferencas põem o foco no des
   await page.keyboard.press("Enter");
   await expect(page.locator("#conteudo")).toBeFocused();
   expect(await historico(page)).toBe(antes);
+  await page.waitForTimeout(300);
+  expect(buscas).toEqual([]);
 
   await abrir(page, "/diferencas");
   await hidratado(page);

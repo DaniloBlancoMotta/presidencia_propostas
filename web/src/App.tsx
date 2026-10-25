@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { carregarChat, chatCarregado } from "./chat-carga";
 import { nomeCandidato } from "./Citado";
+import { ancoraDaPagina, criarVez, estadosAoEmpilhar, rolagemDoEstado } from "./navegacao";
 import { Inicio, Metodologia, NaoEncontrada, Sobre, Tema, Transversal } from "./paginas";
 import { caminhoDaRota, dataBR, resolverRota } from "./rotas";
 import { CANDIDATOS_BASE, NOME_SITE, type CandidatoId, type Comparacao, type DadosPagina, type Rota } from "./tipos";
@@ -92,7 +93,7 @@ export function App({ inicial }: { inicial: DadosPagina }) {
   const [anuncio, setAnuncio] = useState("");
   const atual = useRef(dados);
   atual.current = dados;
-  const ultima = useRef(0); // número da navegação mais recente: só ela chega à tela (crit. 31)
+  const [vez] = useState(criarVez); // só a navegação mais recente chega à tela (crit. 31)
   const rolar = useRef<number | null>(null);
 
   // A ordem foi sorteada pelo script inline do <head> antes da 1ª pintura (decisão 12). Até aqui o CSS
@@ -120,31 +121,32 @@ export function App({ inicial }: { inicial: DadosPagina }) {
       window.location.assign(destino); // o servidor responde 404
       return;
     }
-    const n = ++ultima.current;
+    const n = vez.nova();
     if (faltaBaixar(rota, d)) {
       setCarregando(true);
       setAnuncio("Carregando…");
     }
     try {
       const novo = await carregarDados(rota, d);
-      if (n !== ultima.current) return; // outro destino foi tocado depois deste
+      if (!vez.vale(n)) return; // outro destino foi tocado depois deste
       if (empilhar) {
-        history.replaceState({ ...history.state, y: window.scrollY }, "");
-        history.pushState({ y: 0 }, "", caminhoDaRota(rota) + url.search + url.hash);
+        const { saida, nova } = estadosAoEmpilhar(history.state, window.scrollY);
+        history.replaceState(saida, "");
+        history.pushState(nova, "", caminhoDaRota(rota) + url.search + url.hash);
       }
       rolar.current = y;
       setDados(novo);
       document.title = tituloDocumento(rota, novo);
       requestAnimationFrame(() => document.getElementById("titulo")?.focus({ preventScroll: true }));
     } catch {
-      if (n === ultima.current) window.location.assign(destino);
+      if (vez.vale(n)) window.location.assign(destino);
     } finally {
-      if (n === ultima.current) {
+      if (vez.vale(n)) {
         setCarregando(false);
         setAnuncio("");
       }
     }
-  }, []);
+  }, [vez]);
 
   // Depois de trocar de rota: a posição guardada (Voltar) ou o topo; uma âncora no endereço vale como destino.
   useEffect(() => {
@@ -157,8 +159,7 @@ export function App({ inicial }: { inicial: DadosPagina }) {
   }, [dados]);
 
   useEffect(() => {
-    const voltar = (e: PopStateEvent) =>
-      void ir(window.location.pathname + window.location.search, false, (e.state as { y?: number } | null)?.y ?? 0);
+    const voltar = (e: PopStateEvent) => void ir(window.location.pathname + window.location.search, false, rolagemDoEstado(e.state));
     window.addEventListener("popstate", voltar);
     return () => window.removeEventListener("popstate", voltar);
   }, [ir]);
@@ -171,7 +172,7 @@ export function App({ inicial }: { inicial: DadosPagina }) {
     e.preventDefault();
     // Âncora da mesma página ("Pular para o conteúdo", índice dos temas): foco no destino, sem entrada nova
     // no histórico e sem buscar dados (crit. 28).
-    if (a.hash && a.pathname === window.location.pathname && a.search === window.location.search) {
+    if (ancoraDaPagina(a, window.location)) {
       const alvo = document.getElementById(decodeURIComponent(a.hash.slice(1)));
       if (!alvo) return;
       history.replaceState(history.state, "", a.hash);
